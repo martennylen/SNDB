@@ -23,6 +23,11 @@ http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
 
+app.get('/api', function(req, res) {
+   res.header("Access-Control-Allow-Origin", "http://localhost");
+   res.header("Access-Control-Allow-Methods", "GET, POST");
+});
+
 //server.listen(port);
 
 //require('./public/Scripts/application.js').Application();
