@@ -1,15 +1,28 @@
 var http = require('http'),
-    express = require('express');
+    express = require('express'),
+    path = require('path');
 
 var port = process.env.port || 8101;
 
 var app = express();
-var server = http.createServer(app);
+//var server = http.createServer(app);
 
 app.configure(function(){
-  app.use(express.static(__dirname + '/public'));
+  app.set('port', process.env.port || 8101);
+  app.set('views', __dirname + '/views');
+  app.use(express.logger('dev'));
+  app.use(app.router);
+  app.use(express.static(path.join(__dirname, '/public')));
 });
 
-server.listen(port);
+app.configure('development', function(){
+  app.use(express.errorHandler());
+});
+
+http.createServer(app).listen(app.get('port'), function(){
+  console.log("Express server listening on port " + app.get('port'));
+});
+
+//server.listen(port);
 
 //require('./public/Scripts/application.js').Application();
