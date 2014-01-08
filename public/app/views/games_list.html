@@ -1,0 +1,8 @@
+<h3 ng-style="{color: '#fff'}">{{games.length}} spel hittades</h3>
+<ul>
+	<li ng-repeat="game in games" ng-class-odd="'odd'" ng-class-even="'even'">
+		<a ng-href="#/{{game.value.console}}/{{game.id}}">
+			{{game.value.name}}
+		</a>
+	</li>
+</ul>

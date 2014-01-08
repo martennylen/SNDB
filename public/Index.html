@@ -1,1 +1,21 @@
-<h3>SNDB</h3>
+<!doctype html>
+<html ng-app="sndb">
+<head>
+    <script src="/lib/angular.js"></script>
+    <script src="/lib/angular-resource.js"></script>
+    <script src="/lib/angular-route.js"></script>
+    <script src="/app/app.js"></script>
+    <link rel="stylesheet" type="text/css" href="sndb.css">
+  </head>
+  <body ng-controller="IndexCtrl">
+  	<h1>SNDB - </h1>
+  	<a ng-style="{paddingLeft: '10px'}" ng-href="#/admin">Admin</a>
+  	<ul>
+  		<li ng-repeat="c in consoles" ng-style="{display: 'inline'}">
+  			<a ng-href="#/{{c.id}}">{{c.name}}</a>
+  		</li>
+  	</ul>
+    <div ng-view>
+    </div>
+  </body>
+</html>
