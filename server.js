@@ -1,6 +1,7 @@
 var http = require('http'),
     express = require('express'),
-    path = require('path');
+    path = require('path'),
+    _u = require('underscore');
 
 var port = process.env.port || 8101;
 var app = express();
@@ -35,7 +36,13 @@ var config = require('./config')
 
   app.get('/api/:consoleId', function(req, res) {
     db.view('games/by_console', { key: req.params.consoleId }, function(err, response){
-        res.send(response);
+        var r = [];
+        _u.each(response, function(item){
+          console.log(item.value);
+          r.push(item.value);
+        });
+          
+        res.send(r);
     });
   });
 
