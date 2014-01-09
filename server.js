@@ -1,3 +1,4 @@
+process.env.PWD = process.cwd()
 var http = require('http'),
     express = require('express'),
     path = require('path'),
@@ -8,10 +9,10 @@ var app = express();
 
 app.configure(function(){
   app.set('port', port);
-  app.set('views', __dirname + '/views');
+  //app.set('views', __dirname + '/views');
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
-  app.use(express.static(path.join(process.env.PWD, '/public')));
+  app.use(express.static(process.env.PWD + '/public'));
 });
 
 app.configure('development', function(){
