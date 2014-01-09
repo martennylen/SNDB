@@ -29,32 +29,35 @@ var config = require('./config')
   , connection = new(cradle.Connection)(config.couchdb.url, config.couchdb.port, {cache: true}),
   db = connection.database("sndb");
 
-  app.get('/api/:consoleId/:gameId', function(req, res){
-    db.view('games/all', { key: req.params.gameId }, function(err, response){
-        res.send(response);
-    });
+  app.get('/', function(req, res){
+    res.send('hello world');
   });
+  // app.get('/api/:consoleId/:gameId', function(req, res){
+  //   db.view('games/all', { key: req.params.gameId }, function(err, response){
+  //       res.send(response);
+  //   });
+  // });
 
-  app.get('/api/:consoleId', function(req, res) {
-    db.view('games/by_console', { key: req.params.consoleId }, function(err, response){
-        var r = [];
-        _u.each(response, function(item){
-          console.log(item.value);
-          r.push(item.value);
-        });
+  // app.get('/api/:consoleId', function(req, res) {
+  //   db.view('games/by_console', { key: req.params.consoleId }, function(err, response){
+  //       var r = [];
+  //       _u.each(response, function(item){
+  //         console.log(item.value);
+  //         r.push(item.value);
+  //       });
           
-        res.send(r);
-    });
-  });
+  //       res.send(r);
+  //   });
+  // });
 
-  app.post('/api/newgame', function(request, response){
-    console.log(request.body);      // your JSON
-    db.save(request.body, function (err, res) {
-          if(res.ok){
-            response.send({'reply': 'ok'});    // echo the result back
-          }
-      });
-  });
+  // app.post('/api/newgame', function(request, response){
+  //   console.log(request.body);      // your JSON
+  //   db.save(request.body, function (err, res) {
+  //         if(res.ok){
+  //           response.send({'reply': 'ok'});    // echo the result back
+  //         }
+  //     });
+  // });
 
   http.createServer(app).listen(app.get('port'), function(){
     console.log("Express server listening on port " + app.get('port'));
