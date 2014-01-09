@@ -3,7 +3,7 @@ var http = require('http'),
     path = require('path'),
     _u = require('underscore');
 
-var port = process.env.port || 8101;
+var port = process.env.PORT || 8101;
 var app = express();
 
 app.configure(function(){
