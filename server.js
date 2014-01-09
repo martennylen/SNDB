@@ -12,7 +12,7 @@ app.configure(function(){
   //app.set('views', __dirname + '/views');
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
-  app.use(express.static(process.env.PWD + '/public'));
+  app.use('/', express.static(process.env.PWD + '/public'));
 });
 
 app.configure('development', function(){
