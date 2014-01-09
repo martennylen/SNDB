@@ -24,14 +24,11 @@ app.get('/api', function(req, res) {
    res.header("Access-Control-Allow-Methods", "GET, POST");
 });
 
-var config = require('./config')
-  , cradle = require('cradle')
-  , connection = new(cradle.Connection)(config.couchdb.url, config.couchdb.port, {cache: true}),
-  db = connection.database("sndb");
+// var config = require('./config')
+//   , cradle = require('cradle')
+//   , connection = new(cradle.Connection)(config.couchdb.url, config.couchdb.port, {cache: true}),
+//   db = connection.database("sndb");
 
-  app.get('/', function(req, res){
-    res.send('hello world');
-  });
   // app.get('/api/:consoleId/:gameId', function(req, res){
   //   db.view('games/all', { key: req.params.gameId }, function(err, response){
   //       res.send(response);
