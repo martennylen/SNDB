@@ -30,7 +30,7 @@ function getProdConf(){
 	config.couchdb = {};
 
 	config.couchdb.url = 'https://app21098818.heroku:h03MiH3TtVfOIEhOgURxR28d@app21098818.heroku.cloudant.com';
-	config.couchdb.port = '';
+	config.couchdb.port = '443';
 	config.couchdb.username = 'xxx';
 	config.couchdb.password = 'yyy';
 

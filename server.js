@@ -24,7 +24,6 @@ app.get('/api', function(req, res) {
    res.header("Access-Control-Allow-Methods", "GET, POST");
 });
 
-console.log('PROCESS_ENV ÄR ' + process.env.NODE_ENV);
 var Config = require('./config')
   , conf = new Config()
   , cradle = require('cradle')
