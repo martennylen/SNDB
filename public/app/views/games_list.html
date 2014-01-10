@@ -1,5 +1,5 @@
 <h3 ng-style="{color: '#fff'}">{{filtered.length}} spel hittades</h3>
-<input type="text" ng-model="search.name" />
+<input type="text" placeholder="Sök spel..." ng-model="search.name" />
 <ul>
 	<li ng-repeat="r in regions" ng-style="{display: 'inline'}"><span>{{r.name}}</span><input type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]"></li>
 </ul>
