@@ -1,4 +1,3 @@
-process.env.PWD = process.cwd()
 var http = require('http'),
     express = require('express'),
     path = require('path'),
@@ -25,9 +24,11 @@ app.get('/api', function(req, res) {
    res.header("Access-Control-Allow-Methods", "GET, POST");
 });
 
-var config = require('./config')
+//var config = require('./config');
+var Config = require('./config')
+  , conf = new Config()
   , cradle = require('cradle')
-  , connection = new(cradle.Connection)(config.couchdb.url, config.couchdb.port, {cache: true}),
+  , connection = new(cradle.Connection)(conf.couchdb.url, conf.couchdb.port, {cache: true}),
   db = connection.database("sndb");
 
   app.get('/api/:consoleId/:gameId', function(req, res){

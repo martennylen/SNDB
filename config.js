@@ -1,11 +1,38 @@
-var config = {};
+module.exports = function(){
+    switch(process.env.NODE_ENV){
+        case 'development':
+            return getDevConf();
 
-config.couchdb = {};
-config.twilio = {};
+        case 'production':
+            return getProdConf();
 
-config.couchdb.url = 'http://localhost';
-config.couchdb.port = 5984
-config.couchdb.username = 'xxx';
-config.couchdb.password = 'yyy';
+        default:
+            return {};
+    }
+};
 
-module.exports = config;
+function getDevConf(){
+	var config = {};
+
+	config.couchdb = {};
+
+	config.couchdb.url = 'http://localhost';
+	config.couchdb.port = 5984;
+	config.couchdb.username = 'xxx';
+	config.couchdb.password = 'yyy';
+
+	return config;
+}
+
+function getProdConf(){
+	var config = {};
+
+	config.couchdb = {};
+
+	config.couchdb.url = 'https://app21098818.heroku:h03MiH3TtVfOIEhOgURxR28d@app21098818.heroku.cloudant.com';
+	config.couchdb.port = '';
+	config.couchdb.username = 'xxx';
+	config.couchdb.password = 'yyy';
+
+	return config;
+}
