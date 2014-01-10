@@ -64,6 +64,7 @@ app.controller('AdminCtrl', function($scope, $http, consoles, regions){
   $scope.regions = _.map(regions, function(r){ r.selected = false; return r;});
   $scope.game = {};
   $scope.game.regions = [];
+  $scope.postMessage = '';
 
   $scope.addRegion = function(r){
     if(r.selected){
@@ -77,7 +78,9 @@ app.controller('AdminCtrl', function($scope, $http, consoles, regions){
 	$scope.addGame = function(game){
 		$http.post('/api/newgame', game).
 		success(function(response){
-      		console.log('response from server: ' + response.reply)
+      		if(response.reply === 'ok'){
+            $scope.postMessage = 'Spel sparat';
+          }
     	}).
 		error(function(id){
 	  		console.log('server response failed')

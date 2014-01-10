@@ -15,5 +15,6 @@
 			<input type="checkbox" ng-model="r.selected" ng-change="addRegion(r)">
 		</li>
 	</ul> 
-	<button ng-click="addGame(game)" ng-disabled="!game.console">Spara</button>
+	<button ng-click="addGame(game)" ng-disabled="!game.regions.length">Spara</button>
+	<span ng-show="postMessage" ng-style="{color: 'green'}">{{ postMessage }}</span>
 </form>
