@@ -5,8 +5,11 @@
 </ul>
 <ul>
 	<li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">
-		<a ng-href="#/{{game.console}}/{{game._id}}">
+		<a ng-href="#/{{$parent.console}}/{{game.id}}">
 			{{game.name}}
 		</a>
+	    <div ng-style="{display:'inline-block', marginLeft: '20px'}" ng-show="game.attr">
+            <span ng-repeat="attr in game.attr.common" ng-style="{marginRight: '10px'} "ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
+	    </div>
 	</li>
 </ul>

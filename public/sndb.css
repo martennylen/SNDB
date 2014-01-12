@@ -36,4 +36,7 @@ ul li a:visited {
 }
 ul li a:hover {
 	text-decoration: underline;
-};
+}
+span.exists {
+    color: green;
+}

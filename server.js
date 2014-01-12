@@ -36,20 +36,44 @@ var Config = require('./config')
     });
   });
 
-  app.get('/api/:consoleId', function(req, res) {
-    db.view('games/by_console', { key: req.params.consoleId }, function(err, response){
+  app.get('/api/:consoleId', function (req, res) {
+      db.view('games/by_console', { key: req.params.consoleId }, function (err, response) {
         var r = [];
-        _u.each(response, function(item){
-          console.log(item.value);
+          
+        _u.each(response, function (item) {
           r.push(item.value);
         });
           
-        res.send(r);
+        if (req.query.u) {
+            var d = [];
+            db.view('games/by_user', { key: req.query.u }, function (e, resp) {
+                _u.each(resp[0].value, function (item) {
+                    d.push(item);
+                });
+
+                var found = {};
+                _u.map(d, function(it) {
+                    found = _u.find(r, function(g) {
+                        return g.id === it.id;
+                    });
+
+                    if (found) { // User has game                        
+                        //found.attr.common = _u.object(found.attr.common, it.attr.common);
+                        found.attr.common = _u.map(found.attr.common, function (x, iter) {
+                            return { 'id': x, 'status': it.attr.common[iter] };
+                        });;
+                        found.attr.e = it.attr.e;
+                    }
+                });
+                res.send(r);
+            });
+        } else {
+            res.send(r);
+        }
     });
   });
 
   app.post('/api/newgame', function(request, response){
-    console.log(request.body);      // your JSON
     db.save(request.body, function (err, res) {
           if(res.ok){
             response.send({'reply': 'ok'});    // echo the result back

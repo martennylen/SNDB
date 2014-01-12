@@ -10,12 +10,20 @@ app.config(function($locationProvider, $routeProvider) {
     .otherwise({redirectTo: '/nes'}); 
 });
 
-app.factory('GamesService', function($resource) {
-  return $resource('/api/:consoleId');
+app.factory('GamesService', function ($resource, $location) {
+    var u = '';
+    if ($location.search()['u'] !== undefined) {
+        u = '?u=' + $location.search()['u'];
+    }
+    return $resource('/api/:consoleId' + u);
 });
 
 app.factory('GameDetailsService', function($resource) {
   return $resource('/api/:consoleId/:gameId');
+});
+
+app.factory('UserService', function ($resource) {
+    return $resource('/api/user/:userId');
 });
 
 app.constant('consoles', [
@@ -30,18 +38,18 @@ app.constant('regions', [
   ]);
 
 app.filter('codeFilter', function($filter){
-  return function(games, filters){
-    var r = [], c = [];
-    if(games){
-      c = getChecked(filters);
-      _.each(games, function(g){
-          if(_.intersection(g.regions, c).length){
-            r.push(g);
-          }
-      });
-    }
-    return r;
-  }
+    return function (games, filters) {
+        var r = [], c = [];
+        if (games) {
+            c = getChecked(filters);
+            _.each(games, function (g) {
+                if (_.intersection(g.regions, c).length) {
+                    r.push(g);
+                }
+            });
+        }
+        return r;
+    };
 
   function getChecked(f){
     var c = [];
@@ -76,20 +84,22 @@ app.controller('AdminCtrl', function($scope, $http, consoles, regions){
   };
 
 	$scope.addGame = function(game){
-		$http.post('/api/newgame', game).
-		success(function(response){
-      		if(response.reply === 'ok'){
-            $scope.postMessage = 'Spel sparat';
-          }
-    	}).
-		error(function(id){
-	  		console.log('server response failed')
-		})
+	    $http.post('/api/newgame', game).
+		success(function (response) {
+		    if (response.reply === 'ok') {
+		        $scope.postMessage = 'Spel sparat';
+		    }
+		}).
+		error(function (id) {
+		    console.log('server response failed');
+		});
 	};
 });
 
-app.controller('GameListCtrl', function($scope, $location, $routeParams, GamesService, regions) {
-  GamesService.query({consoleId: $routeParams.consoleId || 'nes'}, function(games){
+app.controller('GameListCtrl', function ($scope, $location, $routeParams, GamesService, UserService, regions) {
+    $scope.console = $routeParams.consoleId || 'nes';
+    GamesService.query({ consoleId: $scope.console }, function (games) {
+        console.log(games);
     $scope.games = games;
   });
 
