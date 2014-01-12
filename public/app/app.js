@@ -4,26 +4,23 @@ var app = angular.module('sndb', ['ngResource', 'ngRoute']);
 
 app.config(function($locationProvider, $routeProvider) {
   $routeProvider
-    .when('/admin', {templateUrl: 'app/views/admin/index.html', controller: 'AdminCtrl'})
-    .when('/:consoleId', {templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl'})
-    .when('/:consoleId/:gameId', {templateUrl: 'app/views/game.html', controller: 'GameDetailsCtrl'})
+    .when('/admin', { templateUrl: 'app/views/admin/index.html', controller: 'AdminCtrl' })
+    .when('/:consoleId', { templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
+    .when('/:consoleId/user/:userId', { templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
+    .when('/:consoleId/:gameId', { templateUrl: 'app/views/game.html', controller: 'GameDetailsCtrl' })
     .otherwise({redirectTo: '/nes'}); 
 });
 
 app.factory('GamesService', function ($resource, $location) {
-    var u = '';
-    if ($location.search()['u'] !== undefined) {
-        u = '?u=' + $location.search()['u'];
-    }
-    return $resource('/api/:consoleId' + u);
+    return $resource('/api/:consoleId');
+});
+
+app.factory('CombinedGamesService', function ($resource) {
+    return $resource('/api/:consoleId/user/:userId');
 });
 
 app.factory('GameDetailsService', function($resource) {
   return $resource('/api/:consoleId/:gameId');
-});
-
-app.factory('UserService', function ($resource) {
-    return $resource('/api/user/:userId');
 });
 
 app.constant('consoles', [
@@ -96,12 +93,12 @@ app.controller('AdminCtrl', function($scope, $http, consoles, regions){
 	};
 });
 
-app.controller('GameListCtrl', function ($scope, $location, $routeParams, GamesService, UserService, regions) {
+app.controller('GameListCtrl', function ($scope, $location, $route, $routeParams, GamesService, GameDetailsService, regions) {
     $scope.console = $routeParams.consoleId || 'nes';
+    
     GamesService.query({ consoleId: $scope.console }, function (games) {
-        console.log(games);
-    $scope.games = games;
-  });
+        $scope.games = games;
+    });
 
     $scope.regions = regions;
     $scope.filterBoxes = {};
@@ -111,8 +108,30 @@ app.controller('GameListCtrl', function ($scope, $location, $routeParams, GamesS
     });
 });
 
-app.controller('GameDetailsCtrl', function($scope, $location, $routeParams, GameDetailsService) {
-  GameDetailsService.query({consoleId: $routeParams.consoleId, gameId: $routeParams.gameId}, function(game){
-    $scope.game = game[0].value;
+app.controller('CombinedListCtrl', function ($scope, $location, $route, $routeParams, CombinedGamesService, GameDetailsService, regions) {
+    $scope.console = $routeParams.consoleId || 'nes';
+
+    CombinedGamesService.query({ consoleId: $scope.console, userId: $routeParams.userId }, function (games) {
+        $scope.games = games;
+    });
+
+    $scope.regions = regions;
+    $scope.filterBoxes = {};
+
+    _.each($scope.regions, function (f) {
+        $scope.filterBoxes[f.id] = f.selected;
+    });
+
+    $scope.showDetails = function (game) {
+        GameDetailsService.query({ consoleId: $routeParams.consoleId, gameId: game.id }, function (content) {
+            game.content = content[0].value;
+        });
+    };
+});
+
+
+app.controller('GameDetailsCtrl', function($scope, $location, $route, $routeParams, GameDetailsService) {
+    GameDetailsService.query({ consoleId: $routeParams.consoleId, gameId: $routeParams.gameId }, function (game) {
+        $scope.game = game[0].value;
   });
 });

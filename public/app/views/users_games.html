@@ -1,17 +1,20 @@
-<h3 ng-style="{color: '#fff'}">{{filtered.length}} spel hittades</h3>
+﻿<h3 ng-style="{color: '#fff'}">{{filtered.length}} spel hittades</h3>
 <input type="text" placeholder="Sök spel..." ng-model="search.name" />
 <ul>
-	<li ng-repeat="r in regions" ng-style="{display: 'inline'}"><span>{{r.name}}</span><input type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]"></li>
+    <li ng-repeat="r in regions" ng-style="{display: 'inline'}"><span>{{r.name}}</span><input type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]"></li>
 </ul>
 <ul>
     <li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">
-        <a ng-style="{display: 'block'}" ng-href="#/{{$parent.console}}/{{game.id}}">
+        <a ng-style="{display: 'block'}" href ng-click="showDetails(game)">
             <span>
                 {{game.name}}
             </span>
-            <div ng-style="{display:'inline-block', marginLeft: '20px'}" ng-show="isUser">
+            <div ng-style="{display:'inline-block', marginLeft: '20px'}">
                 <span ng-repeat="attr in game.attr.common" ng-style="{marginRight: '10px'} " ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
             </div>
         </a>
+        <div ng-show="game.content">
+            <span>{{game.content}}</span>
+        </div>
     </li>
 </ul>
