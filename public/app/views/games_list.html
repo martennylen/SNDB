@@ -9,9 +9,6 @@
             <span>
                 {{game.name}}
             </span>
-            <div ng-style="{display:'inline-block', marginLeft: '20px'}" ng-show="isUser">
-                <span ng-repeat="attr in game.attr.common" ng-style="{marginRight: '10px'} " ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
-            </div>
         </a>
     </li>
 </ul>
