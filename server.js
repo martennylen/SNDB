@@ -12,6 +12,7 @@ app.configure(function(){
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.static(__dirname + '/public'));
+  app.use(require('less-middleware')({ src: __dirname + '/public' }));
   //app.use(express.static(process.env.PWD + '/public'));
 });
 

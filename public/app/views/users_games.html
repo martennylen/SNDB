@@ -1,20 +1,27 @@
-﻿<h3 ng-style="{color: '#fff'}">{{filtered.length}} spel hittades</h3>
-<input type="text" placeholder="Sök spel..." ng-model="search.name" />
-<ul>
-    <li ng-repeat="r in regions" ng-style="{display: 'inline'}"><span>{{r.name}}</span><input type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]"></li>
-</ul>
-<ul>
-    <li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">
-        <a ng-style="{display: 'block'}" href ng-click="showDetails(game)">
-            <span>
-                {{game.name}}
-            </span>
-            <div ng-style="{display:'inline-block', marginLeft: '20px'}">
-                <span ng-repeat="attr in game.attr.common" ng-style="{marginRight: '10px'} " ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
+﻿<div class="view-wrapper">
+    <h3 ng-style="{color: '#fff'}">{{filtered.length}} spel hittades</h3>
+    <input type="text" class="search-holder" placeholder="Sök spel..." ng-model="search.name" />
+    <ul>
+        <li ng-repeat="r in regions" ng-style="{display: 'inline'}"><label for="{{r.id}}">{{r.name}}</label><input id="{{r.id}}" type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]"></li>
+    </ul>
+    <ul id="games">
+        <li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">
+            <!--<a href ng-click="showDetails(game)">-->
+            <a ui-sref="console.game({gameId:game.id})">
+                <div class="game-name">
+                    <span>
+                        {{game.name}}
+                    </span>
+                </div>
+                <div class="attr-holder">
+                    <span ng-repeat="attr in game.attr.common" ng-style="{marginRight: '10px'} " ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
+                </div>
+                <div class="clearfix"></div>
+            </a>
+            <div ng-show="game.id === selected.id">
+                {{game.content}}
             </div>
-        </a>
-        <div ng-show="game.content">
-            <span>{{game.content}}</span>
-        </div>
-    </li>
-</ul>
+        </li>
+    </ul>
+    <div ui-view></div>
+</div>

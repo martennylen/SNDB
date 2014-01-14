@@ -1,0 +1,40 @@
+﻿@cols: 12;
+@gutter: 2%;
+@one-col: (100% - (@gutter * (@cols - 1))) / @cols;
+
+.column(@num) {
+	float: left;
+	margin-right: @gutter;
+	width: (@one-col * @num) + (@gutter * (@num - 1));
+}
+
+.column-no-float(@num){
+	width: (@one-col * @num) + (@gutter * (@num - 1));
+    display: inline-block;
+    margin-right: 2%;
+}
+
+.column-no-float(@num, @gut){
+	width: (@one-col * @num) + (@gutter * (@num - 1));
+    display: inline-block;
+    margin-right: @gut;
+}
+
+.column(@num, @gut) {
+    @col: (100% - (@gut * (@cols - 1))) / @cols;
+    float: left;
+    margin-right: @gut;
+    width: (@col * @num) + (@gut * (@num - 1));
+}
+
+.sub-column(@num, @parent-num) {
+	@parent-size: (@one-col * @parent-num) + (@gutter * (@parent-num - 1));
+	@child-size: (@one-col * @num) + (@gutter * (@num - 1));
+	float: left;
+	margin-right: (@gutter / @parent-size) * 100%;
+	width: (@child-size / @parent-size) * 100%;
+}
+
+.last-col() {
+	margin-right: 0 !important;
+}

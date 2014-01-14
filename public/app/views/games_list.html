@@ -1,14 +1,17 @@
-<h3 ng-style="{color: '#fff'}">{{filtered.length}} spel hittades</h3>
-<input type="text" placeholder="Sök spel..." ng-model="search.name" />
-<ul>
-	<li ng-repeat="r in regions" ng-style="{display: 'inline'}"><span>{{r.name}}</span><input type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]"></li>
-</ul>
-<ul>
-    <li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">
-        <a ng-style="{display: 'block'}" ng-href="#/{{$parent.console}}/{{game.id}}">
-            <span>
-                {{game.name}}
-            </span>
-        </a>
-    </li>
-</ul>
+<div class="view-wrapper">
+    <h3 ng-style="{color: '#fff'}">{{filtered.length}} spel hittades</h3>
+    <input type="text" placeholder="Sök spel..." ng-model="search.name" />
+    <ul id="filters">
+        <li ng-repeat="r in regions" ng-style="{display: 'inline'}"><span>{{r.name}}</span><input type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]"></li>
+    </ul>
+    <ul id="games">
+        <li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">
+            <a ng-style="{display: 'block'}" ng-href="#/{{$parent.console}}/{{game.id}}">
+                <span>
+                    {{game.name}}
+                </span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="clearfix"></div>
