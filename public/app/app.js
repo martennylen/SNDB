@@ -3,10 +3,18 @@
 //var app = angular.module('sndb', ['ngResource', 'ngRoute']);
 var app = angular.module('sndb', ['ngResource', 'ngRoute', 'ui.router']);
 
-app.config(function ($locationProvider, $routeProvider, $stateProvider) {
+app.config(function ($locationProvider, $urlRouterProvider, $stateProvider) {
+    $urlRouterProvider
+        .when('', '/nes');
+        //    //.when('/:consoleId', { templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
+        //.when('/:consoleId/user/:userId', { templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
+        //    //.when('/:consoleId/:gameId', { templateUrl: 'app/views/game.html', controller: 'GameDetailsCtrl' })
+        //.otherwise({ redirectTo: '/nes' });
+
     $stateProvider
-        .state('console', { url: '/:consoleId/user/:userId', templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
-        .state('console.game', {
+        .state('admin', { url: '/admin', templateUrl: 'app/views/admin/index.html', controller: 'AdminCtrl' })
+        .state('user', { url: '/:consoleId/user/:userId', templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
+        .state('user.game', {
             //abstract: true,
             url: '/:gameId',
             controller: 'GameDetailsCtrl'
@@ -15,20 +23,13 @@ app.config(function ($locationProvider, $routeProvider, $stateProvider) {
             //    $scope.selected.id = $stateParams.gameId;
             //}
         })
-        //.state('console.game.details', {
-        //    url: '/details',
-        //    controller: 'GameDetailsCtrl',
-        //    templateUrl: 'app/views/game.content'
-        //})
-        .state('admin', { url: '/admin', templateUrl: 'app/views/admin/index.html', controller: 'AdminCtrl' });
-        //.state('console', { url: '/:consoleId', templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
-
-    //$routeProvider
-    //    //.when('/admin', { templateUrl: 'app/views/admin/index.html', controller: 'AdminCtrl' })
-    //    //.when('/:consoleId', { templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
-    //.when('/:consoleId/user/:userId', { templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
-    //    //.when('/:consoleId/:gameId', { templateUrl: 'app/views/game.html', controller: 'GameDetailsCtrl' })
-        //.otherwise({ redirectTo: '/nes' });
+        .state('console', { url: '/:consoleId', templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' });
+    //.state('console.game.details', {
+    //    url: '/details',
+    //    controller: 'GameDetailsCtrl',
+    //    templateUrl: 'app/views/game.content'
+    //})
+    //.state('console', { url: '/:consoleId', templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
 });
 
 //app.config(function ($stateProvider, $urlRouterProvider) {
@@ -92,7 +93,8 @@ app.controller('IndexCtrl', function($scope, consoles){
 	$scope.consoles = consoles;
 });
 
-app.controller('AdminCtrl', function($scope, $http, consoles, regions){
+app.controller('AdminCtrl', function ($scope, $http, consoles, regions) {
+    console.log('wee');
 	$scope.user = 'Mårten';
 	$scope.consoles = consoles;
   $scope.regions = _.map(regions, function(r){ r.selected = false; return r;});
@@ -123,10 +125,12 @@ app.controller('AdminCtrl', function($scope, $http, consoles, regions){
 });
 
 app.controller('GameListCtrl', function ($scope, $location, $route, $routeParams, GamesService, GameDetailsService, regions) {
+    console.log('gamelistctrl');
     $scope.console = $routeParams.consoleId || 'nes';
     
     GamesService.query({ consoleId: $scope.console }, function (games) {
         $scope.games = games;
+        console.log($scope.games);
     });
 
     $scope.regions = regions;
@@ -138,6 +142,7 @@ app.controller('GameListCtrl', function ($scope, $location, $route, $routeParams
 });
 
 app.controller('CombinedListCtrl', function ($scope, $location, $route, $state, $stateParams, CombinedGamesService, regions) {
+    console.log('comblistctrl');
     $scope.console = $stateParams.consoleId || 'nes';
     $scope.userId = $stateParams.userId;
     $scope.selected = {};

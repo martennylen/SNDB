@@ -6,7 +6,7 @@
     </ul>
     <ul id="games">
         <li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">
-            <a ui-sref="console.game({gameId:game.id})">
+            <a ui-sref="user.game({gameId:game.id})">
                 <div class="game-wrapper">
                     <div class="game-name">
                         <span>

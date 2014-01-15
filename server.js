@@ -21,7 +21,7 @@ app.configure('development', function(){
 });
 
 app.get('/api', function(req, res) {
-   res.header("Access-Control-Allow-Origin", "http://localhost");
+   res.header("Access-Control-Allow-Origin", "http://localhost"); 
    res.header("Access-Control-Allow-Methods", "GET, POST");
 });
 
