@@ -80,12 +80,15 @@ body ul li a:hover {
     width: 32%;
     margin-right: 0 !important;
   }
-  body .content-wrapper .view-wrapper .game-name {
+  body .content-wrapper .view-wrapper .game-wrapper a:hover {
+    text-decoration: none;
+  }
+  body .content-wrapper .view-wrapper .game-wrapper .game-name {
     width: 15%;
     display: inline-block;
     margin-right: 0;
   }
-  body .content-wrapper .view-wrapper .attr-holder {
+  body .content-wrapper .view-wrapper .game-wrapper .attr-holder {
     width: 83%;
     display: inline-block;
     margin-right: 0;

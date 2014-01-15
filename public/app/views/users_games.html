@@ -6,20 +6,20 @@
     </ul>
     <ul id="games">
         <li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">
-            <!--<a href ng-click="showDetails(game)">-->
             <a ui-sref="console.game({gameId:game.id})">
-                <div class="game-name">
-                    <span>
-                        {{game.name}}
-                    </span>
-                </div>
-                <div class="attr-holder">
-                    <span ng-repeat="attr in game.attr.common" ng-style="{marginRight: '10px'} " ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
+                <div class="game-wrapper">
+                    <div class="game-name">
+                        <span>
+                            {{game.name}}
+                        </span>
+                    </div><div class="attr-holder" ng-show="game.attr.common.length">
+                        <span ng-repeat="attr in game.attr.common" ng-style="{marginRight: '10px'}" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
+                    </div>
                 </div>
                 <div class="clearfix"></div>
             </a>
             <div ng-show="game.id === selected.id">
-                {{game.content}}
+                <span>{{game.content}}</span>
             </div>
         </li>
     </ul>
