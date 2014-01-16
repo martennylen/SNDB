@@ -13,10 +13,11 @@ app.config(function ($locationProvider, $urlRouterProvider, $stateProvider) {
 
     $stateProvider
         .state('admin', { url: '/admin', templateUrl: 'app/views/admin/index.html', controller: 'AdminCtrl' })
-        .state('user', { url: '/:consoleId/user/:userId', templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
+        .state('user', { url: '/user/:userId/:consoleId', templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
         .state('user.game', {
             //abstract: true,
-            url: '/:gameId',
+            //url: '/:gameId',
+            url: '/{gameId:[A-z0-9]{32}}',//
             controller: 'GameDetailsCtrl'
             //views: { 'apa': { controller: 'GameDetailsCtrl' } },
             //controller: function($scope, $stateParams) {
@@ -57,7 +58,7 @@ app.constant('consoles', [
 	{'id': 'nes', 'name': 'NES'}, 
 	{'id': 'snes', 'name': 'SNES'}]);
 
-app.constant('regions', [
+app.constant('baseRegions', [
   {'id': 'scn', 'name': 'SCN+ESP', 'selected': true},
   {'id': 'pal-b', 'name': 'PAL-B', 'selected': true},
   {'id': 'pal-a', 'name': 'PAL-A', 'selected': true},
@@ -93,11 +94,10 @@ app.controller('IndexCtrl', function($scope, consoles){
 	$scope.consoles = consoles;
 });
 
-app.controller('AdminCtrl', function ($scope, $http, consoles, regions) {
-    console.log('wee');
-	$scope.user = 'Mårten';
-	$scope.consoles = consoles;
-  $scope.regions = _.map(regions, function(r){ r.selected = false; return r;});
+app.controller('AdminCtrl', function ($scope, $http, consoles, baseRegions) {
+  $scope.user = 'Mårten';
+  $scope.consoles = consoles;
+  $scope.regions = _.map(baseRegions, function (r) { r.selected = false; return r; });
   $scope.game = {};
   $scope.game.regions = [];
   $scope.postMessage = '';
@@ -124,46 +124,48 @@ app.controller('AdminCtrl', function ($scope, $http, consoles, regions) {
 	};
 });
 
-app.controller('GameListCtrl', function ($scope, $location, $route, $routeParams, GamesService, GameDetailsService, regions) {
+app.controller('GameListCtrl', function ($scope, $location, $route, $stateParams, GamesService, GameDetailsService, baseRegions) {
     console.log('gamelistctrl');
-    $scope.console = $routeParams.consoleId || 'nes';
+    $scope.console = $stateParams.consoleId || 'nes';
+
+    $scope.regions = _.map(baseRegions, function (r) { r.selected = true; return r; });
+    $scope.filterBoxes = {};
+
+    _.each($scope.regions, function (f) {
+      $scope.filterBoxes[f.id] = f.selected;
+    });
     
     GamesService.query({ consoleId: $scope.console }, function (games) {
         $scope.games = games;
-        console.log($scope.games);
-    });
-
-    $scope.regions = regions;
-    $scope.filterBoxes = {};
-
-    _.each($scope.regions, function(f){
-      $scope.filterBoxes[f.id] = f.selected;
     });
 });
 
-app.controller('CombinedListCtrl', function ($scope, $location, $route, $state, $stateParams, CombinedGamesService, regions) {
+app.controller('CombinedListCtrl', function ($scope, $location, $route, $state, $stateParams, CombinedGamesService, baseRegions) {
     console.log('comblistctrl');
     $scope.console = $stateParams.consoleId || 'nes';
     $scope.userId = $stateParams.userId;
     $scope.selected = {};
 
-    $scope.games = CombinedGamesService.query({ consoleId: $scope.console, userId: $scope.userId });
-    $scope.games.$promise.then(function (games) {
-        $scope.games = games;
-    });
-
-    $scope.regions = regions;
+    $scope.regions = _.map(baseRegions, function (r) { r.selected = true; return r; });
     $scope.filterBoxes = {};
 
     _.each($scope.regions, function (f) {
         $scope.filterBoxes[f.id] = f.selected;
     });
+    
+    $scope.games = CombinedGamesService.query({ consoleId: $scope.console, userId: $scope.userId });
+    $scope.games.$promise.then(function (games) {
+        $scope.games = games;
+    });
 });
 
 
 app.controller('GameDetailsCtrl', function ($scope, $stateParams, GameDetailsService) {
+    console.log('gamedetailsctrl');
+    //if (!$stateParams.gameId.length) {
+    //    return;
+    //}
     $scope.selected.id = $stateParams.gameId;
-
     $scope.games.$promise.then(function (result) {
         $scope.games = result;
         var current = _.find($scope.games, function (g) {
