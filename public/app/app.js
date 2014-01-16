@@ -164,8 +164,19 @@ app.controller('CombinedListCtrl', function ($scope, $location, $route, $state, 
         $scope.games = games;
     });
 
-    $scope.editGame = function(g) {
-        $scope.selected.id = g;
+    $scope.idEditing = false;
+    $scope.editGame = function (g) {
+        $scope.isEditing = !$scope.isEditing;
+        if ($scope.isEditing) {
+            $scope.selected.id = g;
+        } else {
+            if ($scope.selected.id !== g) {
+                $scope.selected.id = g;
+                $scope.isEditing = true;
+            } else {
+                $scope.selected.id = '';
+            }
+        }
     };
 });
 
