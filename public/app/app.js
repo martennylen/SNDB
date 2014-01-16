@@ -14,17 +14,21 @@ app.config(function ($locationProvider, $urlRouterProvider, $stateProvider) {
     $stateProvider
         .state('admin', { url: '/admin', templateUrl: 'app/views/admin/index.html', controller: 'AdminCtrl' })
         .state('user', { url: '/user/:userId/:consoleId', templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
-        .state('user.game', {
-            //abstract: true,
-            //url: '/:gameId',
-            url: '/{gameId:[A-z0-9]{32}}',//
+        //.state('user.game', {
+        //    //abstract: true,
+        //    //url: '/:gameId',
+        //    url: '/{gameId:[A-z0-9]{32}}',//
+        //    controller: 'GameDetailsCtrl'
+        //    //views: { 'apa': { controller: 'GameDetailsCtrl' } },
+        //    //controller: function($scope, $stateParams) {
+        //    //    $scope.selected.id = $stateParams.gameId;
+        //    //}
+        //})
+        .state('console', { url: '/:consoleId', templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
+        .state('console.game', {
+            url: '/{gameId:[A-z0-9]{32}}',
             controller: 'GameDetailsCtrl'
-            //views: { 'apa': { controller: 'GameDetailsCtrl' } },
-            //controller: function($scope, $stateParams) {
-            //    $scope.selected.id = $stateParams.gameId;
-            //}
-        })
-        .state('console', { url: '/:consoleId', templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' });
+        });
     //.state('console.game.details', {
     //    url: '/details',
     //    controller: 'GameDetailsCtrl',
@@ -127,6 +131,7 @@ app.controller('AdminCtrl', function ($scope, $http, consoles, baseRegions) {
 app.controller('GameListCtrl', function ($scope, $location, $route, $stateParams, GamesService, GameDetailsService, baseRegions) {
     console.log('gamelistctrl');
     $scope.console = $stateParams.consoleId || 'nes';
+    $scope.selected = {};
 
     $scope.regions = _.map(baseRegions, function (r) { r.selected = true; return r; });
     $scope.filterBoxes = {};
@@ -135,7 +140,8 @@ app.controller('GameListCtrl', function ($scope, $location, $route, $stateParams
       $scope.filterBoxes[f.id] = f.selected;
     });
     
-    GamesService.query({ consoleId: $scope.console }, function (games) {
+    $scope.games = GamesService.query({ consoleId: $scope.console });
+    $scope.games.$promise.then(function (games) {
         $scope.games = games;
     });
 });
@@ -157,6 +163,10 @@ app.controller('CombinedListCtrl', function ($scope, $location, $route, $state, 
     $scope.games.$promise.then(function (games) {
         $scope.games = games;
     });
+
+    $scope.editGame = function(g) {
+        $scope.selected.id = g;
+    };
 });
 
 

@@ -62,6 +62,9 @@ body ul li a:visited {
 body ul li a:hover {
   text-decoration: underline;
 }
+body .game-wrapper {
+  font-weight: bold;
+}
 @media all and (min-width: 1000px) {
   body .content-wrapper {
     margin: 0 auto;
