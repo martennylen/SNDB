@@ -6,45 +6,20 @@ var app = angular.module('sndb', ['ngResource', 'ngRoute', 'ui.router']);
 app.config(function ($locationProvider, $urlRouterProvider, $stateProvider) {
     $urlRouterProvider
         .when('', '/nes');
-        //    //.when('/:consoleId', { templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
-        //.when('/:consoleId/user/:userId', { templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
-        //    //.when('/:consoleId/:gameId', { templateUrl: 'app/views/game.html', controller: 'GameDetailsCtrl' })
-        //.otherwise({ redirectTo: '/nes' });
+    //      .when('/:consoleId', { templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
+    //      .when('/:consoleId/user/:userId', { templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
+    //      .when('/:consoleId/:gameId', { templateUrl: 'app/views/game.html', controller: 'GameDetailsCtrl' })
+    //      .otherwise({ redirectTo: '/nes' });
 
     $stateProvider
         .state('admin', { url: '/admin', templateUrl: 'app/views/admin/index.html', controller: 'AdminCtrl' })
         .state('user', { url: '/user/:userId/:consoleId', templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
-        //.state('user.game', {
-        //    //abstract: true,
-        //    //url: '/:gameId',
-        //    url: '/{gameId:[A-z0-9]{32}}',//
-        //    controller: 'GameDetailsCtrl'
-        //    //views: { 'apa': { controller: 'GameDetailsCtrl' } },
-        //    //controller: function($scope, $stateParams) {
-        //    //    $scope.selected.id = $stateParams.gameId;
-        //    //}
-        //})
         .state('console', { url: '/:consoleId', templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
         .state('console.game', {
             url: '/{gameId:[A-z0-9]{32}}',
             controller: 'GameDetailsCtrl'
         });
-    //.state('console.game.details', {
-    //    url: '/details',
-    //    controller: 'GameDetailsCtrl',
-    //    templateUrl: 'app/views/game.content'
-    //})
-    //.state('console', { url: '/:consoleId', templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
 });
-
-//app.config(function ($stateProvider, $urlRouterProvider) {
-//    $stateProvider
-//      .state('/admin', { templateUrl: 'app/views/admin/index.html', controller: 'AdminCtrl' })
-//      .when('/:consoleId', { templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
-//      .when('/:consoleId/user/:userId', { templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
-//      .when('/:consoleId/:gameId', { templateUrl: 'app/views/game.html', controller: 'GameDetailsCtrl' })
-//      .otherwise({ redirectTo: '/nes' });
-//});
 
 app.factory('GamesService', function ($resource, $location) {
     return $resource('/api/:consoleId');
