@@ -6,162 +6,168 @@
 	        box-sizing: border-box;
 }
 
-.clearfix:after {
-    visibility: hidden;
-    display: block;
-    content: "";
-    clear: both;
-    height: 0;
-}
+html {
+    margin: 0;
+    padding: 0;
 
-body {
-    background-color: #efefef;
-    color: #fff;
-    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
-
-    h1 {
-        color: #ccc;
-        display: inline-block;
-        margin: 0;
+    .clearfix:after {
+        visibility: hidden;
+        display: block;
+        content: "";
+        clear: both;
+        height: 0;
     }
 
-    a {
-        color: #ccc;
-        text-decoration: none;
-    }
+    body {
+        background-color: #efefef;
+        color: #fff;
+        font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
 
-    #header-right {
+        h1 {
+            color: #ccc;
+            display: inline-block;
+            margin: 0;
+        }
+
         a {
-            text-decoration: underline;
-        }
-
-        a:hover {
+            color: #ccc;
             text-decoration: none;
         }
 
-        a:nth-of-type(2){
-            display: block;
-        }
-    }
-
-    span.exists {
-        color: green;
-    }
-
-    ul#games {
-        > li {
-            .column-no-float(12, 0);
-        }
-
-        li.odd {
-            background-color: #ccc;
-            color: #fff;
-        }
-
-        li.even {
-            background-color: #666;
-            color: #fff;
-        }
-    }
-
-    ul {
-        padding-left: 0;
-
-        li {
-            list-style-type: none;
-            padding: 10px;
-        }
-    }
-
-        ul li a {
-            color: #fff !important;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-            ul li a:visited {
-                color: #ccc;
-            }
-
-            ul li a:hover {
+        #header-right {
+            a {
                 text-decoration: underline;
             }
 
-            .game-wrapper {
-                font-weight: bold;
+                a:hover {
+                    text-decoration: none;
+                }
+
+                a:nth-of-type(2) {
+                    display: block;
+                }
+        }
+
+        span.exists {
+            color: green;
+        }
+
+        ul#games {
+            > li {
+                .column-no-float(12, 0);
             }
 
-    @media all and (min-width : 1000px) {
-        .content-wrapper {
-            margin: 0 auto;
-            padding-top: 60px;
-            max-width: 65%;
+            li.odd {
+                background-color: #ccc;
+                color: #fff;
+            }
 
+            li.even {
+                background-color: #666;
+                color: #fff;
+            }
+        }
+
+        ul {
+            padding-left: 0;
+
+            li {
+                list-style-type: none;
+                padding: 10px;
+            }
+        }
+
+            ul li a {
+                color: #fff !important;
+                font-weight: bold;
+                text-decoration: none;
+            }
+
+                ul li a:visited {
+                    color: #ccc;
+                }
+
+                ul li a:hover {
+                    text-decoration: underline;
+                }
+
+        .game-wrapper {
+            font-weight: bold;
+        }
+
+        @media all and (min-width : 1000px) {
+            .content-wrapper {
+                margin: 0 auto;
+                padding-top: 60px;
+                max-width: 65%;
+
+                #header-left {
+                    .column(8);
+                }
+
+                #header-right {
+                    text-align: right;
+                    .column(4);
+                    .last-col();
+                }
+
+                .view-wrapper {
+                    .game-wrapper {
+                        a:hover {
+                            text-decoration: none;
+                        }
+
+                        .game-name {
+                            .column-no-float(2, 0);
+                        }
+
+                        .attr-holder {
+                            .column-no-float(10, 0);
+                        }
+                    }
+                }
+            }
+        }
+
+        @media all and (max-width : 999px) {
             #header-left {
-                .column(8);
+                .column(6);
             }
 
             #header-right {
                 text-align: right;
-                .column(4);
+                .column(6);
                 .last-col();
+
+                #logged-in-explain {
+                    display: none;
+                }
             }
 
             .view-wrapper {
-                .game-wrapper {
-                    a:hover {
-                        text-decoration: none
-                    }
-                    .game-name {
-                        .column-no-float(2, 0);
-                    }
+                .column(12);
 
-                    .attr-holder {
-                        .column-no-float(10, 0);
-                    }
-                }
-            }
-        }
-    }
-
-    @media all and (max-width : 999px) {
-         #header-left {
-            .column(6);
-        }
-
-        #header-right {
-            text-align: right;
-            .column(6);
-            .last-col();
-
-            #logged-in-explain {
-                display:none;
-            }
-        }
-
-        .view-wrapper {
-            .column(12);
-
-            input.search-holder {
-                //width: 100%;
-                height: 50px;
-                font-size: 25px;
-            }
-
-            ul#games {
-                font-size: 25px;
-
-                li {
-                    padding: 50px 10px;
+                input.search-holder {
+                    width: 100%;
+                    height: 50px;
+                    font-size: 25px;
                 }
 
-                div.game-name {
-                    .column(8);
-                }
+                ul#games {
+                    font-size: 25px;
 
-                div.attr-holder {
-                    .column(4);
-                    .last-col();
+                    li {
+                        padding: 50px 10px;
+                    }
+
+                    div.game-name {
+                        .column(8);
+                    }
+
+                    div.attr-holder {
+                        .column(4);
+                        .last-col();
+                    }
                 }
             }
         }
