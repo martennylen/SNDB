@@ -71,10 +71,11 @@ var Config = require('./config')
                   if (found) { // User has game                        
                       //found.attr.common = _u.object(found.attr.common, it.attr.common);
                       found.attr.common = _u.map(found.attr.common, function (x, iter) {
-                          return { 'id': x, 'status': it.attr.common[iter] };
+                          return { 'id': x, 'longName': x === 'c' ? 'Kassett' : x === 'i' ? 'Manual' : 'Kartong', 'status': it.attr.common[iter] };
                       });
-                      ;
-                      found.attr.e = it.attr.e;
+                      found.attr.extras = _u.map(found.attr.e, function (x, iter) {
+                          return { 'id': x, 'status': it.attr.e[iter] };
+                      });
                   }
               });
               res.send(r);

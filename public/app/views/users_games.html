@@ -23,11 +23,19 @@
             <div class="clearfix"></div>
             <div class="game-content" ng-show="game.id === selected.id">
                 <ul>
-                    <li ng-repeat="attr in game.attr.common" style="display: inline">
-                        <label style="font-size: 30px" for="{{game.id + '_' + attr.id}}" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}:</label>
+                    <li ng-repeat="attr in game.attr.common" style="padding: 0; display: inline; margin-right: 20px">
+                        <label style="font-size: 30px" for="{{game.id + '_' + attr.id}}" ng-class="{exists: attr.status}">{{attr.longName}}:</label>
                         <input id="{{game.id + '_' + attr.id}}" type="checkbox" ng-checked="attr.status">
                     </li>
                 </ul>
+                <div ng-if="game.attr.extras.length">
+                    <ul>
+                        <li ng-repeat="attr in game.attr.extras" style="padding: 0; display: inline; margin-right: 20px">
+                            <label style="font-size: 30px; color: #6495ed" for="{{game.id + '_' + attr.id}}">{{attr.id.substring(0,1).toUpperCase() + attr.id.substring(1, attr.id.length)}}:</label>
+                            <input id="{{game.id + '_' + attr.id}}" type="checkbox" ng-checked="attr.status">
+                        </li>
+                    </ul>
+                </div>
             </div>
         </li>
     </ul>
