@@ -20,7 +20,7 @@ html {
 
     body {
         background-color: #efefef;
-        color: #fff;
+        color: #666;
         font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
 
         h1 {
@@ -30,8 +30,18 @@ html {
         }
 
         a {
-            color: #ccc;
+            color: #666;
+            text-decoration: underline;
+        }
+
+        a:hover, a:visited, a:active {
             text-decoration: none;
+        }
+
+        #header-left {
+            h1 a {
+                text-decoration: none;
+            }
         }
 
         #header-right {
@@ -49,22 +59,48 @@ html {
         }
 
         span.exists {
-            color: green;
+            color: #3F9434;
         }
 
         ul#games {
             > li {
                 .column-no-float(12, 0);
+
+                a {
+                    color: #fff;
+                    text-decoration: none;
+
+                    .game-name span {
+                        color: #04405E;
+                    }
+
+                    .game-attr {
+                        color: #B23E44;
+                    }
+                }
+
+                a:hover {
+                    .game-name span {
+                        text-decoration: underline;
+                    }
+                }
+
+                .game-content {
+                    padding: 20px; 
+                    background-color: #fff; 
+                    margin-top: 10px;
+                    color: #666;
+                }
             }
 
             li.odd {
-                background-color: #ccc;
-                color: #fff;
+                background-color: #bbb;
+                color: #eee;
             }
 
             li.even {
-                background-color: #666;
-                color: #fff;
+                background-color: #eee;
+                color: #bbb;
             }
         }
 
@@ -77,20 +113,6 @@ html {
             }
         }
 
-            ul li a {
-                color: #fff !important;
-                font-weight: bold;
-                text-decoration: none;
-            }
-
-                ul li a:visited {
-                    color: #ccc;
-                }
-
-                ul li a:hover {
-                    text-decoration: underline;
-                }
-
         .game-wrapper {
             font-weight: bold;
         }
@@ -99,7 +121,7 @@ html {
             .content-wrapper {
                 margin: 0 auto;
                 padding-top: 60px;
-                max-width: 65%;
+                max-width: 50%;
 
                 #header-left {
                     .column(8);
@@ -118,11 +140,11 @@ html {
                         }
 
                         .game-name {
-                            .column-no-float(2, 0);
+                            .column-no-float(6, 0);
                         }
 
-                        .attr-holder {
-                            .column-no-float(10, 0);
+                        .game-attr {
+                            .column-no-float(6, 0);
                         }
                     }
                 }
@@ -160,11 +182,11 @@ html {
                         padding: 50px 10px;
                     }
 
-                    div.game-name {
+                    game-name {
                         .column(8);
                     }
 
-                    div.attr-holder {
+                    .game-attr {
                         .column(4);
                         .last-col();
                     }

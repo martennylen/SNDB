@@ -1,8 +1,11 @@
 ﻿<div class="view-wrapper">
-    <h3 ng-style="{color: '#fff'}">{{filtered.length}} spel hittades</h3>
+    <h3>{{filtered.length}} spel hittades</h3>
     <input type="text" class="search-holder" placeholder="Sök spel..." ng-model="search.name" />
     <ul>
-        <li ng-repeat="r in regions" ng-style="{display: 'inline'}"><label for="{{r.id}}">{{r.name}}</label><input id="{{r.id}}" type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]"></li>
+        <li ng-repeat="r in regions" ng-style="{display: 'inline'}">
+            <label for="{{r.id}}" style="color: #666">{{r.name}}</label>
+            <input id="{{r.id}}" type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]">
+        </li>
     </ul>
     <ul id="games">
         <li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">
@@ -12,14 +15,14 @@
                         <span>
                             {{game.name}}
                         </span>
-                    </div><div class="attr-holder" ng-show="game.attr.common.length">
+                    </div><div class="game-attr" ng-show="game.attr.common.length">
                         <span ng-repeat="attr in game.attr.common" ng-style="{marginRight: '10px'}" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
                     </div>
                 </div>
             </a>
             <div class="clearfix"></div>
-            <div ng-show="game.id === selected.id" style="padding: 20px; background-color: #fff; margin-top: 10px">
-                <ul style="color: #666">
+            <div class="game-content" ng-show="game.id === selected.id">
+                <ul>
                     <li ng-repeat="attr in game.attr.common" style="display: inline">
                         <label style="font-size: 30px" for="{{game.id + '_' + attr.id}}" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}:</label>
                         <input id="{{game.id + '_' + attr.id}}" type="checkbox" ng-checked="attr.status">
