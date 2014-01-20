@@ -12,6 +12,7 @@ app.config(function ($locationProvider, $urlRouterProvider, $stateProvider) {
     //      .otherwise({ redirectTo: '/nes' });
 
     $stateProvider
+        .state('login', { url: '/login', templateUrl: 'app/views/login.html', controller: 'LoginCtrl'})
         .state('admin', { url: '/admin', templateUrl: 'app/views/admin/index.html', controller: 'AdminCtrl' })
         .state('user', { url: '/user/:userId/:consoleId', templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
         .state('console', { url: '/:consoleId', templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
@@ -20,6 +21,29 @@ app.config(function ($locationProvider, $urlRouterProvider, $stateProvider) {
             controller: 'GameDetailsCtrl'
         });
 });
+
+//app.config(function ($httpProvider) {
+//    $httpProvider.interceptors.push(function ($rootScope, $location, $q) {
+//        return {
+//            'request': function (request) {
+//                // if we're not logged-in to the AngularJS app, redirect to login page
+//                $rootScope.loggedIn = $rootScope.loggedIn && _.contains($rootScope.roles, 'a');
+//                if (!$rootScope.loggedIn && $location.path() === '/admin') {
+//                    $location.path('/login');
+//                }
+//                return request;
+//            },
+//            'responseError': function (rejection) {
+//                // if we're not logged-in to the web service, redirect to login page
+//                if (rejection.status === 401 && $location.path() != '/login') {
+//                    $rootScope.loggedIn = false;
+//                    $location.path('/login');
+//                }
+//                return $q.reject(rejection);
+//            }
+//        };
+//    });
+//});
 
 app.factory('GamesService', function ($resource, $location) {
     return $resource('/api/:consoleId');
@@ -175,4 +199,21 @@ app.controller('GameDetailsCtrl', function ($scope, $stateParams, GameDetailsSer
             });
         }
     });
+});
+
+app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope) {
+    console.log('loginctrl');
+
+    $scope.credentials = {};
+
+    $scope.validateCredentials = function (data) {
+        $http.post('/api/login', data).
+		success(function (response) {
+		    $rootScope.loggedinUser = response;
+		    $location.path('/user/' + response.username + '/nes');
+		}).
+		error(function (response) {
+		    console.log('server response failed');
+		});
+    };
 });

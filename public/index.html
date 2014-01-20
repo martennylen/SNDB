@@ -19,15 +19,10 @@
             <h1><a ng-href="/">SNDB</a></h1>
         </div>
         <div id="header-right">
-            <span id="logged-in-explain">Inloggad som </span><a ng-href="#/logout">many</a>
+            <span ng-if="loggedinUser.username.length" id="logged-in-explain">Inloggad som </span><a ng-href="#/logout">{{loggedinUser.username}}</a>
             <a ng-href="#/admin">Admin</a>
         </div>
         <div class="clearfix"></div>
-        <ul>
-            <li ng-repeat="c in consoles" style="display: inline;color: #666">
-                <a ng-href="#/{{c.id}}">{{c.name}}</a>
-            </li>
-        </ul>
         <div ui-view>
         </div>
     </div>

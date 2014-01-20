@@ -1,4 +1,9 @@
-﻿<div class="view-wrapper">
+﻿<ul>
+    <li ng-repeat="c in consoles" style="display: inline;color: #666">
+        <a ng-href="#/{{c.id}}">{{c.name}}</a>
+    </li>
+</ul>
+<div class="view-wrapper">
     <h3>{{filtered.length}} spel hittades</h3>
     <input type="text" class="search-holder" placeholder="Sök spel..." ng-model="search.name" />
     <ul>
