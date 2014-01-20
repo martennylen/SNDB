@@ -10,7 +10,7 @@ app.configure(function(){
   app.set('port', port);
     //app.set('views', __dirname + '/views');
   app.use(express.cookieParser());
-  //app.use(express.session({ secret: '1c001babc0f1f93227ad952ee29ce2ec' }));
+    //app.use(express.session({ secret: '1c001babc0f1f93227ad952ee29ce2ec' }));
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.static(__dirname + '/public'));
@@ -33,6 +33,10 @@ var Config = require('./config')
   , connection = new(cradle.Connection)(conf.couchdb.url, conf.couchdb.port, {cache: true}),
   db = connection.database("sndb");
 
+app.get('/admin', function (req, res) {
+    res.send(200);
+});
+
   app.get('/api/:consoleId', function (req, res) {
       db.view('games/by_console', { key: req.params.consoleId }, function (err, response) {
         var r = [];
@@ -51,7 +55,7 @@ var Config = require('./config')
     });
   });
   
-  app.get('/api/:consoleId/user/:userId', function (req, res) {
+  app.get('/api/user/:userId/:consoleId', function (req, res) {
       db.view('games/by_console', { key: req.params.consoleId }, function (err, response) {
           var r = [];
 
@@ -76,7 +80,7 @@ var Config = require('./config')
                           return { 'id': x, 'longName': x === 'c' ? 'Kassett' : x === 'i' ? 'Manual' : 'Kartong', 'status': it.attr.common[iter] };
                       });
                       found.attr.extras = _u.map(found.attr.e, function (x, iter) {
-                          return { 'id': x, 'status': it.attr.e[iter] };
+                          return { 'id': x, 'status': it.attr.e[iter] }; 
                       });
                   }
               });
@@ -85,7 +89,7 @@ var Config = require('./config')
       });
   });
 
-  app.post('/api/newgame', function(request, response){
+  app.post('/api/newgame', function (request, response) {
     db.save(request.body, function (err, res) {
           if(res.ok){
             response.send({'reply': 'ok'});    // echo the result back
@@ -94,9 +98,12 @@ var Config = require('./config')
   });
 
   app.post('/api/login', function (req, res) {
-      console.log(req.body);
-      var credentials = { 'username': 'many', 'role': 'u' };
-      res.send(credentials);
+      var user = req.body.un;
+      console.log(req.body.un);
+      console.log(req.body.pw);
+      var credentials = { 'username': user, 'role': 'u' };
+
+      res.send({ token: credentials });
   });
 
   http.createServer(app).listen(app.get('port'), function(){

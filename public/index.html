@@ -9,6 +9,7 @@
     <script src="/lib/angular-resource.js"></script>
     <script src="/lib/angular-route.js"></script>
     <script src="//angular-ui.github.io/ui-router/release/angular-ui-router.js"></script>
+    <script src="/lib/angular-cookies.js"></script>
     <script src="/lib/underscore-1.4.1.js"></script>
     <script src="/app/app.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/sndb.css">
@@ -19,7 +20,7 @@
             <h1><a ng-href="/">SNDB</a></h1>
         </div>
         <div id="header-right">
-            <span ng-if="loggedinUser.username.length" id="logged-in-explain">Inloggad som </span><a ng-href="#/logout">{{loggedinUser.username}}</a>
+            <span ng-if="loggedinUser.username.length" id="logged-in-explain">Inloggad som </span><a ng-href="#/logout">{{loggedInUser.username}}</a>
             <a ng-href="#/admin">Admin</a>
         </div>
         <div class="clearfix"></div>

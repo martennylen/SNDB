@@ -1,11 +1,13 @@
 'use strict';
 
 //var app = angular.module('sndb', ['ngResource', 'ngRoute']);
-var app = angular.module('sndb', ['ngResource', 'ngRoute', 'ui.router']);
+var app = angular.module('sndb', ['ngResource', 'ngRoute', 'ui.router', 'ngCookies']);
 
-app.config(function ($locationProvider, $urlRouterProvider, $stateProvider) {
+app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRouterProvider, $stateProvider) {
     $urlRouterProvider
-        .when('', '/nes');
+        //.when('/admin', { templateUrl: 'app/views/admin/index.html', controller: 'AdminCtrl' })
+        //.otherwise({ redirectTo: '/nes' });
+    .when('', '/nes');
     //      .when('/:consoleId', { templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
     //      .when('/:consoleId/user/:userId', { templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
     //      .when('/:consoleId/:gameId', { templateUrl: 'app/views/game.html', controller: 'GameDetailsCtrl' })
@@ -20,6 +22,8 @@ app.config(function ($locationProvider, $urlRouterProvider, $stateProvider) {
             url: '/{gameId:[A-z0-9]{32}}',
             controller: 'GameDetailsCtrl'
         });
+
+    $httpProvider.interceptors.push('authInterceptor');
 });
 
 //app.config(function ($httpProvider) {
@@ -45,16 +49,35 @@ app.config(function ($locationProvider, $urlRouterProvider, $stateProvider) {
 //    });
 //});
 
+app.factory('AdminValidationService', function ($resource) {
+    return $resource('/api/validate/:user');
+});
+
 app.factory('GamesService', function ($resource, $location) {
     return $resource('/api/:consoleId');
 });
 
 app.factory('CombinedGamesService', function ($resource) {
-    return $resource('/api/:consoleId/user/:userId');
+    return $resource('/api/user/:userId/:consoleId');
 });
 
 app.factory('GameDetailsService', function($resource) {
   return $resource('/api/:consoleId/:gameId');
+});
+
+app.factory('authInterceptor', function ($location, $rootScope, $q, $cookieStore) {
+    return {
+        request: function (config) {
+            config.headers = config.headers || {};
+            return config;
+        },
+        response: function (response) {
+            if (response.status === 401) {
+                console.log('apa');
+            }
+            return response || $q.when(response);
+        }
+    };
 });
 
 app.constant('consoles', [
@@ -93,8 +116,9 @@ app.filter('codeFilter', function($filter){
   }
 });
 
-app.controller('IndexCtrl', function($scope, consoles){
-	$scope.consoles = consoles;
+app.controller('IndexCtrl', function($scope, consoles, $cookieStore){
+    $scope.consoles = consoles;
+    $scope.loggedInUser = $cookieStore.get('sndb.token') || {};
 });
 
 app.controller('AdminCtrl', function ($scope, $http, consoles, baseRegions) {
@@ -201,7 +225,7 @@ app.controller('GameDetailsCtrl', function ($scope, $stateParams, GameDetailsSer
     });
 });
 
-app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope) {
+app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope, $cookieStore) {
     console.log('loginctrl');
 
     $scope.credentials = {};
@@ -209,8 +233,10 @@ app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope) {
     $scope.validateCredentials = function (data) {
         $http.post('/api/login', data).
 		success(function (response) {
-		    $rootScope.loggedinUser = response;
-		    $location.path('/user/' + response.username + '/nes');
+		    //$rootScope.loggedinUser = response.token;
+		    $cookieStore.put('sndb.token', response.token);
+		    //$location.path('/user/' + response.username + '/nes');
+		    $location.path('/user/' + response.token.username + '/nes');
 		}).
 		error(function (response) {
 		    console.log('server response failed');
