@@ -10,7 +10,7 @@ app.configure(function(){
   app.set('port', port);
     //app.set('views', __dirname + '/views');
   app.use(express.cookieParser());
-  app.use(express.session({ secret: '1c001babc0f1f93227ad952ee29ce2ec' }));
+  //app.use(express.session({ secret: '1c001babc0f1f93227ad952ee29ce2ec' }));
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.static(__dirname + '/public'));
