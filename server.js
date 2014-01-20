@@ -1,7 +1,8 @@
 var http = require('http'),
     express = require('express'),
     path = require('path'),
-    _u = require('underscore');
+    _u = require('underscore'),
+    passport = require('passport');
 
 var port = process.env.PORT || 8101;
 var app = express();
@@ -22,9 +23,18 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
+// Define a middleware function to be used for every secured routes 
+//var auth = function(req, res, next) {
+//    if (!req.isAuthenticated()) {
+//        res.send(401);
+//    } else {
+//        next();
+//    }
+//};
+
 app.get('/api', function(req, res) {
    res.header("Access-Control-Allow-Origin", "http://localhost"); 
-   res.header("Access-Control-Allow-Methods", "GET, POST");
+   res.header("Access-Control-Allow-Methods", "GET, POST"); 
 });
 
 var Config = require('./config')
@@ -33,8 +43,8 @@ var Config = require('./config')
   , connection = new(cradle.Connection)(conf.couchdb.url, conf.couchdb.port, {cache: true}),
   db = connection.database("sndb");
 
-app.get('/admin', function (req, res) {
-    res.send(200);
+app.get('/api/loggedin', function (req, res) {
+    res.send(req.isAuthenticated() ? req.user : '0');
 });
 
   app.get('/api/:consoleId', function (req, res) {

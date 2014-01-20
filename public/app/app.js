@@ -15,7 +15,12 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRoute
 
     $stateProvider
         .state('login', { url: '/login', templateUrl: 'app/views/login.html', controller: 'LoginCtrl'})
-        .state('admin', { url: '/admin', templateUrl: 'app/views/admin/index.html', controller: 'AdminCtrl' })
+        .state('admin', {
+            url: '/admin',
+            templateUrl: 'app/views/admin/index.html',
+            resolve: { loggedin: checkLoggedin },
+            controller: 'AdminCtrl'
+        })
         .state('user', { url: '/user/:userId/:consoleId', templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
         .state('console', { url: '/:consoleId', templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
         .state('console.game', {
@@ -25,6 +30,25 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRoute
 
     $httpProvider.interceptors.push('authInterceptor');
 });
+
+var checkLoggedin = function($q, $timeout, $http, $location, $rootScope) {
+    // Initialize a new promise 
+    var deferred = $q.defer();
+    // Make an AJAX call to check if the user is logged in 
+    $http.get('/api/loggedin').success(function(user) {
+        // Authenticated 
+        console.log('user ' + user);
+        if (user !== '0')
+            $timeout(deferred.resolve, 0);
+            // Not Authenticated 
+        else {
+            $timeout(function() {
+                deferred.reject();
+            }, 0);
+            $location.path('/login');
+        }
+    });
+}
 
 //app.config(function ($httpProvider) {
 //    $httpProvider.interceptors.push(function ($rootScope, $location, $q) {
@@ -69,9 +93,11 @@ app.factory('authInterceptor', function ($location, $rootScope, $q, $cookieStore
     return {
         request: function (config) {
             config.headers = config.headers || {};
+            console.log($location.path());
             return config;
         },
         response: function (response) {
+            console.log(response.status);
             if (response.status === 401) {
                 console.log('apa');
             }
@@ -121,7 +147,7 @@ app.controller('IndexCtrl', function($scope, consoles, $cookieStore){
     $scope.loggedInUser = $cookieStore.get('sndb.token') || {};
 });
 
-app.controller('AdminCtrl', function ($scope, $http, consoles, baseRegions) {
+app.controller('AdminCtrl', function ($scope, $http, $location, consoles, baseRegions) {
   $scope.user = 'Mårten';
   $scope.consoles = consoles;
   $scope.regions = _.map(baseRegions, function (r) { r.selected = false; return r; });
