@@ -11,7 +11,6 @@ exports.db = function () {
 exports.validateUser = function (username, password, fn) {
     console.log(username + ' ' + password);
     db.view('users/by_username', { key: [username, password] }, function (err, response) {
-        console.log(response.length);
         if (response.length) {
             return fn(null, response[0].value);
         }
@@ -20,10 +19,8 @@ exports.validateUser = function (username, password, fn) {
     });
 };
 
-exports.validateSession = function (username, fn) {
-    console.log(username + ' ' + password);
-    db.view('users/by_userid', { key: username }, function (err, response) {
-        console.log(response.length);
+exports.validateSession = function (id, fn) {
+    db.view('users/by_userid', { key: id }, function (err, response) {
         if (response.length) {
             return fn(null, response);
         }

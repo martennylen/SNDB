@@ -17,11 +17,11 @@ var http = require('http'),
     ));
     
     passport.serializeUser(function (user, done) {
-        done(null, user.id);
+        done(null, user);
     });
 
-    passport.deserializeUser(function (id, done) {
-        couch.validateSession(id, function (err, user) {
+    passport.deserializeUser(function (user, done) {
+        couch.validateSession(user.id, function (err, res) {
             if (err) {
                 return done(null, false);
             }
@@ -33,15 +33,15 @@ var http = require('http'),
     var app = express();
 
     app.configure(function(){
-      app.set('port', port);
-      app.use(express.cookieParser());
-      app.use(express.logger('dev'));
-      app.use(express.bodyParser());
-      app.use(express.cookieSession({ secret: '1c001babc0f1f93227ad952ee29ce2ec', cookie: { maxAge: 604800000 } }));
-      app.use(passport.initialize());
-      app.use(passport.session());
-      app.use(express.static(__dirname + '/public'));
-      app.use(require('less-middleware')({ src: __dirname + '/public' }));
+        app.set('port', port);
+        app.use(express.static(__dirname + '/public'));
+        app.use(require('less-middleware')({ src: __dirname + '/public' }));
+        app.use(express.cookieParser());
+        app.use(express.logger('dev'));
+        app.use(express.bodyParser());
+        app.use(express.cookieSession({ key: 'trackr.sess', secret: '1c001babc0f1f93227ad952ee29ce2ec', cookie: { httpOnly: false, maxAge: 604800000 } }));
+        app.use(passport.initialize());
+        app.use(passport.session());
     });
 
     app.configure('development', function () {

@@ -20,7 +20,7 @@
             <h1><a ng-href="/">SNDB</a></h1>
         </div>
         <div id="header-right">
-            <span ng-if="loggedinUser.username.length" id="logged-in-explain">Inloggad som </span><a ng-href="#/logout">{{loggedInUser.username}}</a>
+            <div ng-if="loggedInUser.length"><span id="logged-in-explain">{{loggedInUser}} </span><a href ng-controller="LogoutCtrl"ng-click="logout()">(Logga ut)</a></div>
             <a ng-href="#/admin">Admin</a>
         </div>
         <div class="clearfix"></div>

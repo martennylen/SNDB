@@ -16,9 +16,18 @@ module.exports = function(app, passport) {
     //    res.header("Access-Control-Allow-Methods", "GET, POST");
     //});
 
+    app.get('/api/user/details', function (req, res) {
+        console.log('yoohoo');
+        if (req.isAuthenticated()) {
+            console.log(req.user.roles);
+            res.send({ 'username': req.user.username, 'roles': req.user.roles });
+        }
+        res.send({});
+    });
+
     app.get('/api/loggedin', function (req, res) {
         console.log('isauthenticated: ' + req.isAuthenticated());
-        res.send(req.isAuthenticated());
+        res.send({ status: req.isAuthenticated() });
     });
     
     app.post('/api/login', function(req, res, next) {
@@ -30,14 +39,21 @@ module.exports = function(app, passport) {
             if (!user) {
                 return res.send({ success : false, message : 'Användarnamn och eller lösenord hittades inte.' });
             }
-            return res.send({ success : true, user: user });
+            req.logIn(user, function (err) {
+                if (err) { return next(err); }
+                return res.send({ success: true, user: user });
+            });
         })(req, res, next);
     });
 
-    app.post('/api/logout', passport.authenticate('local'), function (req, res) {
-        req.session.destroy(function (err) {
-            res.redirect('/');
-        });
+    app.post('/api/logout', function (req, res) {
+        //req.session.destroy(function (err) {
+        //    res.redirect('/');
+        //});
+        if (req.isAuthenticated()) {
+            req.logOut();
+        }
+        res.send(200);
     });
 
     app.get('/api/:consoleId', function (req, res) {

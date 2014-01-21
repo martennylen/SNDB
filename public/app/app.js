@@ -35,8 +35,7 @@ var validateUser = function ($q, $http, $location, $timeout) {
     var deferred = $q.defer();
     $http.get('/api/loggedin')
         .success(function (res) {
-            console.log(res);
-            if (res === true) {
+            if (res.status) {
                 $timeout(function () { deferred.resolve(); }, 0);
             } else {
                 $timeout(function () { deferred.reject(); }, 0);
@@ -79,6 +78,7 @@ app.factory('CombinedGamesService', function ($resource) {
 app.factory('GameDetailsService', function($resource) {
   return $resource('/api/:consoleId/:gameId');
 });
+
 
 //app.factory('authInterceptor', function ($location, $rootScope, $q, $cookieStore) {
 //    return {
@@ -133,9 +133,16 @@ app.filter('codeFilter', function($filter){
   }
 });
 
-app.controller('IndexCtrl', function($scope, consoles, $cookieStore){
+app.controller('IndexCtrl', function($scope, consoles, $http, $rootScope){
     $scope.consoles = consoles;
-    $scope.loggedInUser = $cookieStore.get('sndb.token') || {};
+    console.log('index');
+    $http.get('/api/user/details').success(function (user) {
+        console.log('men va fan: ' + JSON.stringify(user));
+        if (!_.isEmpty(user)) {
+            $rootScope.loggedInUser = user.username;
+        }
+    });
+    //$scope.loggedInUser = $cookieStore.get('trackr.sess').username || {};
 });
 
 app.controller('AdminCtrl', function ($scope, $http, $location, consoles, baseRegions) {
@@ -241,17 +248,16 @@ app.controller('GameDetailsCtrl', function ($scope, $stateParams, GameDetailsSer
     });
 });
 
-app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope, $cookieStore) {
+app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope) {
     console.log('loginctrl');
 
     $scope.credentials = {};
 
     $scope.validateCredentials = function (data) {
-        console.log(data);
         $http.post('/api/login', data).
 		success(function (response) {
 		    if (response.success) {
-		        console.log(response.user);
+		        $rootScope.loggedInUser = response.user.username;
 		        $location.path('/user/' + response.user.username + '/nes');
 		    } else {
 		        console.log(response.message);
@@ -260,5 +266,15 @@ app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope, $coo
 		error(function (response) {
 		    console.log(response);
 		});
+    };
+});
+
+app.controller('LogoutCtrl', function ($scope, $location, $http) {
+    $scope.logout = function () {
+        $http.post('/api/logout').
+            success(function (response) {
+                $rootScope.loggedInUser = '';
+                $location.path('/');
+            });
     };
 });
