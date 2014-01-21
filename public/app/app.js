@@ -18,7 +18,7 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRoute
         .state('admin', {
             url: '/admin',
             templateUrl: 'app/views/admin/index.html',
-            resolve: { loggedin: checkLoggedin },
+            resolve: { loggedin: validateUser },
             controller: 'AdminCtrl'
         })
         .state('user', { url: '/user/:userId/:consoleId', templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
@@ -28,27 +28,22 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRoute
             controller: 'GameDetailsCtrl'
         });
 
-    $httpProvider.interceptors.push('authInterceptor');
+    //$httpProvider.interceptors.push('authInterceptor');
 });
 
-var checkLoggedin = function($q, $timeout, $http, $location, $rootScope) {
-    // Initialize a new promise 
+var validateUser = function ($q, $http, $location, $timeout) {
     var deferred = $q.defer();
-    // Make an AJAX call to check if the user is logged in 
-    $http.get('/api/loggedin').success(function(user) {
-        // Authenticated 
-        console.log('user ' + user);
-        if (user !== '0')
-            $timeout(deferred.resolve, 0);
-            // Not Authenticated 
-        else {
-            $timeout(function() {
-                deferred.reject();
-            }, 0);
-            $location.path('/login');
-        }
-    });
-}
+    $http.get('/api/loggedin')
+        .success(function (res) {
+            console.log(res);
+            if (res === true) {
+                $timeout(function () { deferred.resolve(); }, 0);
+            } else {
+                $timeout(function () { deferred.reject(); }, 0);
+                $location.path('/login');
+            }
+        });
+};
 
 //app.config(function ($httpProvider) {
 //    $httpProvider.interceptors.push(function ($rootScope, $location, $q) {
@@ -73,10 +68,6 @@ var checkLoggedin = function($q, $timeout, $http, $location, $rootScope) {
 //    });
 //});
 
-app.factory('AdminValidationService', function ($resource) {
-    return $resource('/api/validate/:user');
-});
-
 app.factory('GamesService', function ($resource, $location) {
     return $resource('/api/:consoleId');
 });
@@ -89,22 +80,22 @@ app.factory('GameDetailsService', function($resource) {
   return $resource('/api/:consoleId/:gameId');
 });
 
-app.factory('authInterceptor', function ($location, $rootScope, $q, $cookieStore) {
-    return {
-        request: function (config) {
-            config.headers = config.headers || {};
-            console.log($location.path());
-            return config;
-        },
-        response: function (response) {
-            console.log(response.status);
-            if (response.status === 401) {
-                console.log('apa');
-            }
-            return response || $q.when(response);
-        }
-    };
-});
+//app.factory('authInterceptor', function ($location, $rootScope, $q, $cookieStore) {
+//    return {
+//        request: function (config) {
+//            config.headers = config.headers || {};
+//            console.log($location.path());
+//            return config;
+//        },
+//        response: function (response) {
+//            console.log(response.status);
+//            if (response.status === 401) {
+//                console.log('apa');
+//            }
+//            return response || $q.when(response);
+//        }
+//    };
+//});
 
 app.constant('consoles', [
 	{'id': 'nes', 'name': 'NES'}, 
@@ -229,7 +220,6 @@ app.controller('CombinedListCtrl', function ($scope, $location, $route, $state, 
     };
 });
 
-
 app.controller('GameDetailsCtrl', function ($scope, $stateParams, GameDetailsService) {
     console.log('gamedetailsctrl');
     //if (!$stateParams.gameId.length) {
@@ -257,15 +247,18 @@ app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope, $coo
     $scope.credentials = {};
 
     $scope.validateCredentials = function (data) {
+        console.log(data);
         $http.post('/api/login', data).
 		success(function (response) {
-		    //$rootScope.loggedinUser = response.token;
-		    $cookieStore.put('sndb.token', response.token);
-		    //$location.path('/user/' + response.username + '/nes');
-		    $location.path('/user/' + response.token.username + '/nes');
+		    if (response.success) {
+		        console.log(response.user);
+		        $location.path('/user/' + response.user.username + '/nes');
+		    } else {
+		        console.log(response.message);
+		    }
 		}).
 		error(function (response) {
-		    console.log('server response failed');
+		    console.log(response);
 		});
     };
 });

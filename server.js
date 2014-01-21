@@ -1,121 +1,59 @@
 var http = require('http'),
     express = require('express'),
     path = require('path'),
-    _u = require('underscore'),
-    passport = require('passport');
-
-var port = process.env.PORT || 8101;
-var app = express();
-
-app.configure(function(){
-  app.set('port', port);
-    //app.set('views', __dirname + '/views');
-  app.use(express.cookieParser());
-    //app.use(express.session({ secret: '1c001babc0f1f93227ad952ee29ce2ec' }));
-  app.use(express.logger('dev'));
-  app.use(express.bodyParser());
-  app.use(express.static(__dirname + '/public'));
-  app.use(require('less-middleware')({ src: __dirname + '/public' }));
-  //app.use(express.static(process.env.PWD + '/public'));
-});
-
-app.configure('development', function(){
-  app.use(express.errorHandler());
-});
-
-// Define a middleware function to be used for every secured routes 
-//var auth = function(req, res, next) {
-//    if (!req.isAuthenticated()) {
-//        res.send(401);
-//    } else {
-//        next();
-//    }
-//};
-
-app.get('/api', function(req, res) {
-   res.header("Access-Control-Allow-Origin", "http://localhost"); 
-   res.header("Access-Control-Allow-Methods", "GET, POST"); 
-});
-
-var Config = require('./config')
-  , conf = new Config()
-  , cradle = require('cradle')
-  , connection = new(cradle.Connection)(conf.couchdb.url, conf.couchdb.port, {cache: true}),
-  db = connection.database("sndb");
-
-app.get('/api/loggedin', function (req, res) {
-    res.send(req.isAuthenticated() ? req.user : '0');
-});
-
-  app.get('/api/:consoleId', function (req, res) {
-      db.view('games/by_console', { key: req.params.consoleId }, function (err, response) {
-        var r = [];
-          
-        _u.each(response, function (item) {
-          r.push(item.value);
-        });
-
-          res.send(r);
-      });
-  });
-
-  app.get('/api/:consoleId/:gameId', function(req, res){
-    db.view('games/all', { key: req.params.gameId }, function(err, response){
-        res.send(response);
+    couch = require('./couch'),
+    passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy;
+    
+    passport.use(new LocalStrategy(
+      function (username, password, done) {
+          couch.validateUser(username, password, function (err, user) {
+              if (err) {
+                  return done(null, false, { message: 'Användaren hittades inte eller lösenordet stämmer inte.' });
+              }
+              return done(null, user);
+          });
+      }
+    ));
+    
+    passport.serializeUser(function (user, done) {
+        done(null, user.id);
     });
-  });
-  
-  app.get('/api/user/:userId/:consoleId', function (req, res) {
-      db.view('games/by_console', { key: req.params.consoleId }, function (err, response) {
-          var r = [];
 
-          _u.each(response, function (item) {
-              r.push(item.value);
-          });
-          var d = [];
-          db.view('games/by_user', { key: req.params.userId }, function (e, resp) {
-              _u.each(resp[0].value, function (item) {
-                  d.push(item);
-              });
+    passport.deserializeUser(function (id, done) {
+        couch.validateSession(id, function (err, user) {
+            if (err) {
+                return done(null, false);
+            }
+            return done(null, user);
+        });
+    });
 
-              var found = {};
-              _u.map(d, function (it) {
-                  found = _u.find(r, function (g) {
-                      return g.id === it.id;
-                  });
+    var port = process.env.PORT || 8101;
+    var app = express();
 
-                  if (found) { // User has game                        
-                      //found.attr.common = _u.object(found.attr.common, it.attr.common);
-                      found.attr.common = _u.map(found.attr.common, function (x, iter) {
-                          return { 'id': x, 'longName': x === 'c' ? 'Kassett' : x === 'i' ? 'Manual' : 'Kartong', 'status': it.attr.common[iter] };
-                      });
-                      found.attr.extras = _u.map(found.attr.e, function (x, iter) {
-                          return { 'id': x, 'status': it.attr.e[iter] }; 
-                      });
-                  }
-              });
-              res.send(r);
-          });
-      });
-  });
+    app.configure(function(){
+      app.set('port', port);
+      app.use(express.cookieParser());
+      app.use(express.logger('dev'));
+      app.use(express.bodyParser());
+      app.use(express.cookieSession({ secret: '1c001babc0f1f93227ad952ee29ce2ec', cookie: { maxAge: 604800000 } }));
+      app.use(passport.initialize());
+      app.use(passport.session());
+      app.use(express.static(__dirname + '/public'));
+      app.use(require('less-middleware')({ src: __dirname + '/public' }));
+    });
 
-  app.post('/api/newgame', function (request, response) {
-    db.save(request.body, function (err, res) {
-          if(res.ok){
-            response.send({'reply': 'ok'});    // echo the result back
-          }
-      });
-  });
+    app.configure('development', function () {
+        app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+    });
 
-  app.post('/api/login', function (req, res) {
-      var user = req.body.un;
-      console.log(req.body.un);
-      console.log(req.body.pw);
-      var credentials = { 'username': user, 'role': 'u' };
+    app.configure('production', function () {
+        app.use(express.errorHandler());
+    });
 
-      res.send({ token: credentials });
-  });
+    require('./routes')(app, passport);
 
-  http.createServer(app).listen(app.get('port'), function(){
-    console.log("Express server listening on port " + app.get('port'));
-  });
+    http.createServer(app).listen(app.get('port'), function(){
+        console.log("Express server listening on port " + app.get('port'));
+    });
