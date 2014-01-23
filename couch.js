@@ -2,15 +2,14 @@
   , conf = new Config()
   , cradle = require('cradle')
   , connection = new (cradle.Connection)(conf.couchdb.url, conf.couchdb.port, { cache: true })
-  , db = connection.database('sndb');
+  , db = connection.database('sndb'); 
 
 exports.db = function () {
     return db;
 };
 
-exports.validateUser = function (username, password, fn) {
-    console.log(username + ' ' + password);
-    db.view('users/by_username', { key: [username, password] }, function (err, response) {
+exports.validateUser = function (username, fn) {
+    db.view('users/by_username', { key: username }, function (err, response) {
         if (response.length) {
             return fn(null, response[0].value);
         }
@@ -27,4 +26,4 @@ exports.validateSession = function (id, fn) {
 
         return fn(err, null);
     });
-};
+}; 

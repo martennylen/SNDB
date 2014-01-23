@@ -269,7 +269,7 @@ app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope) {
     };
 });
 
-app.controller('LogoutCtrl', function ($scope, $location, $http) {
+app.controller('LogoutCtrl', function ($scope, $location, $http, $rootScope) {
     $scope.logout = function () {
         $http.post('/api/logout').
             success(function (response) {
