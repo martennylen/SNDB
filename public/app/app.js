@@ -260,7 +260,7 @@ app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope) {
 		        $rootScope.loggedInUser = response.user.username;
 		        $location.path('/user/' + response.user.username + '/nes');
 		    } else {
-		        console.log(response.message);
+		        $scope.errorMessage = response.message;
 		    }
 		}).
 		error(function (response) {

@@ -17,7 +17,7 @@ var http = require('http'),
               if (!pwhelper.validate(user.hash, password, user.salt)) {
                 return done(null, false, { message: 'Användaren hittades inte eller lösenordet stämmer inte.' });
               }
-              return done(null, user);
+              return done(null, { "id": user.id, "username": user.username, "roles": user.roles });
           });
       }
     ));
