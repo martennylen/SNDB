@@ -10,13 +10,10 @@ var http = require('http'),
     passport.use(new LocalStrategy(
       function (username, password, done) {
           couch.validateUser(username, function (err, user) {
-              if (err) {
+              if (err || !pwhelper.validate(user.hash, password, user.salt)) {
                   return done(null, false, { message: 'Användaren hittades inte eller lösenordet stämmer inte.' });
               }
 
-              if (!pwhelper.validate(user.hash, password, user.salt)) {
-                return done(null, false, { message: 'Användaren hittades inte eller lösenordet stämmer inte.' });
-              }
               return done(null, { "id": user.id, "username": user.username, "roles": user.roles });
           });
       }
@@ -35,7 +32,7 @@ var http = require('http'),
         });
     });
 
-    var port = process.env.PORT || 8101;
+    var port = process.env.PORT || 8101; 
     var app = express();
 
     app.configure(function(){

@@ -8,8 +8,8 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRoute
         //.when('/admin', { templateUrl: 'app/views/admin/index.html', controller: 'AdminCtrl' })
         //.otherwise({ redirectTo: '/nes' });
     .when('', '/nes');
-    //      .when('/:consoleId', { templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
-    //      .when('/:consoleId/user/:userId', { templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
+    //      .when('/:consoleId', { templateUrl: 'app/views/masterlist.html', controller: 'GameListCtrl' })
+    //      .when('/:consoleId/user/:userId', { templateUrl: 'app/views/userlist.html', controller: 'CombinedListCtrl' })
     //      .when('/:consoleId/:gameId', { templateUrl: 'app/views/game.html', controller: 'GameDetailsCtrl' })
     //      .otherwise({ redirectTo: '/nes' });
 
@@ -21,8 +21,8 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRoute
             resolve: { loggedin: validateUser },
             controller: 'AdminCtrl'
         })
-        .state('user', { url: '/user/:userId/:consoleId', templateUrl: 'app/views/users_games.html', controller: 'CombinedListCtrl' })
-        .state('console', { url: '/:consoleId', templateUrl: 'app/views/games_list.html', controller: 'GameListCtrl' })
+        .state('user', { url: '/user/:userId/:consoleId', templateUrl: 'app/views/userlist.html', controller: 'CombinedListCtrl' })
+        .state('console', { url: '/:consoleId', templateUrl: 'app/views/masterlist.html', controller: 'GameListCtrl' })
         .state('console.game', {
             url: '/{gameId:[A-z0-9]{32}}',
             controller: 'GameDetailsCtrl'
@@ -195,7 +195,7 @@ app.controller('GameListCtrl', function ($scope, $location, $route, $stateParams
     });
 });
 
-app.controller('CombinedListCtrl', function ($scope, $location, $route, $state, $stateParams, CombinedGamesService, baseRegions) {
+app.controller('CombinedListCtrl', function ($scope, $stateParams, $http, CombinedGamesService, baseRegions) {
     console.log('comblistctrl');
     $scope.console = $stateParams.consoleId || 'nes';
     $scope.userId = $stateParams.userId;
@@ -210,12 +210,12 @@ app.controller('CombinedListCtrl', function ($scope, $location, $route, $state, 
     
     $scope.games = CombinedGamesService.query({ consoleId: $scope.console, userId: $scope.userId });
     $scope.games.$promise.then(function (games) {
+        console.log(games);
         $scope.games = games;
     });
 
     $scope.idEditing = false;
     $scope.editGame = function (g) {
-        console.log(g);
         $scope.isEditing = !$scope.isEditing;
         if ($scope.isEditing) {
             $scope.selected.id = g;
@@ -227,6 +227,16 @@ app.controller('CombinedListCtrl', function ($scope, $location, $route, $state, 
                 $scope.selected.id = '';
             }
         }
+    };
+
+    $scope.attrChange = function (item, level, index, status) {
+        $http.post('/api/user/update', { item: item, level: level, index: index, status: status }).
+            success(function() {
+                console.log('det gick bra');
+            }).
+            error(function() {
+                console.log('icke så bra');
+            });
     };
 });
 

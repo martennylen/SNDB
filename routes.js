@@ -73,29 +73,46 @@ module.exports = function(app, passport) {
 
     app.get('/api/user/:userId/:consoleId', function (req, res) {
         db.view('games/by_user', {
-            startkey: [req.params.userId, req.params.consoleId],
-            endkey: [req.params.userId, req.params.consoleId, {}],
+            startkey: [req.user.id, req.params.consoleId],
+            endkey: [req.user.id, req.params.consoleId, {}],
             include_docs: true
         }, function (err, response) {
             var list = [];
-            var current = {};
             _u.each(response, function (game, i) {
-                current = game.doc;
+                var current = {};
+                current.id = game.doc._id;
+                current.name = game.doc.name;
+                current.attr = {};
                 var currentAttr = {};
-                current.attr.common = _u.map(game.value.attr.common, function (attr, iter) {
+                current.attr.common = _u.map(game.value.game.attr.common, function (attr, iter) {
                     currentAttr = game.doc.attr.common[iter];
-                    return { 'id': currentAttr, 'longName': currentAttr === 'c' ? 'Kassett' : currentAttr === 'i' ? 'Manual' : 'Kartong', 'status': game.value.attr.common[iter] };
+                    return { 'id': currentAttr, 'longName': currentAttr === 'c' ? 'Kassett' : currentAttr === 'i' ? 'Manual' : 'Kartong', 'status': game.value.game.attr.common[iter] };
                 });
-                current.attr.extras = _u.map(game.value.attr.extras, function (attr, iter) {
+                current.attr.extras = _u.map(game.value.game.attr.extras, function (attr, iter) {
                     currentAttr = game.doc.attr.extras[iter];
-                    return { 'id': currentAttr, 'status': game.value.attr.extras[iter] };
+                    return { 'id': currentAttr, 'status': game.value.game.attr.extras[iter] };
                 });
-
+                current.note = game.value.game.note;
+                current.regions = game.doc.regions;
+                current.item = game.id;
+                console.log(current);
                 list.push(current);
             });
 
             res.send(list);
         });
+    });
+
+    app.post('/api/user/update', function (req, res) {
+        console.log(req.body);
+        var obj = 'game.attr.' + req.body.level + '[' + req.body.index + ']';
+        console.log(req.body.item);
+        console.log(obj);
+        console.log(req.body.status);
+        db.merge(req.body.item, { obj: req.body.status }, function (err, res) {
+            console.log(res);
+        });
+        res.send(200);
     });
 
     app.post('/api/newgame', function (request, response) {
