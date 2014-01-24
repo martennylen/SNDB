@@ -14,7 +14,8 @@
     </ul>
     <ul id="games">
         <li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">
-            <a href ng-click="editGame(game.id)">
+        <!--<li ng-repeat="game in games" ng-class-odd="'odd'" ng-class-even="'even'">-->
+            <a href ng-click="editGame(game._id)">
                 <div class="game-wrapper">
                     <div class="game-name">
                         <span>
@@ -26,7 +27,7 @@
                 </div>
             </a>
             <div class="clearfix"></div>
-            <div class="game-content" ng-show="game.id === selected.id">
+            <div class="game-content" ng-show="game._id === selected.id">
                 <ul>
                     <li ng-repeat="attr in game.attr.common" style="padding: 0; display: inline; margin-right: 20px">
                         <label style="font-size: 30px" for="{{game.id + '_' + attr.id}}" ng-class="{exists: attr.status}">{{attr.longName}}:</label>

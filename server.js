@@ -22,7 +22,7 @@ var http = require('http'),
       }
     ));
     
-    passport.serializeUser(function (user, done) {
+    passport.serializeUser(function (user, done) { 
         done(null, user);
     });
 

@@ -17,9 +17,7 @@ module.exports = function(app, passport) {
     //});
 
     app.get('/api/user/details', function (req, res) {
-        console.log('yoohoo');
         if (req.isAuthenticated()) {
-            console.log(req.user.roles);
             res.send({ 'username': req.user.username, 'roles': req.user.roles });
         }
         res.send({});
@@ -35,7 +33,6 @@ module.exports = function(app, passport) {
             if (err) {
                 return next(err); // will generate a 500 error
             }
-            // Generate a JSON response reflecting authentication status
             if (!user) {
                 return res.send({ success : false, message : 'Användarnamn och eller lösenord hittades inte.' });
             }
@@ -75,36 +72,29 @@ module.exports = function(app, passport) {
     });
 
     app.get('/api/user/:userId/:consoleId', function (req, res) {
-        db.view('games/by_console', { key: req.params.consoleId }, function (err, response) {
-            var r = [];
-
-            _u.each(response, function (item) {
-                r.push(item.value);
-            });
-            var d = [];
-            db.view('games/by_user', { key: req.params.userId }, function (e, resp) {
-                _u.each(resp[0].value, function (item) {
-                    d.push(item);
+        db.view('games/by_user', {
+            startkey: [req.params.userId, req.params.consoleId],
+            endkey: [req.params.userId, req.params.consoleId, {}],
+            include_docs: true
+        }, function (err, response) {
+            var list = [];
+            var current = {};
+            _u.each(response, function (game, i) {
+                current = game.doc;
+                var currentAttr = {};
+                current.attr.common = _u.map(game.value.attr.common, function (attr, iter) {
+                    currentAttr = game.doc.attr.common[iter];
+                    return { 'id': currentAttr, 'longName': currentAttr === 'c' ? 'Kassett' : currentAttr === 'i' ? 'Manual' : 'Kartong', 'status': game.value.attr.common[iter] };
+                });
+                current.attr.extras = _u.map(game.value.attr.extras, function (attr, iter) {
+                    currentAttr = game.doc.attr.extras[iter];
+                    return { 'id': currentAttr, 'status': game.value.attr.extras[iter] };
                 });
 
-                var found = {};
-                _u.map(d, function (it) {
-                    found = _u.find(r, function (g) {
-                        return g.id === it.id;
-                    });
-
-                    if (found) { // User has game                        
-                        //found.attr.common = _u.object(found.attr.common, it.attr.common);
-                        found.attr.common = _u.map(found.attr.common, function (x, iter) {
-                            return { 'id': x, 'longName': x === 'c' ? 'Kassett' : x === 'i' ? 'Manual' : 'Kartong', 'status': it.attr.common[iter] };
-                        });
-                        found.attr.extras = _u.map(found.attr.e, function (x, iter) {
-                            return { 'id': x, 'status': it.attr.e[iter] };
-                        });
-                    }
-                });
-                res.send(r);
+                list.push(current);
             });
+
+            res.send(list);
         });
     });
 

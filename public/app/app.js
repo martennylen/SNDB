@@ -137,7 +137,6 @@ app.controller('IndexCtrl', function($scope, consoles, $http, $rootScope){
     $scope.consoles = consoles;
     console.log('index');
     $http.get('/api/user/details').success(function (user) {
-        console.log('men va fan: ' + JSON.stringify(user));
         if (!_.isEmpty(user)) {
             $rootScope.loggedInUser = user.username;
         }
@@ -208,11 +207,13 @@ app.controller('CombinedListCtrl', function ($scope, $location, $route, $state, 
     
     $scope.games = CombinedGamesService.query({ consoleId: $scope.console, userId: $scope.userId });
     $scope.games.$promise.then(function (games) {
+        console.log(games);
         $scope.games = games;
     });
 
     $scope.idEditing = false;
     $scope.editGame = function (g) {
+        console.log(g);
         $scope.isEditing = !$scope.isEditing;
         if ($scope.isEditing) {
             $scope.selected.id = g;
