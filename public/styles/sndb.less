@@ -19,18 +19,18 @@ html {
     }
 
     body {
-        background-color: #efefef;
-        color: #666;
+        //background-color: #efefef;
+        background-color: #74AFAD;
+        color: #233f3e;
         font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
 
         h1 {
-            color: #ccc;
             display: inline-block;
             margin: 0;
         }
 
         a {
-            color: #666;
+            color: #ECECEA;
             text-decoration: underline;
         }
 
@@ -61,37 +61,25 @@ html {
             }
 
             #header-console-list {
-                background-color: #fff;
+                //background-color: #F39D52;
+                background-color: #EA974F;
                 padding: 10px;
                 border-radius: 6px;
 
                 > li {
                     display: inline;
-                    color: #666;
                 }
             }
         }
 
         span.exists {
-            color: #3F9434;
+            color: #A8CD1B;
         }
 
         ul#games {
             > li {
                 .column-no-float(12, 0);
 
-                a {
-                    color: #fff;
-                    text-decoration: none;
-
-                    .game-name span {
-                        color: #04405E;
-                    }
-
-                    .game-attr {
-                        color: #B23E44;
-                    }
-                }
 
                     a:hover {
                         .game-name span {
@@ -108,13 +96,24 @@ html {
             }
 
             li.odd {
-                background-color: #bbb;
+                //background-color: #bbb;
+                background-color: #558C89;
                 color: #eee;
             }
 
             li.even {
-                background-color: #eee;
+                //background-color: #eee;
+                //background-color: #ECECEA;
+                background-color: #233f3e;
                 color: #bbb;
+            }
+
+            li:first-of-type {
+                border-radius: 6px 6px 0 0;
+            }
+
+            li:last-of-type {
+                border-radius: 0 0 6px 6px;
             }
         }
 

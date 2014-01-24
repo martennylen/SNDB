@@ -3,7 +3,7 @@
     <input type="text" class="search-holder" placeholder="Sök spel..." ng-model="search.name" />
     <ul>
         <li ng-repeat="r in regions" ng-style="{display: 'inline'}">
-            <label for="{{r.id}}" style="color: #666">{{r.name}}</label>
+            <label for="{{r.id}}">{{r.name}}</label>
             <input id="{{r.id}}" type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]">
         </li>
     </ul>
