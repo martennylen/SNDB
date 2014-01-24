@@ -34,28 +34,42 @@ html {
             text-decoration: underline;
         }
 
-        a:hover, a:visited, a:active {
-            text-decoration: none;
-        }
-
-        #header-left {
-            h1 a {
+            a:hover, a:visited, a:active {
                 text-decoration: none;
             }
-        }
 
-        #header-right {
-            a {
-                text-decoration: underline;
-            }
+        .content-wrapper {
 
-                a:hover {
+            #header-left {
+                h1 a {
                     text-decoration: none;
                 }
+            }
 
-                a:nth-of-type(2) {
-                    display: block;
+            #header-right {
+                a {
+                    text-decoration: underline;
                 }
+
+                    a:hover {
+                        text-decoration: none;
+                    }
+
+                    a:nth-of-type(2) {
+                        display: block;
+                    }
+            }
+
+            #header-console-list {
+                background-color: #fff;
+                padding: 10px;
+                border-radius: 6px;
+
+                > li {
+                    display: inline;
+                    color: #666;
+                }
+            }
         }
 
         span.exists {
@@ -79,15 +93,15 @@ html {
                     }
                 }
 
-                a:hover {
-                    .game-name span {
-                        text-decoration: underline;
+                    a:hover {
+                        .game-name span {
+                            text-decoration: underline;
+                        }
                     }
-                }
 
                 .game-content {
-                    padding: 20px; 
-                    background-color: #fff; 
+                    padding: 20px;
+                    background-color: #fff;
                     margin-top: 10px;
                     color: #666;
                 }

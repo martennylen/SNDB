@@ -1,7 +1,4 @@
 <ul>
-    <li ng-repeat="c in consoles" style="display: inline;color: #666">
-        <a ng-href="#/{{c.id}}">{{c.name}}</a>
-    </li>
     <li style="display: inline;color: #666">
         <a ng-href="#/user/many/nes">Min sida</a>
     </li>
@@ -16,9 +13,11 @@
         <li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">
             <a ui-sref="console.game({gameId:game.id})">
                 <div class="game-wrapper">
-                    <span>
-                        {{game.name}}
-                    </span>
+                    <div class="game-name">
+                        <span>
+                            {{game.name}}
+                        </span>
+                    </div>
                 </div>
             </a>
             <div ng-show="game.id === selected.id">

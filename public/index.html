@@ -24,6 +24,11 @@
             <a ng-href="#/admin">Admin</a>
         </div>
         <div class="clearfix"></div>
+        <ul id="header-console-list">
+            <li ng-repeat="c in consoles">
+                <a ng-href="#/{{c.id}}">{{c.name}}</a>
+            </li>
+        </ul>
         <div ui-view>
         </div>
     </div>

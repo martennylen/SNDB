@@ -99,7 +99,10 @@ app.factory('GameDetailsService', function($resource) {
 
 app.constant('consoles', [
 	{'id': 'nes', 'name': 'NES'}, 
-	{'id': 'snes', 'name': 'SNES'}]);
+	{ 'id': 'snes', 'name': 'SNES' },
+    { 'id': 'n64', 'name': 'GB' },
+    { 'id': 'n64', 'name': 'N64' },
+    { 'id': 'gc', 'name': 'GC' }]);
 
 app.constant('baseRegions', [
   {'id': 'scn', 'name': 'SCN+ESP', 'selected': true},
@@ -207,7 +210,6 @@ app.controller('CombinedListCtrl', function ($scope, $location, $route, $state, 
     
     $scope.games = CombinedGamesService.query({ consoleId: $scope.console, userId: $scope.userId });
     $scope.games.$promise.then(function (games) {
-        console.log(games);
         $scope.games = games;
     });
 
