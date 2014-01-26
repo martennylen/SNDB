@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 //var app = angular.module('sndb', ['ngResource', 'ngRoute']);
 var app = angular.module('sndb', ['ngResource', 'ngRoute', 'ui.router', 'ngCookies']);
@@ -231,11 +231,8 @@ app.controller('CombinedListCtrl', function ($scope, $stateParams, $http, Combin
 
     $scope.attrChange = function (item, level, index, status) {
         $http.post('/api/user/update', { item: item, level: level, index: index, status: status }).
-            success(function() {
-                console.log('det gick bra');
-            }).
-            error(function() {
-                console.log('icke så bra');
+            error(function () {
+                console.log('HIELP');
             });
     };
 });

@@ -1,4 +1,5 @@
 ﻿var _u = require('underscore'),
+    request = require('request'),
     couch = require('./couch'),
     db = couch.db();
 
@@ -95,7 +96,6 @@ module.exports = function(app, passport) {
                 current.note = game.value.game.note;
                 current.regions = game.doc.regions;
                 current.item = game.id;
-                console.log(current);
                 list.push(current);
             });
 
@@ -103,22 +103,24 @@ module.exports = function(app, passport) {
         });
     });
 
-    app.post('/api/user/update', function (req, res) {
-        console.log(req.body);
-        var obj = 'game.attr.' + req.body.level + '[' + req.body.index + ']';
-        console.log(req.body.item);
-        console.log(obj);
-        console.log(req.body.status);
-        db.merge(req.body.item, { obj: req.body.status }, function (err, res) {
-            console.log(res);
+    app.post('/api/user/update', function(req, res) {
+        var reqObj = {};
+        reqObj["/game/attr/" + req.body.level + '/' + req.body.index] = req.body.status;
+        request.put({
+            uri: couch.updatePath() + req.body.item,
+            body: JSON.stringify(reqObj)
+        }, function (error) {
+            if (error) {
+                res.send(500);
+            }
+            res.send(200);
         });
-        res.send(200);
-    });
+    }); 
 
     app.post('/api/newgame', function (request, response) {
         db.save(request.body, function (err, res) {
             if (res.ok) {
-                response.send({ 'reply': 'ok' });    // echo the result back
+                response.send({ 'reply': 'ok' });
             }
         });
     });

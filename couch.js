@@ -2,10 +2,14 @@
   , conf = new Config()
   , cradle = require('cradle')
   , connection = new (cradle.Connection)(conf.couchdb.url, conf.couchdb.port, { cache: true })
-  , db = connection.database('sndb'); 
+  , db = connection.database(conf.couchdb.database); 
 
 exports.db = function () {
     return db;
+};
+
+exports.updatePath = function() {
+    return [conf.couchdb.url, conf.couchdb.port].join(':') + "/" + conf.couchdb.database + "/_design/update/_update/partialUpdate/";
 };
 
 exports.validateUser = function (username, fn) {

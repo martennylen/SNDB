@@ -35,7 +35,7 @@
                     <ul>
                         <li ng-repeat="attr in game.attr.extras" style="padding: 0; display: inline; margin-right: 20px">
                             <label style="font-size: 30px; color: #6495ed" for="{{game.id + '_' + attr.id}}">{{attr.id.substring(0,1).toUpperCase() + attr.id.substring(1, attr.id.length)}}:</label>
-                            <input id="{{game.id + '_' + attr.id}}" type="checkbox" ng-checked="attr.status">
+                            <input id="{{game.id + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status" ng-change="attrChange(game.item, 'extras', $index, attr.status)">
                         </li>
                     </ul>
                 </div>
