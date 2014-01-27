@@ -26,15 +26,15 @@ exports.validateUser = function (username, fn) {
     });
 };
 
-exports.getUserIdByName = function(username, fn) {
-    db.view('users/by_user', { key: username }, function (err, response) {
-        if (response.length) {
-            return fn(null, response);
-        }
+//exports.getUserIdByName = function(username, fn) {
+//    db.view('users/by_user', { key: username }, function (err, response) {
+//        if (response.length) {
+//            return fn(null, response);
+//        }
 
-        return fn(err, null);
-    });
-};
+//        return fn(err, null);
+//    });
+//};
 
 exports.validateSession = function (id, fn) {
     db.view('users/by_userid', { key: id }, function (err, response) {

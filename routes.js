@@ -66,19 +66,26 @@ module.exports = function(app, passport) {
         });
     });
 
-    app.get('/api/:consoleId/:gameId', function (req, res) {
-        db.view('games/all', { key: req.params.gameId }, function (err, response) {
-            res.send(response);
+    app.get('/api/:consoleName/:gameName', function (req, res) {
+        console.log(req.params.gameName.split('-').join(' '));
+        db.view('games/all', { key: req.params.gameName.split('-').join(' ') }, function (err, response) {
+            //TA BARA DET VI BEHÖVER, INTE HELA COUCH-MODELLEN
+            if (err) {
+                res.send(404);
+            }
+            console.log(response[0].value);
+            res.send(response[0].value);
         });
     });
 
     app.get('/api/user/:userName/:consoleId', function (req, res) {
-        couch.getUserIdByName(req.params.userName, function (err, response) {
+        db.view('users/by_user', { key: req.params.userName }, function (err, response) {
             if (err) {
                 console.log("Ingen användare hittades");
                 res.send(404);
             }
             var userId = response[0].id;
+
             db.view('games/by_user', {
                 startkey: [userId, req.params.consoleId],
                 endkey: [userId, req.params.consoleId, {}],

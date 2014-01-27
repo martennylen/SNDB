@@ -14,12 +14,14 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRoute
             resolve: { loggedin: validateUser },
             controller: 'AdminCtrl'
         })
-        .state('user', { url: '/user/:userName/:consoleId', templateUrl: 'app/game/userlist.html', controller: 'UserGameListCtrl' })
-        .state('console', { url: '/:consoleId', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl' })
-        .state('console.game', {
-            url: '/{gameId:[A-z0-9]{32}}',
+        .state('user', { url: '/user/:userName/:consoleId', templateUrl: 'app/user/userlist.html', controller: 'UserGameListCtrl' })
+        .state('game', {
+            //url: '/:consoleId/{gameId:[A-z0-9]{32}}',
+            url: '/:consoleName/:gameName',
+            templateUrl: 'app/game/game.html',
             controller: 'GameDetailsCtrl'
-        });
+        })
+        .state('console', { url: '/:consoleId', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl' });
 
     //$httpProvider.interceptors.push('authInterceptor');
 });
@@ -46,7 +48,7 @@ app.factory('UserGamesService', function ($resource) {
 });
 
 app.factory('GameDetailsService', function($resource) {
-  return $resource('/api/:consoleId/:gameId');
+  return $resource('/api/:consoleName/:gameName');
 });
 
 app.constant('consoles', [
@@ -54,13 +56,14 @@ app.constant('consoles', [
 	{ 'id': 'snes', 'name': 'SNES' },
     { 'id': 'n64', 'name': 'GB' },
     { 'id': 'n64', 'name': 'N64' },
-    { 'id': 'gc', 'name': 'GC' }]);
+    { 'id': 'gc', 'name': 'GC'
+    }]);
 
 app.constant('baseRegions', [
   {'id': 'scn', 'name': 'SCN+ESP', 'selected': true},
   {'id': 'pal-b', 'name': 'PAL-B', 'selected': true},
   {'id': 'pal-a', 'name': 'PAL-A', 'selected': true},
-  {'id': 'ntsc', 'name': 'NTSC', 'selected': true},
+  {'id': 'ntsc', 'name': 'NTSC', 'selected': true}
   ]);
 
 app.filter('codeFilter', function($filter){
