@@ -62,7 +62,8 @@ html {
 
             #header-console-list {
                 //background-color: #F39D52;
-                background-color: #EA974F;
+                //background-color: #EA974F;
+                background-color: #E58838;
                 padding: 10px;
                 border-radius: 6px;
 
@@ -79,39 +80,38 @@ html {
         ul#games {
             > li {
                 .column-no-float(12, 0);
+                color: #eee;
+                padding: 20px;
 
+                a {
+                    cursor: default;
+                }
 
-                    a:hover {
-                        .game-name span {
-                            text-decoration: underline;
-                        }
-                    }
+                a.clickable {
+                    cursor: pointer;
+                }   
 
                 .game-content {
                     padding: 20px;
                     //margin-bottom: 10px;
                     background-color: #fff;
                     margin-top: 10px;
-                    color: #666;
+                    color: #666 !important;
                     border-radius: 6px;
                 }
-            }
-
-            li {
-                padding: 20px;
             }
 
             li.odd {
                 //background-color: #bbb;
                 background-color: #558C89;
-                color: #eee;
+                //color: #eee;
             }
 
             li.even {
                 //background-color: #eee;
                 //background-color: #ECECEA;
                 background-color: #233f3e;
-                color: #bbb;
+                //color: #bbb;
             }
 
             li:first-of-type {
@@ -120,6 +120,10 @@ html {
 
             li:last-of-type {
                 border-radius: 0 0 6px 6px;
+            }
+
+            li:only-of-type {
+                border-radius: 6px;
             }
         }
 

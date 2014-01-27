@@ -1,0 +1,17 @@
+﻿app.controller('GameListCtrl', function ($scope, $location, $route, $stateParams, GamesService, GameDetailsService, baseRegions) {
+    console.log('gamelistctrl');
+    $scope.console = $stateParams.consoleId || 'nes';
+    $scope.selected = {};
+
+    $scope.regions = _.map(baseRegions, function (r) { r.selected = true; return r; });
+    $scope.filterBoxes = {};
+
+    _.each($scope.regions, function (f) {
+        $scope.filterBoxes[f.id] = f.selected;
+    });
+
+    $scope.games = GamesService.query({ consoleId: $scope.console });
+    $scope.games.$promise.then(function (games) {
+        $scope.games = games;
+    });
+});

@@ -72,43 +72,57 @@ module.exports = function(app, passport) {
         });
     });
 
-    app.get('/api/user/:userId/:consoleId', function (req, res) {
-        db.view('games/by_user', {
-            startkey: [req.user.id, req.params.consoleId],
-            endkey: [req.user.id, req.params.consoleId, {}],
-            include_docs: true
-        }, function (err, response) {
-            var list = [];
-            _u.each(response, function (game, i) {
-                var current = {};
-                current.id = game.doc._id;
-                current.name = game.doc.name;
-                current.attr = {};
-                var currentAttr = {};
-                current.attr.common = _u.map(game.value.game.attr.common, function (attr, iter) {
-                    currentAttr = game.doc.attr.common[iter];
-                    return { 'id': currentAttr, 'longName': currentAttr === 'c' ? 'Kassett' : currentAttr === 'i' ? 'Manual' : 'Kartong', 'status': game.value.game.attr.common[iter] };
+    app.get('/api/user/:userName/:consoleId', function (req, res) {
+        couch.getUserIdByName(req.params.userName, function (err, response) {
+            if (err) {
+                console.log("Ingen användare hittades");
+                res.send(404);
+            }
+            var userId = response[0].id;
+            db.view('games/by_user', {
+                startkey: [userId, req.params.consoleId],
+                endkey: [userId, req.params.consoleId, {}],
+                include_docs: true
+            }, function (err, response) {
+                var list = [];
+                _u.each(response, function (game, i) {
+                    var current = {};
+                    current.id = game.doc._id;
+                    current.name = game.doc.name;
+                    current.attr = {};
+                    var currentAttr = {};
+                    current.attr.common = _u.map(game.value.game.attr.common, function (attr, iter) {
+                        currentAttr = game.doc.attr.common[iter];
+                        return { 'id': currentAttr, 'longName': currentAttr === 'c' ? 'Kassett' : currentAttr === 'i' ? 'Manual' : 'Kartong', 'status': game.value.game.attr.common[iter] };
+                    });
+                    current.attr.extras = _u.map(game.value.game.attr.extras, function (attr, iter) {
+                        currentAttr = game.doc.attr.extras[iter];
+                        return { 'id': currentAttr, 'status': game.value.game.attr.extras[iter] };
+                    });
+                    current.attr.note = game.value.game.attr.note;
+                    current.regions = game.doc.regions;
+                    current.item = game.id;
+                    list.push(current);
                 });
-                current.attr.extras = _u.map(game.value.game.attr.extras, function (attr, iter) {
-                    currentAttr = game.doc.attr.extras[iter];
-                    return { 'id': currentAttr, 'status': game.value.game.attr.extras[iter] };
-                });
-                current.note = game.value.game.note;
-                current.regions = game.doc.regions;
-                current.item = game.id;
-                list.push(current);
+                //req.user.id //IF userID === req.user.id THEN SAME USER, SHOW EDIT ON CLICK
+                //console.log(userId + ' ' + req.user.id);
+                var requestId = '';
+                if (req.user !== undefined) {
+                    requestId = req.user.id;
+                }
+                res.send({ items: list, showControls: userId === requestId });
             });
-
-            res.send(list);
         });
     });
 
     app.post('/api/user/update', function(req, res) {
-        var reqObj = {};
-        reqObj["/game/attr/" + req.body.level + '/' + req.body.index] = req.body.status;
+        //var reqObj = {};
+        //reqObj["/game/" + req.body.level + '/' + req.body.index] = req.body.status;
+        console.log(req.body.item);
+        console.log(req.body.attrs);
         request.put({
             uri: couch.updatePath() + req.body.item,
-            body: JSON.stringify(reqObj)
+            body: JSON.stringify({ "/game/attr": req.body.attrs })
         }, function (error) {
             if (error) {
                 res.send(500);
