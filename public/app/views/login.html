@@ -1,8 +1,0 @@
-﻿<div class="view-wrapper">
-    <form>
-        <input ng-style="{width: '100%', padding: '10px'}" type="text" placeholder="Användarnamn" ng-model="credentials.username" required />
-        <input ng-style="{width: '100%', padding: '10px'}" type="password" placeholder="Lösenord" ng-model="credentials.password" required />
-        <button ng-click="validateCredentials(credentials)" ng-disabled="!credentials.username.length">Logga in</button>
-        <span>{{errorMessage}}</span>
-    </form>
-</div>
