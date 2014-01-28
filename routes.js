@@ -1,4 +1,5 @@
 ﻿var _u = require('underscore'),
+    pwhelper = require('./password.js'),
     request = require('request'),
     couch = require('./couch'),
     db = couch.db();
@@ -17,6 +18,33 @@ module.exports = function(app, passport) {
     //    res.header("Access-Control-Allow-Methods", "GET, POST");
     //});
 
+    app.post('/api/register', function (req, res) {
+        db.view('users/by_username', { key: req.body.username }, function (err, response) {
+            if (response.length) {
+                res.send(409);
+            }
+
+            var h = pwhelper.hash(req.body.password);
+            var newUser = {
+                type: 'user',
+                salt: h.salt,
+                hash: h.hash,
+                user: req.body.username,
+                email: req.body.email,
+                roles: ['u']
+            };
+
+            db.save(newUser, function (err2, res2) {
+                console.log(res2);
+                if (err) {
+                    res.send(500);
+                }
+                
+                res.send(200);
+            });
+        });
+    });
+
     app.get('/api/user/details', function (req, res) {
         if (req.isAuthenticated()) {
             res.send({ 'username': req.user.username, 'roles': req.user.roles });
@@ -25,6 +53,7 @@ module.exports = function(app, passport) {
     });
 
     app.get('/api/loggedin', function (req, res) {
+        console.log(req.user);
         console.log('isauthenticated: ' + req.isAuthenticated());
         res.send({ status: req.isAuthenticated() });
     });

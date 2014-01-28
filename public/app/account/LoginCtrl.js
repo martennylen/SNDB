@@ -8,9 +8,11 @@
     $http.get('/api/user/details').success(function (user) {
         if (!_.isEmpty(user)) {
             $rootScope.loggedInUser = { userName: user.username };
-            console.log($scope.isLoggedIn());
         }
     });
+    $scope.showAdminLink = function() {
+        return _.contains($rootScope.loggedInUser.roles, 'a');
+    };
     //$scope.loggedInUser = $cookieStore.get('trackr.sess').username || {};
 });
 
@@ -26,32 +28,7 @@ app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope) {
         $http.post('/api/login', credentials).
 		success(function (response) {
 		    if (response.success) {
-		        setUpLogin(user);
-		    } else {
-		        $scope.errorMessage = response.message;
-		    }
-		}).
-		error(function (response) {
-		    console.log(response);
-		});
-    };
-
-    var setUpLogin = function(user) {
-        $rootScope.loggedInUser = user.username;
-        $location.path('/user/' + user.username + '/nes');
-    };
-});
-
-app.controller('RegisterCtrl', function ($scope, $location, $http) {
-    console.log('registerctrl');
-
-    $scope.credentials = { mail: '', username: '', password: ''};
-
-    $scope.registerCredentials = function () {
-        $http.post('/api/register', $scope.credentials).
-		success(function (response) {
-		    if (response.success) {
-		        $scope.$emit('userRegistration', response.user);
+		        setUpLogin(response.user);
 		    } else {
 		        $scope.errorMessage = response.message;
 		    }
@@ -62,10 +39,39 @@ app.controller('RegisterCtrl', function ($scope, $location, $http) {
     };
 
     $scope.validateFields = function () {
-        //console.log($scope.credentials);
-        //console.log($scope.credentials.mail.length > 0 && $scope.credentials.username.length > 0 && $scope.credentials.password.length > 0);
-        //return $scope.credentials.mail.length > 0 && $scope.credentials.username.length > 0 && $scope.credentials.password.length > 0;
-        return $scope.form.$valid;
+        return $scope.loginForm.$valid;
+    };
+
+    var setUpLogin = function(user) {
+        $rootScope.loggedInUser = user;
+        $location.path('/user/' + user.username + '/nes');
+    };
+});
+
+app.controller('RegisterCtrl', function ($scope, $location, $http) {
+    console.log('registerctrl');
+
+    $scope.credentials = { email: '', username: '', password: ''};
+
+    $scope.registerCredentials = function () {
+        $http.post('/api/register', $scope.credentials).
+		success(function (response) {
+		    console.log(JSON.stringify(response));
+		    //if (response.success) {
+		    //    $scope.$emit('userRegistration', response.user);
+		    //} else {
+		    //    $scope.errorMessage = response.message;
+		    //}
+		}).
+		error(function (response, status) {
+		    if (status === 409) {
+		        $scope.errorMessage = 'Användarnamnet upptaget, välj ett annat.';
+		    }
+		});
+    };
+
+    $scope.validateFields = function () {
+        return $scope.regForm.$valid;
     };
 });
 
@@ -73,8 +79,8 @@ app.controller('LogoutCtrl', function ($scope, $location, $http, $rootScope) {
     $scope.logout = function () {
         $http.post('/api/logout').
             success(function (response) {
-                $rootScope.loggedInUser = '';
-                $location.path('/');
+                $rootScope.loggedInUser = {};
+                $location.path('/nes');
             });
     };
 });

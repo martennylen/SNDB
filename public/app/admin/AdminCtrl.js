@@ -1,4 +1,5 @@
-﻿app.controller('AdminCtrl', function ($scope, $http, $location, consoles, baseRegions) {
+﻿app.controller('AdminCtrl', function ($scope, $http, $location, consoles, baseRegions, loggedin) {
+    console.log(loggedin);
     $scope.user = 'Mårten';
     $scope.consoles = consoles;
     $scope.regions = _.map(baseRegions, function (r) { r.selected = false; return r; });

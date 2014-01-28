@@ -8,7 +8,7 @@ var hash = function (passwd, salt) {
 function createHash(password) {
     var salt = uuid.v4();
     var pwHash = hash(password, salt);
-    return pwHash;
+    return { salt: salt, hash: pwHash };
 }
 
 function validateHash(pwHash, password, salt) {

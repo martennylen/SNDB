@@ -12,8 +12,8 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRoute
         .state('admin', {
             url: '/admin',
             templateUrl: 'app/admin/index.html',
-            resolve: { loggedin: validateUser },
-            controller: 'AdminCtrl'
+            controller: 'AdminCtrl',
+            resolve: { loggedin: validateUser }
         })
         .state('user', { url: '/user/:userName/:consoleName', templateUrl: 'app/user/userlist.html', controller: 'UserGameListCtrl' })
         .state('game', {
@@ -23,8 +23,6 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRoute
             controller: 'GameDetailsCtrl'
         })
         .state('console', { url: '/:consoleName', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl' });
-
-    //$httpProvider.interceptors.push('authInterceptor');
 });
 
 var validateUser = function ($q, $http, $location, $timeout) {
@@ -32,7 +30,10 @@ var validateUser = function ($q, $http, $location, $timeout) {
     $http.get('/api/loggedin')
         .success(function (res) {
             if (res.status) {
-                $timeout(function () { deferred.resolve(); }, 0);
+                $timeout(function () {
+                    $timeout(function () { deferred.resolve(); }, 0);
+                    //$scope.loggedin = deferred.promise;
+                }, 0);
             } else {
                 $timeout(function () { deferred.reject(); }, 0);
                 $location.path('/login');

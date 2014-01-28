@@ -1,9 +1,13 @@
 ﻿<div class="view-wrapper">
-    <form name="form">
-        <input style="width:100%;padding:10px;border:0" type="text" placeholder="Mejladress" ng-model="credentials.mail" required />
-        <input style="width:100%;padding:10px;border:0" type="text" placeholder="Användarnamn" ng-model="credentials.username" required />
-        <input style="width:100%;padding:10px;border:0" type="password" placeholder="Lösenord" ng-model="credentials.password" required />
-        <button ng-disabled="!validateFields()" ng-click="registerCredentials()">Registrera</button>
-        <span>{{errorMessage}}</span>
+    <form name="regForm">
+        <input style="width:70%;padding:10px;border:0" type="email" placeholder="Mejladress" ng-model="credentials.email" required />
+        <input style="width:70%;padding:10px;border:0" type="text" placeholder="Användarnamn" ng-model="credentials.username" ng-minlength="3" ng-maxlength="20" required />
+        <span>Minst 3, max 20 tecken</span>
+        <input style="width:70%;padding:10px;border:0" type="password" placeholder="Lösenord" ng-model="credentials.password" ng-minlength="3" ng-maxlength="20" required />
+        <span>Minst 3, max 20 tecken</span>
+        <div>
+            <button ng-disabled="!validateFields()" ng-click="registerCredentials()">Registrera</button>
+            <span style="color: rgb(162, 26, 58)">{{errorMessage}}</span>
+        </div>
     </form>
 </div>

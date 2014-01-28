@@ -7,43 +7,48 @@
             <input id="{{r.id}}" type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]">
         </li>
     </ul>
-    <ul id="games">
+    <ul id="games" ng-if="games.length">
         <!--<li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">-->
-            <li ng-repeat="game in games" ng-class-odd="'odd'" ng-class-even="'even'">
-                <a href ng-click="editGame(game)" ng-class="{disabled: !validatePerm()}">
-                    <div class="game-wrapper">
-                        <div class="game-name">
-                            <span>
-                                {{game.name}}
-                            </span>
-                        </div><div class="game-attr">
-                            <span ng-repeat="attr in game.attr.common" ng-style="{marginRight: '10px'}" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
-                        </div><div class="game-note">
-                            <span>{{game.attr.note}}</span>
-                        </div>
-                    </div>
-                </a>
-            <div class="clearfix"></div>
-                <div class="game-content" ng-if="game.id === selected.id">
-                    <ul>
-                        <li ng-repeat="attr in selected.attr.common" style="padding: 0; display: inline; margin-right: 20px">
-                            <label style="font-size: 30px" for="{{selected.id + '_' + attr.id}}">{{attr.longName}}:</label>
-                            <input id="{{selected.id + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status">
-                        </li>
-                    </ul>
-                    <ul ng-if="selected.attr.extras.length">
-                        <li ng-repeat="attr in selected.attr.extras" style="padding: 0; display: inline; margin-right: 20px">
-                            <label style="font-size: 30px; color: #6495ed" for="{{selected.id + '_' + attr.id}}">{{attr.id.substring(0,1).toUpperCase() + attr.id.substring(1, attr.id.length)}}:</label>
-                            <input id="{{selected.id + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status">
-                        </li>
-                    </ul>
-                    <div>
-                        <label style="font-size: 30px" for="{{game.id + '_note'}}">Anteckning:</label>
-                        <input id="{{game.id + '_note'}}" type="text" ng-model="selected.attr.note">
-                        <button ng-disabled="!isDirty(game.attr)" ng-click="updateGame(game)">Spara</button>
-                    </div>
+        <li ng-repeat="game in games" ng-class-odd="'odd'" ng-class-even="'even'">
+            <a href ng-click="editGame(game)" ng-class="{disabled: !validatePerm()}">
+                <div class="game-wrapper">
+                    <div class="game-name">
+                        <span>
+                            {{game.name}}
+                        </span>
+                    </div><div class="game-attr">
+                              <span ng-repeat="attr in game.attr.common" ng-style="{marginRight: '10px'}" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
+                          </div><div class="game-note">
+                                    <span>{{game.attr.note}}</span>
+                                </div>
                 </div>
+            </a>
+            <div class="clearfix"></div>
+            <div class="game-content" ng-if="game.id === selected.id">
+                <ul>
+                    <li ng-repeat="attr in selected.attr.common" style="padding: 0; display: inline; margin-right: 20px">
+                        <label style="font-size: 30px" for="{{selected.id + '_' + attr.id}}">{{attr.longName}}:</label>
+                        <input id="{{selected.id + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status">
+                    </li>
+                </ul>
+                <ul ng-if="selected.attr.extras.length">
+                    <li ng-repeat="attr in selected.attr.extras" style="padding: 0; display: inline; margin-right: 20px">
+                        <label style="font-size: 30px; color: #6495ed" for="{{selected.id + '_' + attr.id}}">{{attr.id.substring(0,1).toUpperCase() + attr.id.substring(1, attr.id.length)}}:</label>
+                        <input id="{{selected.id + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status">
+                    </li>
+                </ul>
+                <div>
+                    <label style="font-size: 30px" for="{{game.id + '_note'}}">Anteckning:</label>
+                    <input id="{{game.id + '_note'}}" type="text" ng-model="selected.attr.note">
+                    <button ng-disabled="!isDirty(game.attr)" ng-click="updateGame(game)">Spara</button>
+                </div>
+            </div>
         </li>
     </ul>
+    <div style="background-color:#eee;padding:20px;border-radius:6px" ng-if="!games.length">
+        <span>
+            Det verkar som du inte har några spel än! Lägg till spel till din samling genom att gå till konsollistorna ovan.
+        </span>
+    </div>
     <div ui-view></div>
 </div>

@@ -29,7 +29,7 @@
                 <div ng-switch-when="true">
                     <span id="logged-in-explain">{{loggedInUser.userName}} </span>
                     <a href ng-controller="LogoutCtrl" ng-click="logout()">(Logga ut)</a>
-                    <a style="display: block" ng-href="#/admin">Admin</a>
+                    <a ng-if="showAdminLink()" style="display: block" ng-href="#/admin">Admin</a>
                 </div>
                 <div ng-switch-default>
                     <a ng-controller="LoginCtrl" ng-href="#/login">Logga in</a>
