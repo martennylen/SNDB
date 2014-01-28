@@ -19,14 +19,23 @@
     <script src="/app/admin/AdminCtrl.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/trackr.css">
   </head>
-<body ng-controller="IndexCtrl">
-    <div class="content-wrapper">
+<body>
+    <div class="content-wrapper" ng-controller="IndexCtrl">
         <div id="header-left">
             <h1><a ng-href="/">Trackr</a></h1>
         </div>
         <div id="header-right">
-            <div ng-if="loggedInUser.length"><span id="logged-in-explain">{{loggedInUser}} </span><a href ng-controller="LogoutCtrl"ng-click="logout()">(Logga ut)</a></div>
-            <a ng-href="#/admin">Admin</a>
+            <div ng-switch on="isLoggedIn()">
+                <div ng-switch-when="true">
+                    <span id="logged-in-explain">{{loggedInUser.userName}} </span>
+                    <a href ng-controller="LogoutCtrl" ng-click="logout()">(Logga ut)</a>
+                    <a style="display: block" ng-href="#/admin">Admin</a>
+                </div>
+                <div ng-switch-default>
+                    <a ng-controller="LoginCtrl" ng-href="#/login">Logga in</a>
+                    <a style="display: block" ng-href="#/register">Registrera</a>
+                </div>
+            </div>
         </div>
         <div class="clearfix"></div>
         <ul id="header-console-list">

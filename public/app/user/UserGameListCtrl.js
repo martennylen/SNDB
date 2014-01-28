@@ -1,6 +1,6 @@
 ﻿app.controller('UserGameListCtrl', function ($scope, $stateParams, $http, UserGamesService, baseRegions) {
     console.log('comblistctrl');
-    $scope.console = $stateParams.consoleId || 'nes';
+    $scope.console = $stateParams.consoleName || 'nes';
     $scope.userName = $stateParams.userName;
     $scope.selected = {};
 

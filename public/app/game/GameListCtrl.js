@@ -1,6 +1,6 @@
-﻿app.controller('GameListCtrl', function ($scope, $location, $route, $stateParams, GamesService, GameDetailsService, baseRegions) {
+﻿app.controller('GameListCtrl', function ($scope, $location, $route, $stateParams, GamesService, baseRegions) {
     console.log('gamelistctrl');
-    $scope.console = $stateParams.consoleId || 'nes';
+    $scope.console = $stateParams.consoleName || 'nes';
     $scope.selected = {};
 
     $scope.regions = _.map(baseRegions, function (r) { r.selected = true; return r; });

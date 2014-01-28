@@ -7,21 +7,22 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRoute
         .when('', '/nes');
 
     $stateProvider
-        .state('login', { url: '/login', templateUrl: 'app/account/login.html', controller: 'LoginCtrl'})
+        .state('login', { url: '/login', templateUrl: 'app/account/login.html', controller: 'LoginCtrl' })
+        .state('register', { url: '/register', templateUrl: 'app/account/register.html', controller: 'RegisterCtrl' })
         .state('admin', {
             url: '/admin',
             templateUrl: 'app/admin/index.html',
             resolve: { loggedin: validateUser },
             controller: 'AdminCtrl'
         })
-        .state('user', { url: '/user/:userName/:consoleId', templateUrl: 'app/user/userlist.html', controller: 'UserGameListCtrl' })
+        .state('user', { url: '/user/:userName/:consoleName', templateUrl: 'app/user/userlist.html', controller: 'UserGameListCtrl' })
         .state('game', {
             //url: '/:consoleId/{gameId:[A-z0-9]{32}}',
             url: '/:consoleName/:gameName',
             templateUrl: 'app/game/game.html',
             controller: 'GameDetailsCtrl'
         })
-        .state('console', { url: '/:consoleId', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl' });
+        .state('console', { url: '/:consoleName', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl' });
 
     //$httpProvider.interceptors.push('authInterceptor');
 });

@@ -1,0 +1,9 @@
+﻿<div class="view-wrapper">
+    <form name="form">
+        <input style="width:100%;padding:10px;border:0" type="text" placeholder="Mejladress" ng-model="credentials.mail" required />
+        <input style="width:100%;padding:10px;border:0" type="text" placeholder="Användarnamn" ng-model="credentials.username" required />
+        <input style="width:100%;padding:10px;border:0" type="password" placeholder="Lösenord" ng-model="credentials.password" required />
+        <button ng-disabled="!validateFields()" ng-click="registerCredentials()">Registrera</button>
+        <span>{{errorMessage}}</span>
+    </form>
+</div>
