@@ -1,13 +1,13 @@
-<h3>Hej {{ user }}</h3>
+<h3>Hej {{ user.username }}!</h3>
 
 <form novalidate class="simple-form" ng-style="{width: '95%'}">
 	<span>Konsol:</span> 
-	<select ng-style="{width: '100%', padding: '10px'}" ng-model="game.console" ng-options="c.id as c.name for c in consoles" ng-init="game.console = consoles[0].id">
+	<select style="width: 100%;padding: 10px;border:0" ng-model="game.console" ng-options="c.id as c.name for c in consoles" ng-init="game.console = consoles[0].id">
 	</select>
 	<span>Namn:</span>
-	<input ng-style="{width: '100%', padding: '10px'}" type="text" ng-model="game.name" required />
+    <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Spelnamn" ng-model="game.name" required />
 	<span>Utgivningsdatum:</span>
-	<input ng-style="{width: '100%', padding: '10px'}" type="text" ng-model="game.releaseDate" required />
+    <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Releasedatum" ng-model="game.releaseDate" required />
 	<span>Regioner:</span>
 	<ul>
 		<li ng-repeat="r in regions" ng-style="{display: 'inline'}">

@@ -13,7 +13,7 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRoute
             url: '/admin',
             templateUrl: 'app/admin/index.html',
             controller: 'AdminCtrl',
-            resolve: { roles: validateUser }
+            resolve: { user: validateUser }
         })
         .state('user', { url: '/user/:userName/:consoleName', templateUrl: 'app/user/userlist.html', controller: 'UserGameListCtrl' })
         .state('game', {
@@ -30,7 +30,7 @@ var validateUser = function($q, $http, $location, $timeout) {
     $http.get('/api/loggedin')
         .success(function(res) {
             if (res.status) {
-                $timeout(function() {deferred.resolve(res.roles);}, 0);
+                $timeout(function() {deferred.resolve(res.user);}, 0);
             } else {
                 $timeout(function() {deferred.reject();}, 0);
                 $location.path('/nes');

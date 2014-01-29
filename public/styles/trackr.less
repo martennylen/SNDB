@@ -54,16 +54,16 @@ html {
                     a:hover {
                         text-decoration: none;
                     }
-
-                    a:nth-of-type(2) {
+                /*a:nth-of-type(2) {
                         display: block;
-                    }
+                    }*/
             }
 
             #header-console-list {
                 //background-color: #F39D52;
-                //background-color: #EA974F;
-                background-color: #E58838;
+                background-color: #EA974F;
+                //background-color: #E58838;
+                //background-color: #ECA76C;
                 padding: 10px;
                 border-radius: 6px;
 
@@ -85,7 +85,15 @@ html {
 
                 a.disabled {
                     cursor: default;
-                }   
+                }
+
+                a:hover {
+                    .game-name {
+                        span {
+                            text-decoration: underline;
+                        }
+                    }
+                }
 
                 .game-content {
                     padding: 20px;
@@ -165,6 +173,7 @@ html {
                         .game-attr {
                             .column-no-float(2, 0);
                         }
+
                         .game-note {
                             .column-no-float(4, 0);
                         }

@@ -1,11 +1,9 @@
-﻿app.controller('AdminCtrl', function ($scope, $http, $location, consoles, baseRegions, roles) {
+﻿app.controller('AdminCtrl', function ($scope, $http, $location, consoles, baseRegions, user) {
     
     //roles.$promise.then(function (roles) {
     //    $scope.roles = roles;
     //});
-    $scope.roles = roles;
-    console.log($scope.roles);
-    $scope.user = 'Mårten';
+    $scope.user = user;
     $scope.consoles = consoles;
     $scope.regions = _.map(baseRegions, function (r) { r.selected = false; return r; });
     $scope.game = {};
