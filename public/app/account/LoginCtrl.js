@@ -1,18 +1,23 @@
 ﻿app.controller('IndexCtrl', function ($scope, consoles, $http, $rootScope) {
     $scope.consoles = consoles;
     console.log('index');
-    $rootScope.loggedInUser = {};
+    $scope.loggedInUser = {};
     $scope.isLoggedIn = function () {
-        return !_.isEmpty($rootScope.loggedInUser);
+        return !_.isEmpty($scope.loggedInUser);
     };
     $http.get('/api/user/details').success(function (user) {
         if (!_.isEmpty(user)) {
-            $rootScope.loggedInUser = user;
+            $scope.loggedInUser = user;
         }
     });
     $scope.showAdminLink = function() {
-        return _.contains($rootScope.loggedInUser.roles, 'a');
+        return _.contains($scope.loggedInUser.roles, 'a');
     };
+    $scope.$on('userLog', function (event, user) {
+        console.log(event);
+        console.log('user ' + JSON.stringify(user));
+        $scope.loggedInUser = user;
+    });
     //$scope.loggedInUser = $cookieStore.get('trackr.sess').username || {};
 });
 
@@ -20,15 +25,13 @@ app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope) {
     console.log('loginctrl');
 
     $scope.credentials = {};
-    $scope.$on('userRegistration', function(user) {
-        setUpLogin(user);
-    });
 
     $scope.validateCredentials = function (credentials) {
         $http.post('/api/login', credentials).
 		success(function (response) {
 		    if (response.success) {
-		        setUpLogin(response.user);
+		        $scope.$emit('userLog', response.user);
+		        $location.path('/user/' + response.user.username + '/nes');
 		    } else {
 		        $scope.errorMessage = response.message;
 		    }
@@ -41,11 +44,6 @@ app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope) {
     $scope.validateFields = function () {
         return $scope.loginForm.$valid;
     };
-
-    var setUpLogin = function(user) {
-        $rootScope.loggedInUser = user;
-        $location.path('/user/' + user.username + '/nes');
-    };
 });
 
 app.controller('RegisterCtrl', function ($scope, $location, $http) {
@@ -57,11 +55,12 @@ app.controller('RegisterCtrl', function ($scope, $location, $http) {
         $http.post('/api/register', $scope.credentials).
 		success(function (response) {
 		    console.log(JSON.stringify(response));
-		    //if (response.success) {
-		    //    $scope.$emit('userRegistration', response.user);
-		    //} else {
-		    //    $scope.errorMessage = response.message;
-		    //}
+		    if (response.success) {
+		        $scope.$emit('userLog', response.user);
+		        $location.path('/user/' + response.user.username + '/nes');
+		    } else {
+		        $scope.errorMessage = response.message;
+		    }
 		}).
 		error(function (response, status) {
 		    if (status === 409) {
@@ -78,8 +77,8 @@ app.controller('RegisterCtrl', function ($scope, $location, $http) {
 app.controller('LogoutCtrl', function ($scope, $location, $http, $rootScope) {
     $scope.logout = function () {
         $http.post('/api/logout').
-            success(function (response) {
-                $rootScope.loggedInUser = {};
+            success(function () {
+                $scope.$emit('userLog', {});
                 $location.path('/nes');
             });
     };
