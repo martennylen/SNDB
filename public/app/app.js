@@ -13,7 +13,7 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRoute
             url: '/admin',
             templateUrl: 'app/admin/index.html',
             controller: 'AdminCtrl',
-            resolve: { loggedin: validateUser }
+            resolve: { roles: validateUser }
         })
         .state('user', { url: '/user/:userName/:consoleName', templateUrl: 'app/user/userlist.html', controller: 'UserGameListCtrl' })
         .state('game', {
@@ -25,20 +25,19 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRoute
         .state('console', { url: '/:consoleName', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl' });
 });
 
-var validateUser = function ($q, $http, $location, $timeout) {
+var validateUser = function($q, $http, $location, $timeout) {
     var deferred = $q.defer();
     $http.get('/api/loggedin')
-        .success(function (res) {
+        .success(function(res) {
             if (res.status) {
-                $timeout(function () {
-                    $timeout(function () { deferred.resolve(); }, 0);
-                    //$scope.loggedin = deferred.promise;
-                }, 0);
+                $timeout(function() {deferred.resolve(res.roles);}, 0);
             } else {
-                $timeout(function () { deferred.reject(); }, 0);
-                $location.path('/login');
+                $timeout(function() {deferred.reject();}, 0);
+                $location.path('/nes');
             }
         });
+
+    return deferred.promise;
 };
 
 app.factory('GamesService', function ($resource, $location) {

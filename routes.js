@@ -53,9 +53,11 @@ module.exports = function(app, passport) {
     });
 
     app.get('/api/loggedin', function (req, res) {
-        console.log(req.user);
-        console.log('isauthenticated: ' + req.isAuthenticated());
-        res.send({ status: req.isAuthenticated() });
+        if (req.isAuthenticated && _u.contains(req.user.roles, 'a')) {
+            res.send({ status: true, roles: req.user.roles });
+        } else {
+            res.send({ status: false });
+        }
     });
     
     app.post('/api/login', function(req, res, next) {

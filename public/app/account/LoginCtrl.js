@@ -2,12 +2,12 @@
     $scope.consoles = consoles;
     console.log('index');
     $rootScope.loggedInUser = {};
-    $scope.isLoggedIn = function() {
+    $scope.isLoggedIn = function () {
         return !_.isEmpty($rootScope.loggedInUser);
     };
     $http.get('/api/user/details').success(function (user) {
         if (!_.isEmpty(user)) {
-            $rootScope.loggedInUser = { userName: user.username };
+            $rootScope.loggedInUser = user;
         }
     });
     $scope.showAdminLink = function() {
