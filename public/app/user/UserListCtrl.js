@@ -21,6 +21,14 @@
         $scope.filterBoxes[f.id] = f.selected;
     });
 
+    //$scope.games = UserGamesService.get({ userName: $scope.userName, consoleName: $scope.consoleName });
+    //$scope.games.$promise.then(function (response) {
+    //    $scope.games = response.items;
+    //    $scope.showControls = response.showControls;
+    //});
+
+    //console.log('hämtar spel ' + $scope.consoleName);
+
     //$http.get('/api/user/' + $stateParams.userName + '/' + $stateParams.consoleId).success(function(response) {
     //    $scope.games = response.items;
     //    $scope.showControls = response.showControls;
