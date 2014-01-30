@@ -12,7 +12,8 @@
     <script src="/lib/angular-cookies.js"></script>
     <script src="/lib/underscore-1.4.1.js"></script>
     <script src="/app/app.js"></script>
-    <script src="/app/user/UserGameListCtrl.js"></script>
+    <script src="/app/user/UserCtrl.js"></script>
+    <script src="/app/user/UserListCtrl.js"></script>
     <script src="/app/game/GameListCtrl.js"></script>
     <script src="/app/game/GameDetailsCtrl.js"></script>
     <script src="/app/account/LoginCtrl.js"></script>
@@ -31,8 +32,8 @@
                     <span id="logged-in-explain">{{loggedInUser.username}} </span>
                     <a href ng-controller="LogoutCtrl" ng-click="logout()">(Logga ut)</a>
                     <div>
-                        <a ng-if="isLoggedIn()" ng-href="#/user/{{loggedInUser.username}}/nes"><span class="glyphicon glyphicon-home"></span><span style="margin-left:6px">Min sida</span></a>
-                        <a ng-if="showAdminLink()" ng-href="#/admin" style="margin-left: 10px"><span class="glyphicon glyphicon-lock"></span><span style="margin-left:6px">Admin</span></a>
+                        <a ng-if="isLoggedIn()" href ui-sref="user({userName: loggedInUser.username})"><span class="glyphicon glyphicon-home"></span><span style="margin-left:6px">Min sida</span></a>
+                        <a ng-if="showAdminLink()" href ng-href="#/admin" style="margin-left: 10px"><span class="glyphicon glyphicon-lock"></span><span style="margin-left:6px">Admin</span></a>
                     </div>
                 </div>
                 <div ng-switch-default>

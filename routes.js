@@ -45,13 +45,6 @@ module.exports = function(app, passport) {
         });
     });
 
-    app.get('/api/user/details', function (req, res) {
-        if (req.isAuthenticated()) {
-            res.send({ 'username': req.user.username, 'roles': req.user.roles });
-        }
-        res.send({});
-    });
-
     app.get('/api/loggedin', function (req, res) {
         if (req.isAuthenticated && _u.contains(req.user.roles, 'a')) {
             res.send({ status: true, user: req.user });
@@ -84,32 +77,43 @@ module.exports = function(app, passport) {
         }
         res.send(200);
     });
-
-    app.get('/api/:consoleId', function (req, res) {
-        db.view('games/by_console', { key: req.params.consoleId }, function (err, response) {
-            var r = [];
-
-            _u.each(response, function (item) {
-                r.push(item.value);
-            });
-
-            res.send(r);
-        });
+    
+    app.get('/api/user/details', function (req, res) {
+        if (req.isAuthenticated()) {
+            res.send({ 'username': req.user.username, 'roles': req.user.roles });
+        }
+        res.send({});
     });
 
-    app.get('/api/:consoleName/:gameName', function (req, res) {
-        console.log(req.params.gameName.split('-').join(' '));
-        db.view('games/all', { key: req.params.gameName.split('-').join(' ') }, function (err, response) {
-            //TA BARA DET VI BEHÖVER, INTE HELA COUCH-MODELLEN
+    app.get('/api/user/:userName', function (req, res) {
+        console.log(req.params);
+        db.view('users/by_user', { key: req.params.userName }, function(err, response) {
             if (err) {
+                console.log("Ingen användare hittades");
                 res.send(404);
             }
-            console.log(response[0].value);
-            res.send(response[0].value);
+            var userId = response[0].id;
+            console.log('apa ' + userId);
+            db.view('games/stats_by_user', {
+                startkey: [userId],
+                endkey: [userId, {}],
+                group: true
+            }, function (err, response) {
+            if (err) {
+                res.send(500);
+            }
+            var list = [];
+            _u.each(response, function (unique) {
+                //console.log(unique);
+                list.push({ console: unique.key[1], count: unique.value });
+            });
+
+            res.send(list);
+            });
         });
     });
 
-    app.get('/api/user/:userName/:consoleId', function (req, res) {
+    app.get('/api/user/:userName/:consoleName', function (req, res) {
         db.view('users/by_user', { key: req.params.userName }, function (err, response) {
             if (err) {
                 console.log("Ingen användare hittades");
@@ -118,8 +122,8 @@ module.exports = function(app, passport) {
             var userId = response[0].id;
 
             db.view('games/by_user', {
-                startkey: [userId, req.params.consoleId],
-                endkey: [userId, req.params.consoleId, {}],
+                startkey: [userId, req.params.consoleName],
+                endkey: [userId, req.params.consoleName, {}],
                 include_docs: true
             }, function (err, response) {
                 var list = [];
@@ -148,7 +152,7 @@ module.exports = function(app, passport) {
                 if (req.user !== undefined) {
                     requestId = req.user.id;
                 }
-                res.send({ items: list, showControls: userId === requestId });
+                res.send({ games: list, showControls: userId === requestId });
             });
         });
     });
@@ -174,6 +178,29 @@ module.exports = function(app, passport) {
             if (res.ok) {
                 response.send({ 'reply': 'ok' });
             }
+        });
+    });
+    
+    app.get('/api/:consoleName', function (req, res) {
+        db.view('games/by_console', { key: req.params.consoleName }, function (err, response) {
+            var r = [];
+
+            _u.each(response, function (item) {
+                r.push(item.value);
+            });
+
+            res.send(r);
+        });
+    });
+
+    app.get('/api/:consoleName/:gameName', function (req, res) {
+        db.view('games/all', { key: req.params.gameName.split('-').join(' ') }, function (err, response) {
+            //TA BARA DET VI BEHÖVER, INTE HELA COUCH-MODELLEN
+            if (err) {
+                res.send(404);
+            }
+            console.log(response[0].value);
+            res.send(response[0].value);
         });
     });
 }

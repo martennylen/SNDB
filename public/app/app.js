@@ -2,7 +2,7 @@
 
 var app = angular.module('trackr', ['ngResource', 'ngRoute', 'ui.router', 'ngCookies']);
 
-app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRouterProvider, $stateProvider) {
+app.config(function($httpProvider, $routeProvider, $locationProvider, $urlRouterProvider, $stateProvider) {
     $urlRouterProvider
         .when('', '/nes');
 
@@ -15,7 +15,27 @@ app.config(function ($httpProvider, $routeProvider, $locationProvider, $urlRoute
             controller: 'AdminCtrl',
             resolve: { user: validateUser }
         })
-        .state('user', { url: '/user/:userName/:consoleName', templateUrl: 'app/user/userlist.html', controller: 'UserGameListCtrl' })
+        .state('user', {
+            //abstract: true,
+            url: '/user/:userName',
+            templateUrl: 'app/user/user.html',
+            controller: 'UserCtrl',
+            resolve: {
+                stats: function (UserGamesStatsService, $stateParams) {
+                    var stats = UserGamesStatsService.query({ userName: $stateParams.userName });
+                    return stats.$promise;
+                }
+            }
+        })
+        .state('user.list', {
+            url: '/:consoleName', templateUrl: 'app/user/userlist.html', controller: 'UserListCtrl',
+            resolve: {
+                gameResponse: function (UserGamesService, $stateParams) {
+                    var games = UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName });
+                    return games.$promise;
+                }
+            }
+        })
         .state('game', {
             //url: '/:consoleId/{gameId:[A-z0-9]{32}}',
             url: '/:consoleName/:gameName',
@@ -40,16 +60,20 @@ var validateUser = function($q, $http, $location, $timeout) {
     return deferred.promise;
 };
 
-app.factory('GamesService', function ($resource, $location) {
-    return $resource('/api/:consoleId');
+app.factory('UserGamesStatsService', function ($resource) {
+    return $resource('/api/user/:userName');
 });
 
 app.factory('UserGamesService', function ($resource) {
-    return $resource('/api/user/:userName/:consoleId');
+    return $resource('/api/user/:userName/:consoleName');
 });
 
-app.factory('GameDetailsService', function($resource) {
-  return $resource('/api/:consoleName/:gameName');
+app.factory('GameDetailsService', function ($resource) {
+    return $resource('/api/:consoleName/:gameName');
+});
+
+app.factory('GamesService', function ($resource, $location) {
+    return $resource('/api/:consoleName');
 });
 
 app.constant('consoles', [
@@ -57,8 +81,11 @@ app.constant('consoles', [
 	{ 'id': 'snes', 'name': 'SNES' },
     { 'id': 'n64', 'name': 'GB' },
     { 'id': 'n64', 'name': 'N64' },
-    { 'id': 'gc', 'name': 'GC'
-    }]);
+    { 'id': 'gc', 'name': 'GC' },
+    { 'id': 'wii', 'name': 'Wii' },
+    { 'id': 'gc', 'name': 'WiiU' },
+    { 'id': 'gw', 'name': 'G&W' }
+]);
 
 app.constant('baseRegions', [
   {'id': 'scn', 'name': 'SCN+ESP', 'selected': true},

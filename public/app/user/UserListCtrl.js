@@ -1,6 +1,16 @@
-﻿app.controller('UserGameListCtrl', function ($scope, $stateParams, $http, UserGamesService, baseRegions) {
-    console.log('comblistctrl');
-    $scope.console = $stateParams.consoleName || 'nes';
+﻿app.controller('UserListCtrl', function ($scope, $location, $stateParams, $http, baseRegions, gameResponse) {
+    console.log('userlistctrl');
+    $scope.consoleName = $stateParams.consoleName;
+    $scope.games = gameResponse.games;
+    $scope.showControls = gameResponse.showControls;
+    $scope.$watch('consoleName', function (newValue) {
+        if (newValue.length) {
+            //console.log('userlistctrl fick stateparam och satte till: ' + newValue);
+            $scope.$emit('consoleChanged', newValue);
+            //$location.path('/user/' + $scope.userName + '/' + $scope.consoleName);
+        }
+    });
+    //console.log($scope.consoleName);
     $scope.userName = $stateParams.userName;
     $scope.selected = {};
 
@@ -9,12 +19,6 @@
 
     _.each($scope.regions, function (f) {
         $scope.filterBoxes[f.id] = f.selected;
-    });
-
-    $scope.games = UserGamesService.get({ userName: $scope.userName, consoleId: $scope.console });
-    $scope.games.$promise.then(function (response) {
-        $scope.games = response.items;
-        $scope.showControls = response.showControls;
     });
 
     //$http.get('/api/user/' + $stateParams.userName + '/' + $stateParams.consoleId).success(function(response) {

@@ -31,7 +31,7 @@ app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope) {
 		success(function (response) {
 		    if (response.success) {
 		        $scope.$emit('userLog', response.user);
-		        $location.path('/user/' + response.user.username + '/nes');
+		        $location.path('/user/' + response.user.username);
 		    } else {
 		        $scope.errorMessage = response.message;
 		    }
@@ -57,7 +57,7 @@ app.controller('RegisterCtrl', function ($scope, $location, $http) {
 		    console.log(JSON.stringify(response));
 		    if (response.success) {
 		        $scope.$emit('userLog', response.user);
-		        $location.path('/user/' + response.user.username + '/nes');
+		        $location.path('/user/' + response.user.username);
 		    } else {
 		        $scope.errorMessage = response.message;
 		    }

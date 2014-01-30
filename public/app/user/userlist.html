@@ -1,13 +1,13 @@
-﻿<div class="view-wrapper">
+﻿<div ng-if="games.length">
     <input type="text" class="search-holder" placeholder="Sök spel..." ng-model="search.name" />
-    <h3 style="display:inline">{{filtered.length}} spel hittades</h3>
+    <!--<h3 style="display:inline">{{filtered.length}} spel hittades</h3>-->
     <ul>
         <li ng-repeat="r in regions" ng-style="{display: 'inline'}">
             <label for="{{r.id}}">{{r.name}}</label>
             <input id="{{r.id}}" type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]">
         </li>
     </ul>
-    <ul id="games" ng-if="games.length">
+    <ul id="games">
         <!--<li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">-->
         <li ng-repeat="game in games" ng-class-odd="'odd'" ng-class-even="'even'">
             <a href ng-click="editGame(game)" ng-class="{disabled: !validatePerm()}">
@@ -17,10 +17,10 @@
                             {{game.name}}
                         </span>
                     </div><div class="game-attr">
-                              <span ng-repeat="attr in game.attr.common" ng-style="{marginRight: '10px'}" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
-                          </div><div class="game-note">
-                                    <span>{{game.attr.note}}</span>
-                                </div>
+                        <span ng-repeat="attr in game.attr.common" ng-style="{marginRight: '10px'}" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
+                    </div><div class="game-note">
+                        <span>{{game.attr.note}}</span>
+                    </div>
                 </div>
             </a>
             <div class="clearfix"></div>
@@ -45,10 +45,4 @@
             </div>
         </li>
     </ul>
-    <div style="background-color:#eee;padding:20px;border-radius:6px" ng-if="!games.length">
-        <span>
-            Det verkar som du inte har några spel än! Lägg till spel till din samling genom att gå till konsollistorna ovan.
-        </span>
-    </div>
-    <div ui-view></div>
 </div>

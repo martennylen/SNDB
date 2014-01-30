@@ -10,7 +10,7 @@
         $scope.filterBoxes[f.id] = f.selected;
     });
 
-    $scope.games = GamesService.query({ consoleId: $scope.console });
+    $scope.games = GamesService.query({ consoleName: $scope.console });
     $scope.games.$promise.then(function (games) {
         $scope.games = games;
     });

@@ -69,6 +69,10 @@ html {
 
                 > li {
                     display: inline;
+
+                    a {
+                        font-weight: bold;
+                    }
                 }
             }
         }
@@ -91,6 +95,14 @@ html {
                     .game-name {
                         span {
                             text-decoration: underline;
+                        }
+                    }
+                }
+
+                a.disabled:hover {
+                    .game-name {
+                        span {
+                            text-decoration: none;
                         }
                     }
                 }
@@ -128,6 +140,27 @@ html {
 
             li:only-of-type {
                 border-radius: 6px;
+            }
+        }
+
+        ul#user-console-list{
+            background-color: #ECECEA;
+            padding: 10px;
+            border-radius: 6px;
+            display: inline;
+            margin-left: 15px;
+
+            > li {
+                display: inline;
+
+                a {
+                    color: #EA974F;
+                    //font-weight: bold;
+                }
+
+                a.selected {
+                    font-weight: bold;
+                }
             }
         }
 
