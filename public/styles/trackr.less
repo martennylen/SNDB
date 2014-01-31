@@ -97,12 +97,6 @@ html {
                             text-decoration: underline;
                         }
                     }
-
-                    .game-add-button {
-                        span:nth-of-type(2) {
-                            text-decoration: underline;
-                        }
-                    }
                 }
 
                 a.disabled:hover {
@@ -153,8 +147,6 @@ html {
             background-color: #ECECEA;
             padding: 10px;
             border-radius: 6px;
-            display: inline;
-            margin-left: 15px;
 
             > li {
                 display: inline;
@@ -184,6 +176,9 @@ html {
         }
 
         @media all and (min-width : 1000px) {
+            .mobile-only {
+                display: none;
+            }
             .content-wrapper {
                 margin: 0 auto;
                 padding-top: 60px;
@@ -197,6 +192,10 @@ html {
                     text-align: right;
                     .column(4);
                     .last-col();
+
+                    .blockify {
+                        display: block;
+                    }
                 }
 
                 .view-wrapper {
@@ -227,27 +226,43 @@ html {
                             .column-no-float(8, 0);
                         }
 
-                        .game-add-button {
+                        .game-attr {
                             .column-no-float(4, 0);
+
+                            .glyphicon-plus-sign {
+                                top: 4px;
+                            }
                         }
+                    }
+
+                    ul#user-console-list {
+                        display: inline;
+                        margin-left: 15px;
+                    }
+
+                    h3 {
+                        display: inline-block;
                     }
                 }
             }
         }
 
         @media all and (max-width : 999px) {
+            .desktop-only {
+                display: none;
+            }
+            .glyphicon {
+                font-size: 30px;
+            }
             #header-left {
-                .column(6);
+                .column-no-float(4,5%);
             }
 
             #header-right {
-                text-align: right;
-                .column(6);
+                .column-no-float(8,5%);
                 .last-col();
-
-                #logged-in-explain {
-                    display: none;
-                }
+                text-align: right;
+                padding-right: 20px;
             }
 
             .view-wrapper {
@@ -266,14 +281,39 @@ html {
                         padding: 50px 10px;
                     }
 
-                    .game-name {
-                        .column-no-float(9);
+                    .game-wrapper {
+                        .game-name {
+                            .column-no-float(9);
+                        }
+
+                        .game-attr {
+                            .column-no-float(3);
+                            .last-col();
+                        }
                     }
 
-                    .game-attr {
-                        .column-no-float(3);
-                        .last-col();
+                    .master-wrapper {
+                        .game-name {
+                            .column-no-float(9, 0);
+                        }
+
+                        .game-attr {
+                            .column-no-float(3, 0);
+
+                            .glyphicon-plus-sign {
+                                top: 6px;
+                            }
+                        }
                     }
+                }
+
+                ul#user-console-list {
+                    display: block;
+                    margin-top: 0;
+                }
+
+                h3 {
+                    margin: 0;
                 }
             }
         }

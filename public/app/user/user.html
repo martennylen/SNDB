@@ -1,5 +1,5 @@
 ﻿<div class="view-wrapper">
-    <h3 style="display: inline-block">Hej {{userName}}!</h3>
+    <h3>Hej {{userName}}!</h3>
     <ul ng-if="stats.length" id="user-console-list">
         <li ng-repeat="stat in stats">
             <a ui-sref="user.list({consoleName: stat.console})" ng-class="{selected: stat.console === selected}">{{stat.console.toUpperCase()}} ({{stat.count}})</a>

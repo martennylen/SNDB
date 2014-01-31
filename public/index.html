@@ -5,6 +5,8 @@
     <title>SNDB Trackr</title>
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" type="text/css" href="styles/trackr.css">
+    <link rel="stylesheet" type="text/css" href="styles/icons.css">
     <script src="/lib/angular.js"></script>
     <script src="/lib/angular-resource.js"></script>
     <script src="/lib/angular-route.js"></script>
@@ -18,27 +20,24 @@
     <script src="/app/game/GameDetailsCtrl.js"></script>
     <script src="/app/account/LoginCtrl.js"></script>
     <script src="/app/admin/AdminCtrl.js"></script>
-    <link rel="stylesheet" type="text/css" href="styles/trackr.css">
-    <link rel="stylesheet" type="text/css" href="styles/icons.css">
   </head>
 <body>
     <div class="content-wrapper" ng-controller="IndexCtrl">
         <div id="header-left">
             <h1><a ng-href="/">Trackr</a></h1>
-        </div>
-        <div id="header-right">
+        </div><div id="header-right">
             <div ng-switch on="isLoggedIn()">
                 <div ng-switch-when="true">
-                    <span id="logged-in-explain">{{loggedInUser.username}} </span>
-                    <a href ng-controller="LogoutCtrl" ng-click="logout()">(Logga ut)</a>
-                    <div>
-                        <a ng-if="isLoggedIn()" href ui-sref="user({userName: loggedInUser.username})"><span class="glyphicon glyphicon-home"></span><span style="margin-left:6px">Min sida</span></a>
-                        <a ng-if="showAdminLink()" href ng-href="#/admin" style="margin-left: 10px"><span class="glyphicon glyphicon-lock"></span><span style="margin-left:6px">Admin</span></a>
-                    </div>
+                    <a href ui-sref="user({userName: loggedInUser.username})"><span class="glyphicon glyphicon-home mobile-only"></span><span style="margin-left:6px" class="desktop-only">Min sida</span></a>
+                    <a ng-if="showAdminLink()" href ng-href="#/admin"><span class="glyphicon glyphicon-lock mobile-only"></span><span style="margin-left:6px" class="desktop-only">Admin</span></a>
+                    <span class="blockify">
+                        <span class="desktop-only">{{loggedInUser.username}} </span>
+                        <a href ng-controller="LogoutCtrl" ng-click="logout()"><span class="glyphicon glyphicon-log-out mobile-only"></span><span style="margin-left:6px" class="desktop-only">(Logga ut)</span></a>
+                    </span>
                 </div>
                 <div ng-switch-default>
-                    <a ng-controller="LoginCtrl" ng-href="#/login">Logga in</a>
-                    <a style="display: block" ng-href="#/register">Registrera</a>
+                    <a ng-href="#/register"><span class="glyphicon glyphicon-pencil mobile-only"></span><span class="desktop-only">Registrera</span></a>
+                    <a ng-controller="LoginCtrl" ng-href="#/login"><span class="glyphicon glyphicon-log-in mobile-only"></span><span class="desktop-only blockify">Logga in</span></a>
                 </div>
             </div>
         </div>
