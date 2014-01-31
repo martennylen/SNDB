@@ -6,15 +6,19 @@
     </ul>
     <ul id="games">
         <li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">
-            <a ui-sref="game({consoleName:console, gameName:game.name.split(' ').join('-')})">
-                <div class="game-wrapper">
+            <div class="master-wrapper">
+                <a ui-sref="game({consoleName:console, gameName:game.name.split(' ').join('-')})">
                     <div class="game-name">
                         <span>
                             {{game.name}}
                         </span>
-                    </div>
+                    </div></a><a href="#"><div class="game-add-button">
+                    <span class="glyphicon glyphicon-plus-sign">
+                    </span>
+                    <span>Lägg till</span>
                 </div>
-            </a>
+                </a>
+            </div>
         </li>
     </ul>
 </div>
