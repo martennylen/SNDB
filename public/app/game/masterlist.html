@@ -13,8 +13,9 @@
                             {{game.name}}
                         </span>
                     </div></a><a href="#"><div class="game-attr">
-                        <span class="glyphicon glyphicon-plus-sign"></span>
-                        <span class="desktop-only">Lägg till</span>
+                        <span ng-repeat="attr in game.attr.common" ng-style="{marginRight: '10px'}" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
+                                              <!--<span class="glyphicon glyphicon-plus-sign"></span>
+                                                  <span class="desktop-only">Lägg till</span>-->
                     </div>
                 </a>
             </div>

@@ -12,6 +12,7 @@
 
     $scope.games = GamesService.query({ consoleName: $scope.console });
     $scope.games.$promise.then(function (games) {
+        console.log(games);
         $scope.games = games;
     });
 });

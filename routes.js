@@ -182,15 +182,129 @@ module.exports = function(app, passport) {
     });
     
     app.get('/api/:consoleName', function (req, res) {
-        db.view('games/by_console', { key: req.params.consoleName }, function (err, response) {
-            var r = [];
+        //db.view('games/by_console', { key: req.params.consoleName }, function (err, response) {
+        //    var r = [];
 
-            _u.each(response, function (item) {
-                r.push(item.value);
-            });
+        //    _u.each(response, function (item) {
+        //        r.push(item.value);
+        //    });
 
-            res.send(r);
+        //    res.send(r);
+        //});
+        
+        var indexOfValue = _u.indexOf;
+
+        // using .mixin allows both wrapped and unwrapped calls:
+        // _(array).indexOf(...) and _.indexOf(array, ...)
+        _u.mixin({
+
+            // return the index of the first array element passing a test
+            indexOf: function(array, test) {
+                // delegate to standard indexOf if the test isn't a function
+                if (!_u.isFunction(test)) return indexOfValue(array, test);
+                // otherwise, look for the index
+                for (var x = 0; x < array.length; x++) {
+                    if (test(array[x])) return x;
+                }
+                // not found, return fail value
+                return -1;
+            }
+
         });
+
+        db.view('games/by_console', { key: req.params.consoleName }, function (err, response) {
+            if (req.user !== undefined) {
+                db.view('users/by_user', { key: req.user.username }, function(e2, r2) {
+                    if (e2) {
+                        console.log("Ingen användare hittades");
+                        res.send(404);
+                    }
+
+                    var userId = r2[0].id;
+                    var result = [];
+
+                    db.view('games/by_user', {
+                        startkey: [userId, req.params.consoleName],
+                        endkey: [userId, req.params.consoleName, {}]
+                    }, function(e, resp) {
+                        if (e) {
+                            res.send(500);
+                        }
+                        if (resp.length) {
+                            var found = {};
+                            _u.each(response, function(game) {
+                                found = _u.indexOf(resp, function(comb) {
+                                    return game.value.id === comb.value.game.id;
+                                });
+
+                                var status = false;
+                                console.log(game.value);
+                                game.value.attr.common = _u.map(game.value.attr.common, function (attr, i) {
+                                    status = (found > -1) ? resp[found].value.game.attr.common[i] : false;
+                                    return { id: attr, status: status };
+                                });
+                                game.value.attr.extras = _u.map(game.value.attr.extras, function (attr, i) {
+                                    status = (found > -1) ? resp[found].value.game.attr.extras[i] : false;
+                                    return { id: attr, status: status };
+                                });
+
+                                if (found > -1) {
+                                    game.value.attr.isNew = false;
+                                    resp.splice(found, 1);
+                                } else {
+                                    game.value.attr.isNew = true;
+                                }
+                                
+                                result.push(game.value);
+                            });
+
+                            res.send(result);
+                        } else {
+                            res.send(_u.map(response, function (game) {
+                                return game.value;
+                            }));
+                        }
+                    });
+                });
+            } else {
+                res.send(_u.map(response, function (game) {
+                    return game.value;
+                }));
+            }
+            //_u.each(response, function (item) {
+
+
+                //    result.push(item.value);
+                //});
+
+                //if (req.query.u) {
+                //    var d = [];
+                //    //db.view('games/by_user', { key: req.query.u }, function(e, resp) {
+                //        _u.each(resp[0].value, function(item) {
+                //            d.push(item);
+                //        });
+
+                //        var found = {};
+                //        _u.map(d, function(it) {
+                //            found = _u.find(r, function(g) {
+                //                return g.id === it.id;
+                //            });
+
+                //            if (found) { // User has game                        
+                //                //found.attr.common = _u.object(found.attr.common, it.attr.common);
+                //                found.attr.common = _u.map(found.attr.common, function(x, iter) {
+                //                    return { 'id': x, 'status': it.attr.common[iter] };
+                //                });
+                //                found.attr.e = it.attr.e;
+                //            }
+                //        });
+                //    }
+                //        res.send(r);
+                //    });
+                //} else {
+                //    res.send(r);
+                //}
+            });
     });
 
     app.get('/api/:consoleName/:gameName', function (req, res) {
