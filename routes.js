@@ -36,7 +36,7 @@ module.exports = function(app, passport) {
 
             db.save(newUser, function (err2, res2) {
                 console.log(res2);
-                if (err) {
+                if (err2) {
                     res.send(500);
                 }
                 
@@ -142,6 +142,7 @@ module.exports = function(app, passport) {
                         return { 'id': currentAttr, 'status': game.value.game.attr.extras[iter] };
                     });
                     current.attr.note = game.value.game.attr.note;
+                    current.attr.isComplete = _u.every(_u.pluck(current.attr.common, 'status'));
                     current.regions = game.doc.regions;
                     current.item = game.id;
                     list.push(current);
@@ -181,17 +182,7 @@ module.exports = function(app, passport) {
         });
     });
     
-    app.get('/api/:consoleName', function (req, res) {
-        //db.view('games/by_console', { key: req.params.consoleName }, function (err, response) {
-        //    var r = [];
-
-        //    _u.each(response, function (item) {
-        //        r.push(item.value);
-        //    });
-
-        //    res.send(r);
-        //});
-        
+    app.get('/api/:consoleName', function (req, res) {        
         var indexOfValue = _u.indexOf;
 
         // using .mixin allows both wrapped and unwrapped calls:
@@ -230,23 +221,22 @@ module.exports = function(app, passport) {
                         if (e) {
                             res.send(500);
                         }
-                        if (resp.length) {
-                            var found = {};
-                            _u.each(response, function(game) {
+                        var hasGames = resp.length > 0;
+                        var found = 0;
+                        _u.each(response, function (game) {
+                            if (hasGames) {
                                 found = _u.indexOf(resp, function(comb) {
                                     return game.value.id === comb.value.game.id;
                                 });
 
-                                var status = false;
-                                console.log(game.value);
-                                game.value.attr.common = _u.map(game.value.attr.common, function (attr, i) {
-                                    status = (found > -1) ? resp[found].value.game.attr.common[i] : false;
-                                    return { id: attr, status: status };
+                                game.value.attr.common = _u.map(game.value.attr.common, function(attr, i) {
+                                    return { id: attr, status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
                                 });
-                                game.value.attr.extras = _u.map(game.value.attr.extras, function (attr, i) {
-                                    status = (found > -1) ? resp[found].value.game.attr.extras[i] : false;
-                                    return { id: attr, status: status };
+                                game.value.attr.extras = _u.map(game.value.attr.extras, function(attr, i) {
+                                    return { id: attr, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
                                 });
+                                game.value.attr.note = (found > -1) ? resp[found].value.game.attr.note : '';
+                                game.value.attr.isComplete = _u.every(_u.pluck(game.value.attr.common, 'status'));
 
                                 if (found > -1) {
                                     game.value.attr.isNew = false;
@@ -254,57 +244,26 @@ module.exports = function(app, passport) {
                                 } else {
                                     game.value.attr.isNew = true;
                                 }
-                                
-                                result.push(game.value);
-                            });
+                            } else {
+                                game.value.attr.isNew = true;
+                            }
 
-                            res.send(result);
-                        } else {
-                            res.send(_u.map(response, function (game) {
-                                return game.value;
-                            }));
-                        }
+                            result.push(game.value);
+                        });
+
+                        var list = _u.pluck(response, 'value');
+                        
+                        res.send({ games: list, loggedIn: true });
                     });
                 });
             } else {
-                res.send(_u.map(response, function (game) {
-                    return game.value;
-                }));
+                res.send({
+                    games: _u.map(response, function(game) {
+                        return game.value;
+                    }), loggedIn: false
+                });
             }
-            //_u.each(response, function (item) {
-
-
-                //    result.push(item.value);
-                //});
-
-                //if (req.query.u) {
-                //    var d = [];
-                //    //db.view('games/by_user', { key: req.query.u }, function(e, resp) {
-                //        _u.each(resp[0].value, function(item) {
-                //            d.push(item);
-                //        });
-
-                //        var found = {};
-                //        _u.map(d, function(it) {
-                //            found = _u.find(r, function(g) {
-                //                return g.id === it.id;
-                //            });
-
-                //            if (found) { // User has game                        
-                //                //found.attr.common = _u.object(found.attr.common, it.attr.common);
-                //                found.attr.common = _u.map(found.attr.common, function(x, iter) {
-                //                    return { 'id': x, 'status': it.attr.common[iter] };
-                //                });
-                //                found.attr.e = it.attr.e;
-                //            }
-                //        });
-                //    }
-                //        res.send(r);
-                //    });
-                //} else {
-                //    res.send(r);
-                //}
-            });
+        });
     });
 
     app.get('/api/:consoleName/:gameName', function (req, res) {

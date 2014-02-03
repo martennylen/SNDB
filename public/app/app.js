@@ -31,13 +31,9 @@ app.config(function($httpProvider, $routeProvider, $locationProvider, $urlRouter
             url: '/:consoleName', templateUrl: 'app/user/userlist.html', controller: 'UserListCtrl',
             resolve: {
                 gameResponse: function (UserGamesService, $stateParams) {
-                    console.log($stateParams.consoleName);
                     var games = UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName });
                     return games.$promise;
                 }
-            },
-            onExit: function($location) {
-                console.log($location.path());
             }
         })
         .state('game', {
@@ -46,7 +42,15 @@ app.config(function($httpProvider, $routeProvider, $locationProvider, $urlRouter
             templateUrl: 'app/game/game.html',
             controller: 'GameDetailsCtrl'
         })
-        .state('console', { url: '/:consoleName', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl' });
+        .state('console', {
+            url: '/:consoleName', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl',
+            resolve: {
+                gameResponse: function (GamesService, $stateParams) {
+                    var games = GamesService.get({ consoleName: $stateParams.consoleName });
+                    return games.$promise;
+                }
+            }
+        });
 });
 
 var validateUser = function($q, $http, $location, $timeout) {

@@ -34,6 +34,10 @@
     //    $scope.showControls = response.showControls;
     //});
 
+    //$scope.$watch("selected", function (selected) {
+    //    console.log(selected);
+    //});
+
     $scope.idEditing = false;
     $scope.editGame = function (g) {
         if (!$scope.showControls) {
@@ -53,15 +57,9 @@
     };
 
     $scope.updateGame = function (g) {
-        var current = $scope.selected;
-
         var obj = {
-            common: _.map(current.attr.common, function (attr) {
-                return attr.status;
-            }),
-            extras: _.map(current.attr.extras, function (attr) {
-                return attr.status;
-            }),
+            common: _.pluck(current.attr.common, 'status'),
+            extras: _.pluck(current.attr.extras, 'status'),
             note: current.attr.note
         };
 
@@ -86,10 +84,7 @@
     //};
 
     $scope.isDirty = function (attrs) {
+        console.log('anropas');
         return (angular.toJson(attrs) !== angular.toJson($scope.selected.attr));
-    };
-
-    $scope.validatePerm = function () {
-        return $scope.showControls;
     };
 });

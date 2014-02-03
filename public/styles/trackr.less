@@ -199,38 +199,48 @@ html {
                 }
 
                 .view-wrapper {
-                    .game-wrapper {
-                        a:hover {
-                            text-decoration: none;
+                    ul#games {
+                        a.complete {
+                            color: #A8CD1B;
                         }
 
-                        .game-name {
-                            .column-no-float(6, 0);
+                        .game-wrapper {
+                            a:hover {
+                                text-decoration: none;
+                            }
+
+                            .game-name {
+                                .column-no-float(6, 0);
+                            }
+
+                            .game-attr {
+                                .column-no-float(2, 0);
+                            }
+
+                            .game-note {
+                                .column-no-float(4, 0);
+                            }
                         }
 
-                        .game-attr {
-                            .column-no-float(2, 0);
-                        }
+                        .master-wrapper {
+                            a:hover {
+                                text-decoration: none;
+                            }
 
-                        .game-note {
-                            .column-no-float(4, 0);
-                        }
-                    }
+                            .game-name {
+                                .column-no-float(6, 0);
+                            }
 
-                    .master-wrapper {
-                        a:hover {
-                            text-decoration: none;
-                        }
+                            .game-attr {
+                                .column-no-float(2, 0);
 
-                        .game-name {
-                            .column-no-float(8, 0);
-                        }
+                                .glyphicon-plus-sign {
+                                    top: 4px;
+                                }
+                            }
 
-                        .game-attr {
-                            .column-no-float(4, 0);
-
-                            .glyphicon-plus-sign {
-                                top: 4px;
+                            .game-note {
+                                .column-no-float(4, 0);
                             }
                         }
                     }
@@ -281,14 +291,17 @@ html {
                         padding: 50px 10px;
                     }
 
+                    a.complete {
+                        color: #A8CD1B;
+                    }
+
                     .game-wrapper {
                         .game-name {
-                            .column-no-float(9);
+                            .column-no-float(9, 0);
                         }
 
                         .game-attr {
-                            .column-no-float(3);
-                            .last-col();
+                            .column-no-float(3, 0);
                         }
 
                         .game-note {
@@ -297,6 +310,9 @@ html {
                     }
 
                     .master-wrapper {
+                        a.complete {
+                            color: #A8CD1B;
+                        }
                         .game-name {
                             .column-no-float(9, 0);
                         }
@@ -307,6 +323,10 @@ html {
                             .glyphicon-plus-sign {
                                 top: 6px;
                             }
+                        }
+
+                        .game-note {
+                            display: none;
                         }
                     }
                 }
