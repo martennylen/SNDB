@@ -72,6 +72,11 @@ html {
 
                     a {
                         font-weight: bold;
+                        text-decoration: none;
+                    }
+
+                    a:hover {
+                        text-decoration: underline;
                     }
                 }
             }
@@ -79,6 +84,12 @@ html {
 
         span.exists {
             color: #A8CD1B;
+        }
+
+        #game-search {
+            border: 0;
+            outline-color: #EA974F; 
+            padding: 8px
         }
 
         ul#games {
@@ -199,6 +210,11 @@ html {
                 }
 
                 .view-wrapper {
+                    #game-search {
+                        height: 30px; 
+                        width: 40%; 
+                    }
+
                     ul#games {
                         a.complete {
                             color: #A8CD1B;
@@ -278,7 +294,7 @@ html {
             .view-wrapper {
                 .column(12);
 
-                input.search-holder {
+                #game-search {
                     width: 100%;
                     height: 50px;
                     font-size: 25px;

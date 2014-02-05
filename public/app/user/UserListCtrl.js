@@ -5,12 +5,10 @@
     $scope.showControls = gameResponse.showControls;
     $scope.$watch('consoleName', function (newValue) {
         if (newValue.length) {
-            //console.log('userlistctrl fick stateparam och satte till: ' + newValue);
             $scope.$emit('consoleChanged', newValue);
-            //$location.path('/user/' + $scope.userName + '/' + $scope.consoleName);
         }
     });
-    //console.log($scope.consoleName);
+
     $scope.userName = $stateParams.userName;
     $scope.selected = {};
 
@@ -20,23 +18,6 @@
     _.each($scope.regions, function (f) {
         $scope.filterBoxes[f.id] = f.selected;
     });
-
-    //$scope.games = UserGamesService.get({ userName: $scope.userName, consoleName: $scope.consoleName });
-    //$scope.games.$promise.then(function (response) {
-    //    $scope.games = response.items;
-    //    $scope.showControls = response.showControls;
-    //});
-
-    //console.log('hämtar spel ' + $scope.consoleName);
-
-    //$http.get('/api/user/' + $stateParams.userName + '/' + $stateParams.consoleId).success(function(response) {
-    //    $scope.games = response.items;
-    //    $scope.showControls = response.showControls;
-    //});
-
-    //$scope.$watch("selected", function (selected) {
-    //    console.log(selected);
-    //});
 
     $scope.idEditing = false;
     $scope.editGame = function (g) {
@@ -72,16 +53,6 @@
                 console.log('HIELP');
             });
     };
-
-    //$scope.attrChange = function (item, level, index, status) {
-    //    ng-change="attrChange(game.item, 'attr/common', $index, attr.status)"
-    //    ng-change="attrChange(game.item, 'attr/extras', $index, attr.status)"
-    //    ng-disabled="!isDirty(game)"
-    //    $http.post('/api/user/update', { item: item, level: level, index: index, status: status }).
-    //        error(function () {
-    //            console.log('HIELP');
-    //        });
-    //};
 
     $scope.isDirty = function (attrs) {
         console.log('anropas');

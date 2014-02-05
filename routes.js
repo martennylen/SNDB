@@ -206,7 +206,7 @@ module.exports = function(app, passport) {
                             });
 
                             game.value.attr.common = _u.map(game.value.attr.common, function (attr, i) {
-                                return { id: attr, status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
+                                return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
                             });
                             game.value.attr.extras = _u.map(game.value.attr.extras, function (attr, i) {
                                 return { id: attr, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
@@ -282,7 +282,7 @@ module.exports = function(app, passport) {
                             });
 
                             game.value.attr.common = _u.map(game.value.attr.common, function(attr, i) {
-                                return { id: attr, status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
+                                return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
                             });
                             game.value.attr.extras = _u.map(game.value.attr.extras, function(attr, i) {
                                 return { id: attr, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };

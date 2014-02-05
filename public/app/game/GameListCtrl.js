@@ -1,6 +1,6 @@
 ﻿app.controller('GameListCtrl', function ($scope, $location, $route, $stateParams, $http, $timeout, GamesService, baseRegions, gameResponse) {
     console.log('gamelistctrl');
-    $scope.console = $stateParams.consoleName || 'nes';
+    $scope.consoleName = $stateParams.consoleName || 'nes';
     $scope.selected = {};
 
     $scope.regions = _.map(baseRegions, function (r) { r.selected = true; return r; });
@@ -15,7 +15,7 @@
 
     $scope.idEditing = false;
     $scope.editGame = function (g) {
-        if (!$scope.showControls) {
+        if (!$scope.loggedIn) {
             return;
         }
         $scope.isEditing = !$scope.isEditing;
@@ -77,6 +77,11 @@
                 });
             }, 0);
         }
+    };
+
+    $scope.isDirty = function (attrs) {
+        console.log('anropas');
+        return (angular.toJson(attrs) !== angular.toJson($scope.selected.attr));
     };
 
     //$scope.isComplete = function (game) {
