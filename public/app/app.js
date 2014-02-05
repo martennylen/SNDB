@@ -126,3 +126,5 @@ app.filter('codeFilter', function($filter){
     return c;
   }
 });
+
+_.mixin(_.str.exports());

@@ -1,7 +1,7 @@
 <div class="view-wrapper">
-    <h3>{{filtered.length}} spel hittades</h3>
-    <!--<input type="text" placeholder="Sök spel..." ng-model="search.name" />
-    <ul id="filters">
+    <input type="text" style="border: 0; height: 30px; width: 40%; outline-color: #EA974F; padding: 8px" placeholder="Sök spel..." ng-model="q" ng-change="search()" ng-minlength="3" />
+    <h3 style="margin: 0 5px" ng-if="showQ">{{games.length}} spel hittades</h3>
+    <!--<ul id="filters">
         <li ng-repeat="r in regions" ng-style="{display: 'inline'}"><span>{{r.name}}</span><input type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]"></li>
     </ul>-->
     <ul id="games">
