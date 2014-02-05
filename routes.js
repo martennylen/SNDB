@@ -141,7 +141,8 @@ module.exports = function(app, passport) {
                         return { 'id': currentAttr, 'status': game.value.game.attr.extras[iter] };
                     });
                     current.attr.note = game.value.game.attr.note;
-                    current.attr.isComplete = _u.every(_u.pluck(current.attr.common, 'status'));
+                    current.attr.extrasComplete = current.attr.extras.length ? _u.all(_u.pluck(current.attr.extras, 'status')) : true;
+                    current.attr.isComplete = _u.every(_u.pluck(current.attr.common, 'status')) && current.attr.extrasComplete;
                     current.regions = game.doc.regions;
                     current.item = game.id;
                     list.push(current);
@@ -198,31 +199,33 @@ module.exports = function(app, passport) {
                         res.send(500);
                     }
                     var hasGames = resp.length > 0;
-                    var found = 0;
+                    var found = -1;
                     _u.each(response, function (game) {
                         if (hasGames) {
-                            found = _u.indexOf(resp, function (comb) {
+                            found = _u.indexOf(resp, function(comb) {
                                 return game.value.id === comb.value.game.id;
                             });
-
-                            game.value.attr.common = _u.map(game.value.attr.common, function (attr, i) {
-                                return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
-                            });
-                            game.value.attr.extras = _u.map(game.value.attr.extras, function (attr, i) {
-                                return { id: attr, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
-                            });
-                            game.value.attr.note = (found > -1) ? resp[found].value.game.attr.note : '';
-                            game.value.attr.isComplete = _u.every(_u.pluck(game.value.attr.common, 'status'));
-
-                            if (found > -1) {
-                                game.value.attr.isNew = false;
-                                resp.splice(found, 1);
-                            } else {
-                                game.value.attr.isNew = true;
-                            }
                         } else {
                             game.value.attr.isNew = true;
                         }
+
+                        game.value.attr.common = _u.map(game.value.attr.common, function (attr, i) {
+                            return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
+                        });
+                        game.value.attr.extras = _u.map(game.value.attr.extras, function (attr, i) {
+                            return { id: attr, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
+                        });
+                        game.value.attr.note = (found > -1) ? resp[found].value.game.attr.note : '';
+                        game.value.attr.extrasComplete = (found > -1) ? game.value.attr.extras.length ? _u.all(_u.pluck(game.value.attr.extras, 'status')) : true : false;
+                        game.value.attr.isComplete = (found > -1) ? _u.all(_u.pluck(game.value.attr.common, 'status')) && game.value.attr.extrasComplete : false;
+
+                        if (found > -1) {
+                            game.value.attr.isNew = false;
+                            resp.splice(found, 1);
+                        } else {
+                            game.value.attr.isNew = true;
+                        }
+                        
 
                         result.push(game.value);
                     });
@@ -274,30 +277,29 @@ module.exports = function(app, passport) {
                         res.send(500);
                     }
                     var hasGames = resp.length > 0;
-                    var found = 0;
+                    var found = -1;
                     _u.each(response, function (game) {
                         if (hasGames) {
                             found = _u.indexOf(resp, function(comb) {
                                 return game.value.id === comb.value.game.id;
                             });
-
-                            game.value.attr.common = _u.map(game.value.attr.common, function(attr, i) {
-                                return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
-                            });
-                            game.value.attr.extras = _u.map(game.value.attr.extras, function(attr, i) {
-                                return { id: attr, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
-                            });
-                            game.value.attr.note = (found > -1) ? resp[found].value.game.attr.note : '';
-                            game.value.attr.isComplete = _u.every(_u.pluck(game.value.attr.common, 'status'));
-
-                            if (found > -1) {
-                                game.value.attr.isNew = false;
-                                resp.splice(found, 1);
-                            } else {
-                                game.value.attr.isNew = true;
-                            }
                         } else {
                             game.value.attr.isNew = true;
+                        }
+
+                        game.value.attr.common = _u.map(game.value.attr.common, function(attr, i) {
+                            return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
+                        });
+                        game.value.attr.extras = _u.map(game.value.attr.extras, function(attr, i) {
+                            return { id: attr, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
+                        });
+                        game.value.attr.extrasComplete = (found > -1) ? game.value.attr.extras.length ? _u.all(_u.pluck(game.value.attr.extras, 'status')) : true : false;
+                        game.value.attr.isComplete = (found > -1) ? _u.all(_u.pluck(game.value.attr.common, 'status')) && game.value.attr.extrasComplete : false;
+                        game.value.attr.note = (found > -1) ? resp[found].value.game.attr.note : '';
+
+                        if (found > -1) {
+                            game.value.attr.isNew = false;
+                            resp.splice(found, 1);
                         }
 
                         result.push(game.value);

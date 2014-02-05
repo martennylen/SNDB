@@ -2,6 +2,15 @@
     console.log('gamelistctrl');
     $scope.consoleName = $stateParams.consoleName || 'nes';
     $scope.selected = {};
+    
+    $scope.games = gameResponse.games;
+    $scope.loggedIn = gameResponse.loggedIn;
+    
+    $scope.$watch('consoleName', function (newValue) {
+        if (newValue.length) {
+            $scope.$emit('consoleChanged', newValue);
+        }
+    });
 
     $scope.regions = _.map(baseRegions, function (r) { r.selected = true; return r; });
     $scope.filterBoxes = {};
@@ -9,9 +18,6 @@
     _.each($scope.regions, function (f) {
         $scope.filterBoxes[f.id] = f.selected;
     });
-
-    $scope.games = gameResponse.games;
-    $scope.loggedIn = gameResponse.loggedIn;
 
     $scope.idEditing = false;
     $scope.editGame = function (g) {
@@ -29,6 +35,28 @@
                 $scope.selected = {};
             }
         }
+    };
+
+    $scope.updateGame = function (g) {
+        var obj = {
+            common: _.pluck(current.attr.common, 'status'),
+            extras: _.pluck(current.attr.extras, 'status'),
+            note: current.attr.note
+        };
+
+        $http.post('/api/user/update', { item: current.item, attrs: obj })
+            .success(function () {
+                g.attr = current.attr;
+                $scope.editGame(g);
+            })
+            .error(function () {
+                console.log('HIELP');
+            });
+    };
+
+    $scope.isDirty = function (attrs) {
+        console.log('anropas');
+        return (angular.toJson(attrs) !== angular.toJson($scope.selected.attr));
     };
 
     $scope.search = function () {
@@ -77,11 +105,6 @@
                 });
             }, 0);
         }
-    };
-
-    $scope.isDirty = function (attrs) {
-        console.log('anropas');
-        return (angular.toJson(attrs) !== angular.toJson($scope.selected.attr));
     };
 
     //$scope.isComplete = function (game) {

@@ -28,7 +28,7 @@ app.config(function($httpProvider, $routeProvider, $locationProvider, $urlRouter
             }
         })
         .state('user.list', {
-            url: '/:consoleName', templateUrl: 'app/user/userlist.html', controller: 'UserListCtrl',
+            url: '/:consoleName', templateUrl: 'app/game/masterlist.html', controller: 'UserListCtrl',
             resolve: {
                 gameResponse: function (UserGamesService, $stateParams) {
                     var games = UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName });
