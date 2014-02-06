@@ -229,8 +229,9 @@ module.exports = function(app, passport) {
                     var hasGames = resp.length > 0;
                     var found = -1;
                     _u.each(response, function (game) {
+
                         if (hasGames) {
-                            found = _u.indexOf(resp, function(comb) {
+                            found = _u.indexOf(resp, function (comb) {
                                 return game.value.id === comb.value.game.id;
                             });
                         }
@@ -252,12 +253,17 @@ module.exports = function(app, passport) {
                         } else {
                             game.value.attr.isNew = true;
                         }
-                        
 
-                        result.push(game.value);
+                        if (req.query.r === "false") {
+                            result.push(game.value);
+                        } else {
+                            if (found > -1) {
+                                result.push(game.value);
+                            }
+                        }
                     });
 
-                    var list = _u.pluck(response, 'value');
+                    var list = result;
                     res.send({ games: list, loggedIn: true });
                 });
             } else {
@@ -294,7 +300,7 @@ module.exports = function(app, passport) {
         db.view('games/by_console', { key: req.params.consoleName }, function (err, response) {
             console.log(req.user);
             if (req.user !== undefined) {
-                var result = [];
+                //var result = [];
 
                 db.view('games/by_user', {
                     startkey: [req.user.id, req.params.consoleName],
@@ -330,7 +336,7 @@ module.exports = function(app, passport) {
                             game.value.attr.isNew = true;
                         }
 
-                        result.push(game.value);
+                        //result.push(game.value);
                     });
 
                     var list = _u.pluck(response, 'value');

@@ -23,4 +23,15 @@
         //console.log('user satte till: ' + consoleName);
         $scope.selected = consoleName;
     });
+
+    $scope.$on('gameRemoved', function (event, consoleName) {
+        console.log(_.where($scope.stats, { console: consoleName })[0]);
+        var obj = _.where($scope.stats, { console: consoleName })[0];
+
+        if (obj.count === 1) {
+            $scope.stats.splice(_.indexOf($scope.stats, obj), 1);
+        } else {
+            count--;
+        }
+    });
 });

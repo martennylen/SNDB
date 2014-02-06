@@ -19,8 +19,6 @@
         $scope.filterBoxes[f.id] = f.selected;
     });
 
-    //$scope.userName = $stateParams.userName;
-
     $scope.idEditing = false;
     $scope.editGame = function (g) {
         if (!$scope.loggedIn) {
@@ -60,6 +58,8 @@
             .error(function () {
                 console.log('HIELP');
             });
+
+        //IF REMOVE - g.isRemoved = true;
     };
 
     $scope.isDirty = function (attrs) {

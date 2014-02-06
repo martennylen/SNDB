@@ -1,5 +1,6 @@
 ﻿app.controller('GameListCtrl', function ($scope, $location, $route, $stateParams, $http, $timeout, GamesService, baseRegions, gameResponse) {
     console.log('gamelistctrl');
+    $scope.userName = $stateParams.userName || false;
     $scope.consoleName = $stateParams.consoleName || 'nes';
     $scope.selected = {};
     
@@ -38,7 +39,7 @@
     };
 
     $scope.attrChanged = function (attrs) {
-        $scope.willRemove = (_.every(_.pluck(attrs, 'status'), function(a) { return a === false; }) && !$scope.selected.attr.isNew) ? true : false; 
+        $scope.willRemove = (_.every(_.pluck(attrs, 'status'), function(a) { return !a; }) && !$scope.selected.attr.isNew) ? true : false; 
     };
 
     $scope.updateGame = function (g) {
@@ -60,16 +61,20 @@
                     console.log('HIELP');
                 });
         } else {
-            if (!_.every(_.pluck(obj.common, 'status')) && (obj.extras.length && !_.every(_.pluck(obj.extras, 'status')))) {
-                $http.post('/api/user/remove', { item: current.item })
-                    .success(function() {
-                        g.attr = current.attr;
-                        g.attr.isNew = true;
-                        $scope.editGame(g);
-                    })
-                    .error(function() {
-                        console.log('HIELP');
-                    });
+            if ((_.every(obj.common, function(a) { return !a; }) && !$scope.selected.attr.isNew)) {
+                console.log('vill ta bort ' + current.item);
+                $scope.$emit('gameRemoved', $scope.consoleName);
+                //$http.post('/api/user/remove', { item: current.item })
+                //    .success(function () {
+                //        if ($scope.userName) {
+                //            g.isRemoved = true;
+                //            $scope.$emit('gameRemoved', $scope.consoleName);
+                //        }
+                //        $scope.editGame(g);
+                //    })
+                //    .error(function() {
+                //        console.log('HIELP');
+                //    });
             } else {
                 console.log(current.item);
                 $http.post('/api/user/update', { item: current.item, attr: obj })
@@ -126,9 +131,9 @@
 
             $timeout(function () {
                 if ($scope.pendingPromise) { $timeout.cancel($scope.pendingPromise); }
-                $scope.pendingPromise = $http.get('/api/search/' + $stateParams.consoleName + '?q=' + $scope.q);
-                $scope.pendingPromise.
-                success(function (res) {
+                $scope.pendingPromise = $http.get('/api/search/' + $stateParams.consoleName + '?q=' + $scope.q + '&r=' + $scope.userName);
+                $scope.pendingPromise
+                .success(function (res) {
                     $scope.games = res.games;
                     $scope.showQ = true;
                     console.log('och nu kom resultatet');

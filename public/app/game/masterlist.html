@@ -6,7 +6,7 @@
             <li ng-repeat="r in regions" ng-style="{display: 'inline'}"><span>{{r.name}}</span><input type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]"></li>
         </ul>
         <ul id="games">
-            <li ng-repeat="game in games" ng-class-odd="'odd'" ng-class-even="'even'">
+            <li ng-repeat="game in games" ng-if="!game.isRemoved" ng-class-odd="'odd'" ng-class-even="'even'">
                 <div class="master-wrapper">
                     <a ng-class="{complete: game.attr.isComplete}" ui-sref="game({consoleName:consoleName, gameName:game.name.split(' ').join('-')})">
                         <div class="game-name">
