@@ -152,7 +152,7 @@ module.exports = function(app, passport) {
                 if (req.user !== undefined) {
                     requestId = req.user.id;
                 }
-                res.send({ games: list, showControls: userId === requestId });
+                res.send({ games: list, loggedIn: userId === requestId });
             });
         });
     });

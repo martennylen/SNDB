@@ -4,7 +4,7 @@
     $scope.selected = {};
     
     $scope.games = gameResponse.games;
-    $scope.showControls = gameResponse.showControls;
+    $scope.loggedIn = gameResponse.loggedIn;
 
     $scope.$watch('consoleName', function (newValue) {
         if (newValue.length) {
@@ -23,7 +23,7 @@
 
     $scope.idEditing = false;
     $scope.editGame = function (g) {
-        if (!$scope.showControls) {
+        if (!$scope.loggedIn) {
             return;
         }
         $scope.isEditing = !$scope.isEditing;
@@ -40,6 +40,7 @@
     };
 
     $scope.updateGame = function (g) {
+        var current = $scope.selected;
         var obj = {
             common: _.pluck(current.attr.common, 'status'),
             extras: _.pluck(current.attr.extras, 'status'),
@@ -49,6 +50,7 @@
         $http.post('/api/user/update', { item: current.item, attrs: obj })
             .success(function () {
                 g.attr = current.attr;
+                g.attr.isComplete = _.every(_.pluck(g.attr.common, 'status')) && (g.attr.extras.length ? _.every(_.pluck(g.attr.extras, 'status')) : true);
                 $scope.editGame(g);
             })
             .error(function () {

@@ -64,11 +64,12 @@ html {
                 background-color: #EA974F;
                 //background-color: #E58838;
                 //background-color: #ECA76C;
-                padding: 10px;
+                //padding: 10px;
                 border-radius: 6px;
 
                 > li {
-                    display: inline;
+                    display: inline-block;
+                    padding: 10px;
 
                     a {
                         font-weight: bold;
@@ -96,7 +97,7 @@ html {
             > li {
                 .column-no-float(12, 0);
                 color: #eee;
-                padding: 20px;
+                //padding: 20px;
 
                 a.disabled {
                     cursor: default;
@@ -161,6 +162,7 @@ html {
 
             > li {
                 display: inline;
+                padding: 10px;
 
                 a {
                     color: #EA974F;
@@ -178,7 +180,7 @@ html {
 
             li {
                 list-style-type: none;
-                padding: 10px;
+                //padding: 10px;
             }
         }
 
@@ -245,10 +247,13 @@ html {
 
                             .game-name {
                                 .column-no-float(6, 0);
+                                border-right: 2px solid #74afad;
+                                padding: 20px;
                             }
 
                             .game-attr {
                                 .column-no-float(2, 0);
+                                padding-left: 10px;
 
                                 .common {
                                     display: inline-block;
@@ -302,6 +307,12 @@ html {
                 padding-right: 20px;
             }
 
+            #header-console-list{
+                > li {
+                    margin-left: 10px;
+                }
+            }
+
             .view-wrapper {
                 .column(12);
 
@@ -340,12 +351,17 @@ html {
                         a.complete {
                             color: #A8CD1B;
                         }
+
                         .game-name {
                             .column-no-float(9, 0);
                         }
 
                         .game-attr {
                             .column-no-float(3, 0);
+
+                            .common {
+                                display: inline-block;
+                            }
 
                             .glyphicon-plus-sign {
                                 top: 6px;

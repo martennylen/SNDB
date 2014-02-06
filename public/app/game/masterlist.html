@@ -16,8 +16,7 @@
                         </div></a><a href ng-click="editGame(game)" ng-class="{disabled: !$parent.loggedIn}"><div class="game-attr">
                             <div class="common">
                                 <span ng-repeat="attr in game.attr.common" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
-                            </div>
-                            <span ng-if="game.attr.extras.length" ng-class="{exists: game.attr.extrasComplete}">+</span>
+                            </div><span ng-if="game.attr.extras.length" ng-class="{exists: game.attr.extrasComplete}">+</span>
                         </div><div class="game-note">
                             <span>{{game.attr.note}}</span>
                         </div>

@@ -38,6 +38,7 @@
     };
 
     $scope.updateGame = function (g) {
+        var current = $scope.selected;
         var obj = {
             common: _.pluck(current.attr.common, 'status'),
             extras: _.pluck(current.attr.extras, 'status'),
