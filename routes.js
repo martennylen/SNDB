@@ -157,17 +157,45 @@ module.exports = function(app, passport) {
         });
     });
 
+    app.post('/api/user/add', function (req, res) {
+        var gameItem = {
+            type: 'item',
+            owner: req.user.id,
+            game: {            
+                id: req.body.id,
+                console: req.body.console,
+                attr: req.body.attr
+            }
+        };
+        db.save(gameItem, function (err, resp) {
+            if (err) {
+                res.send(500);
+            }
+            res.send(200);
+        });
+    });
+
     app.post('/api/user/update', function(req, res) {
         request.put({
             uri: couch.updatePath() + req.body.item,
-            body: JSON.stringify({ "/game/attr": req.body.attrs })
+            body: JSON.stringify({ "/game/attr": req.body.attr })
         }, function (error) {
             if (error) {
                 res.send(500);
             }
             res.send(200);
         });
-    }); 
+    });
+
+    app.post('/api/user/remove', function(req, res) {
+        db.remove(req.body.item, function(err, resp) {
+            if (err) {
+                res.send(500);
+            }
+
+            res.send(200);
+        });
+    });
 
     app.post('/api/newgame', function (request, response) {
         db.save(request.body, function (err, res) {
@@ -205,8 +233,6 @@ module.exports = function(app, passport) {
                             found = _u.indexOf(resp, function(comb) {
                                 return game.value.id === comb.value.game.id;
                             });
-                        } else {
-                            game.value.attr.isNew = true;
                         }
 
                         game.value.attr.common = _u.map(game.value.attr.common, function (attr, i) {
@@ -221,6 +247,7 @@ module.exports = function(app, passport) {
 
                         if (found > -1) {
                             game.value.attr.isNew = false;
+                            game.item = resp[found].id;
                             resp.splice(found, 1);
                         } else {
                             game.value.attr.isNew = true;
@@ -283,8 +310,6 @@ module.exports = function(app, passport) {
                             found = _u.indexOf(resp, function(comb) {
                                 return game.value.id === comb.value.game.id;
                             });
-                        } else {
-                            game.value.attr.isNew = true;
                         }
 
                         game.value.attr.common = _u.map(game.value.attr.common, function(attr, i) {
@@ -298,8 +323,11 @@ module.exports = function(app, passport) {
                         game.value.attr.note = (found > -1) ? resp[found].value.game.attr.note : '';
 
                         if (found > -1) {
+                            game.value.item = resp[found].id;
                             game.value.attr.isNew = false;
                             resp.splice(found, 1);
+                        } else {
+                            game.value.attr.isNew = true;
                         }
 
                         result.push(game.value);

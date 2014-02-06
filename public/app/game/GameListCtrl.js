@@ -37,6 +37,10 @@
         }
     };
 
+    $scope.attrChanged = function (attrs) {
+        $scope.willRemove = (_.every(_.pluck(attrs, 'status'), function(a) { return a === false; }) && !$scope.selected.attr.isNew) ? true : false; 
+    };
+
     $scope.updateGame = function (g) {
         var current = $scope.selected;
         var obj = {
@@ -44,19 +48,44 @@
             extras: _.pluck(current.attr.extras, 'status'),
             note: current.attr.note
         };
-
-        $http.post('/api/user/update', { item: current.item, attrs: obj })
-            .success(function () {
-                g.attr = current.attr;
-                $scope.editGame(g);
-            })
-            .error(function () {
-                console.log('HIELP');
-            });
+        
+        if (current.attr.isNew) {
+            $http.post('/api/user/add', { id: current.id, console: $stateParams.consoleName, attr: obj })
+                .success(function () {
+                    g.attr = current.attr;
+                    g.attr.isNew = false;
+                    $scope.editGame(g);
+                })
+                .error(function () {
+                    console.log('HIELP');
+                });
+        } else {
+            if (!_.every(_.pluck(obj.common, 'status')) && (obj.extras.length && !_.every(_.pluck(obj.extras, 'status')))) {
+                $http.post('/api/user/remove', { item: current.item })
+                    .success(function() {
+                        g.attr = current.attr;
+                        g.attr.isNew = true;
+                        $scope.editGame(g);
+                    })
+                    .error(function() {
+                        console.log('HIELP');
+                    });
+            } else {
+                console.log(current.item);
+                $http.post('/api/user/update', { item: current.item, attr: obj })
+                    .success(function() {
+                        g.attr = current.attr;
+                        g.attr.isComplete = _.every(_.pluck(g.attr.common, 'status')) && (g.attr.extras.length ? _.every(_.pluck(g.attr.extras, 'status')) : true);
+                        $scope.editGame(g);
+                    })
+                    .error(function() {
+                        console.log('HIELP');
+                    });
+            }
+        }
     };
 
     $scope.isDirty = function (attrs) {
-        console.log('anropas');
         return (angular.toJson(attrs) !== angular.toJson($scope.selected.attr));
     };
 

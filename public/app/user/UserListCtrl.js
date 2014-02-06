@@ -39,6 +39,10 @@
         }
     };
 
+    $scope.attrChanged = function (attrs) {
+        $scope.willRemove = (_.every(_.pluck(attrs, 'status'), function (a) { return !a; }) && !$scope.selected.attr.isNew) ? true : false;
+    };
+
     $scope.updateGame = function (g) {
         var current = $scope.selected;
         var obj = {
@@ -47,7 +51,7 @@
             note: current.attr.note
         };
 
-        $http.post('/api/user/update', { item: current.item, attrs: obj })
+        $http.post('/api/user/update', { item: current.item, attr: obj })
             .success(function () {
                 g.attr = current.attr;
                 g.attr.isComplete = _.every(_.pluck(g.attr.common, 'status')) && (g.attr.extras.length ? _.every(_.pluck(g.attr.extras, 'status')) : true);

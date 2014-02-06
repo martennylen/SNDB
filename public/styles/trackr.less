@@ -123,7 +123,9 @@ html {
                     padding: 20px;
                     //margin-bottom: 10px;
                     background-color: #fff;
-                    margin-top: 10px;
+                    //margin-top: 10px;
+                    margin: 20px;
+                    margin-top: 0;
                     color: #666 !important;
                     border-radius: 6px;
                 }
@@ -246,33 +248,34 @@ html {
                             }
 
                             .game-name {
-                                .column-no-float(6, 0);
-                                border-right: 2px solid #74afad;
+                                .column-no-float(7, 0);
+                                //border-right: 2px solid #74afad;
                                 padding: 20px;
                             }
 
-                            .game-attr {
-                                .column-no-float(2, 0);
-                                padding-left: 10px;
+                            .game-data {
+                                .column-no-float(5, 0);
+                                border-left: 2px solid #74afad;
+                                padding: 20px;
 
-                                .common {
-                                    display: inline-block;
-                                    span {
-                                        margin-right: 10px;
-                                    }
-
-                                        span:last-of-type {
-                                            margin-right: 0;
+                                .game-attr {
+                                .column-no-float(5, 0);
+                                    .common {
+                                        display: inline-block;
+                                        span {
+                                            margin-right: 10px;
                                         }
+
+                                            span:last-of-type {
+                                                margin-right: 0;
+                                            }
+                                    }
                                 }
 
-                                .glyphicon-plus-sign {
-                                    top: 4px;
+                                .game-note {
+                                    .column-no-float(7, 0);
+                                    //padding: 20px;
                                 }
-                            }
-
-                            .game-note {
-                                .column-no-float(4, 0);
                             }
                         }
                     }
@@ -356,20 +359,19 @@ html {
                             .column-no-float(9, 0);
                         }
 
-                        .game-attr {
-                            .column-no-float(3, 0);
+                        .game-data {
+                            .column-no-float(3,0);
+                            .game-attr {
+                                //.column-no-float(12, 0);
 
-                            .common {
-                                display: inline-block;
+                                .common {
+                                    display: inline-block;
+                                }
                             }
 
-                            .glyphicon-plus-sign {
-                                top: 6px;
+                            .game-note {
+                                display: none;
                             }
-                        }
-
-                        .game-note {
-                            display: none;
                         }
                     }
                 }
