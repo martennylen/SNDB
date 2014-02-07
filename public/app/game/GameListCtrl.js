@@ -3,6 +3,7 @@
     $scope.userName = $stateParams.userName || false;
     $scope.consoleName = $stateParams.consoleName || 'nes';
     $scope.selected = {};
+    $scope.searchResult = [];
     
     $scope.games = gameResponse.games;
     $scope.loggedIn = gameResponse.loggedIn;
@@ -94,47 +95,53 @@
         return (angular.toJson(attrs) !== angular.toJson($scope.selected.attr));
     };
 
+    var latestResults = [];
     $scope.search = function () {
         if ($scope.q === undefined) {
             return;
         }
         
         if ($scope.q.length === 0) {
+            //latestResults = [];
             $scope.games = gameResponse.games;
             $scope.showQ = false;
             return;
         }
-        
-        if ($scope.q.length < latestSearchQuery.length) {
-            $scope.games = _.filter($scope.games, function (game) {
-                return _.any(game.tags, function (tag) {
-                    return _(tag).startsWith($scope.q);
-                });
+
+        var oldies = _.filter(latestResults, function(game) {
+            return _.any(game.tags, function(tag) {
+                return _(tag).startsWith($scope.q);
             });
-        } else {
+        });
+
+        if (oldies.length === 0) {
             searchThrottled($scope);
+        } else {
+            $scope.games = oldies;
         }
     };
-    
-    var latestSearchQuery = '';
 
     var searchDelayed = function ($scope) {
         $scope.$apply(function () { searchAction($scope); });
     };
-
+    
     var searchThrottled = _.debounce(searchDelayed, 1000);
 
     var searchAction = function ($scope) {
         if ($scope.q !== undefined) {
             console.log('eller så söker vi lite...');
-            latestSearchQuery = $scope.q;
 
             $timeout(function () {
                 if ($scope.pendingPromise) { $timeout.cancel($scope.pendingPromise); }
-                $scope.pendingPromise = $http.get('/api/search/' + $stateParams.consoleName + '?q=' + $scope.q + '&r=' + $scope.userName);
+                $scope.pendingPromise = $http.get('/api/search/' + $stateParams.consoleName + '?q=' + $scope.q.substring(0,3) + '&r=' + $scope.userName);
                 $scope.pendingPromise
                 .success(function (res) {
-                    $scope.games = res.games;
+                    latestResults = res.games;
+                    $scope.games = _.filter(res.games, function(game) {
+                        return _.any(game.tags, function (tag) {
+                            return _(tag).startsWith($scope.q);
+                        });
+                    });
                     $scope.showQ = true;
                     console.log('och nu kom resultatet');
                 });
