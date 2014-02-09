@@ -65,17 +65,17 @@
             if ((_.every(obj.common, function(a) { return !a; }) && !$scope.selected.attr.isNew)) {
                 console.log('vill ta bort ' + current.item);
                 $scope.$emit('gameRemoved', $scope.consoleName);
-                //$http.post('/api/user/remove', { item: current.item })
-                //    .success(function () {
-                //        if ($scope.userName) {
-                //            g.isRemoved = true;
-                //            $scope.$emit('gameRemoved', $scope.consoleName);
-                //        }
-                //        $scope.editGame(g);
-                //    })
-                //    .error(function() {
-                //        console.log('HIELP');
-                //    });
+                $http.post('/api/user/remove', { item: current.item })
+                    .success(function () {
+                        if ($scope.userName) {
+                            g.isRemoved = true;
+                            $scope.$emit('gameRemoved', $scope.consoleName);
+                        }
+                        $scope.editGame(g);
+                    })
+                    .error(function() {
+                        console.log('HIELP');
+                    });
             } else {
                 console.log(current.item);
                 $http.post('/api/user/update', { item: current.item, attr: obj })
@@ -133,13 +133,13 @@
 
             $timeout(function () {
                 if ($scope.pendingPromise) { $timeout.cancel($scope.pendingPromise); }
-                $scope.pendingPromise = $http.get('/api/search/' + $stateParams.consoleName + '?q=' + $scope.q.substring(0,3) + '&r=' + $scope.userName);
+                $scope.pendingPromise = $http.get('/api/search/' + $stateParams.consoleName + '?q=' + $scope.q.substring(0,3).toLowerCase() + '&r=' + $scope.userName);
                 $scope.pendingPromise
                 .success(function (res) {
                     latestResults = res.games;
                     $scope.games = _.filter(res.games, function(game) {
                         return _.any(game.tags, function (tag) {
-                            return _(tag).startsWith($scope.q);
+                            return _(tag).startsWith($scope.q.toLowerCase());
                         });
                     });
                     $scope.showQ = true;

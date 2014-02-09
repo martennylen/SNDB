@@ -269,6 +269,12 @@ module.exports = function(app, passport) {
             } else {
                 res.send({
                     games: _u.map(response, function (game) {
+                        game.value.attr.common = _u.map(game.value.attr.common, function (attr) {
+                            return { id: attr };
+                        });
+                        game.value.attr.extras = _u.map(game.value.attr.extras, function (attr) {
+                            return { id: attr };
+                        });
                         return game.value;
                     }), loggedIn: false
                 });
@@ -345,7 +351,13 @@ module.exports = function(app, passport) {
                 });
             } else {
                 res.send({
-                    games: _u.map(response, function(game) {
+                    games: _u.map(response, function (game) {
+                        game.value.attr.common = _u.map(game.value.attr.common, function (attr) {
+                            return { id: attr };
+                        });
+                        game.value.attr.extras = _u.map(game.value.attr.extras, function (attr) {
+                            return { id: attr };
+                        });
                         return game.value;
                     }), loggedIn: false
                 });
