@@ -138,7 +138,7 @@ module.exports = function(app, passport) {
                     });
                     current.attr.extras = _u.map(game.value.game.attr.extras, function (attr, iter) {
                         currentAttr = game.doc.attr.extras[iter];
-                        return { 'id': currentAttr, 'status': game.value.game.attr.extras[iter] };
+                        return { 'id': iter, 'longName': currentAttr.name, 'status': game.value.game.attr.extras[iter] };
                     });
                     current.attr.note = game.value.game.attr.note;
                     current.attr.extrasComplete = current.attr.extras.length ? _u.all(_u.pluck(current.attr.extras, 'status')) : true;
@@ -328,7 +328,7 @@ module.exports = function(app, passport) {
                             return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
                         });
                         game.value.attr.extras = _u.map(game.value.attr.extras, function(attr, i) {
-                            return { id: attr, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
+                            return { id: i, 'longName': attr.name, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
                         });
                         game.value.attr.extrasComplete = (found > -1) ? game.value.attr.extras.length ? _u.all(_u.pluck(game.value.attr.extras, 'status')) : true : false;
                         game.value.attr.isComplete = (found > -1) ? _u.all(_u.pluck(game.value.attr.common, 'status')) && game.value.attr.extrasComplete : false;

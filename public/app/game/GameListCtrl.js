@@ -77,11 +77,11 @@
                         console.log('HIELP');
                     });
             } else {
-                console.log(current.item);
                 $http.post('/api/user/update', { item: current.item, attr: obj })
                     .success(function() {
                         g.attr = current.attr;
                         g.attr.isComplete = _.every(_.pluck(g.attr.common, 'status')) && (g.attr.extras.length ? _.every(_.pluck(g.attr.extras, 'status')) : true);
+                        console.log(g.attr.isComplete);
                         $scope.editGame(g);
                     })
                     .error(function() {

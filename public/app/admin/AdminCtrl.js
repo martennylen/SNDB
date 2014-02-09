@@ -10,6 +10,7 @@
     $scope.game.regions = [];
     $scope.postMessage = '';
     $scope.game.attr.common = [{ id: 'c', longName: 'Kassett', selected: true }, { id: 'i', longName: 'Manual', selected: true }, { id: 'b', longName: 'Kartong', selected: true }];
+    $scope.currentExtra = '';
 
     $scope.addRegion = function (r) {
         if (r.selected) {
@@ -24,8 +25,10 @@
         if (_.contains($scope.game.attr.extras, extra)) {
             $scope.game.attr.extras.splice(_.indexOf($scope.game.attr.extras, extra), 1);
         } else {
-            $scope.game.attr.extras.push(extra);
+            $scope.game.attr.extras.push({'name': extra });
         }
+
+        $scope.currentExtra = '';
     };
 
     $scope.addGame = function (game) {

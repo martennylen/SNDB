@@ -6,25 +6,24 @@
 	</select>
     <span style="font-weight: bold">Namn:</span>
     <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Spelnamn" ng-model="game.name" required />
-	<span>Utgivningsdatum:</span>
-    <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Releasedatum" ng-model="game.releaseDate" required />
-    <div style="margin-top: 10px; background-color: #fff; padding: 10px; border-radius: 6px;">
-        <span style="font-weight: bold">Attribut:</span>
-        <ul style="margin: 0">
+    <span style="font-weight: bold">Attribut:</span>
+    <div style="background-color: #fff; padding: 10px; border-radius: 6px;">
+        <ul style="margin: 0;display: inline-block">
             <li style="display: inline-block" ng-repeat="attr in game.attr.common">
                 <span>{{attr.longName}}</span>
                 <input type="checkbox" ng-model="attr.selected">
             </li>
         </ul>
     </div>
-    <div style="margin-top: 10px; background-color: #fff; padding: 10px; border-radius: 6px;">
-        <span style="font-weight: bold">Extras:</span>
+    
+    <span style="font-weight: bold">Extra:</span>
+    <div style="background-color: #fff; padding: 10px; border-radius: 6px;">
         <input style="width: 90%; padding: 5px; border: 1px solid #74AFAD" type="text" placeholder="Extratillbeh&ouml;r" ng-model="currentExtra" />
-        <button ng-click="handleExtra(currentExtra)">L&auml;gg till</button>
+        <button class="yeah" ng-click="handleExtra(currentExtra)" ng-disabled="currentExtra.length === 0">L&auml;gg till</button>
         <ul style="margin: 0">
             <li style="display: inline-block" ng-repeat="attr in game.attr.extras">
-                <span>{{attr}}</span>
-                <button ng-click="handleExtra(attr)">Ta bort</button>
+                <span>{{attr.name}}</span>
+                <button class="danger" ng-click="handleExtra(attr)">Ta bort</button>
             </li>
         </ul>
     </div>
@@ -37,6 +36,8 @@
             </li>
         </ul>
     </div>
-	<button ng-click="addGame(game)" ng-disabled="!game.regions.length">Spara</button>
-	<span ng-show="postMessage" ng-style="{color: 'green'}">{{ postMessage }}</span>
+    <div style="margin-top:10px">
+        <button ng-click="addGame(game)" ng-disabled="!game.regions.length" ng-class="{yeah: game.regions.length}">Spara</button>
+        <span ng-show="postMessage" ng-style="{color: 'green'}">{{ postMessage }}</span>
+    </div>
 </form>
