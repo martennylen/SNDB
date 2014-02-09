@@ -13,7 +13,7 @@
 
         //if (!current.content) {
             GameDetailsService.get({ consoleName: $stateParams.consoleName, gameName: $stateParams.gameName }, function (game) {
-                $scope.game.content = game.releaseDate;
+                $scope.game.content = game.name;
             });
         //}
     //});
