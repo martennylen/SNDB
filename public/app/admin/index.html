@@ -1,20 +1,42 @@
 <h3>Hej {{ user.username }}!</h3>
 
 <form novalidate class="simple-form" ng-style="{width: '95%'}">
-	<span>Konsol:</span> 
+	<span style="font-weight: bold">Konsol:</span> 
 	<select style="width: 100%;padding: 10px;border:0" ng-model="game.console" ng-options="c.id as c.name for c in consoles" ng-init="game.console = consoles[0].id">
 	</select>
-	<span>Namn:</span>
+    <span style="font-weight: bold">Namn:</span>
     <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Spelnamn" ng-model="game.name" required />
 	<span>Utgivningsdatum:</span>
     <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Releasedatum" ng-model="game.releaseDate" required />
-	<span>Regioner:</span>
-	<ul>
-		<li ng-repeat="r in regions" ng-style="{display: 'inline'}">
-			<span>{{r.name}}</span>
-			<input type="checkbox" ng-model="r.selected" ng-change="addRegion(r)">
-		</li>
-	</ul> 
+    <div style="margin-top: 10px; background-color: #fff; padding: 10px; border-radius: 6px;">
+        <span style="font-weight: bold">Attribut:</span>
+        <ul style="margin: 0">
+            <li style="display: inline-block" ng-repeat="attr in game.attr.common">
+                <span>{{attr.longName}}</span>
+                <input type="checkbox" ng-model="attr.selected">
+            </li>
+        </ul>
+    </div>
+    <div style="margin-top: 10px; background-color: #fff; padding: 10px; border-radius: 6px;">
+        <span style="font-weight: bold">Extras:</span>
+        <input style="width: 90%; padding: 5px; border: 1px solid #74AFAD" type="text" placeholder="Extratillbeh&ouml;r" ng-model="currentExtra" />
+        <button ng-click="handleExtra(currentExtra)">L&auml;gg till</button>
+        <ul style="margin: 0">
+            <li style="display: inline-block" ng-repeat="attr in game.attr.extras">
+                <span>{{attr}}</span>
+                <button ng-click="handleExtra(attr)">Ta bort</button>
+            </li>
+        </ul>
+    </div>
+    <div style="margin-top: 10px;background-color: #fff;padding:10px;border-radius: 6px">
+        <span style="font-weight: bold">Regioner:</span>
+        <ul style="margin: 0">
+            <li ng-repeat="r in regions" style="display: inline">
+                <span>{{r.name}}</span>
+                <input type="checkbox" ng-model="r.selected" ng-change="addRegion(r)">
+            </li>
+        </ul>
+    </div>
 	<button ng-click="addGame(game)" ng-disabled="!game.regions.length">Spara</button>
 	<span ng-show="postMessage" ng-style="{color: 'green'}">{{ postMessage }}</span>
 </form>

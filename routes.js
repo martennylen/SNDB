@@ -200,7 +200,7 @@ module.exports = function(app, passport) {
     app.post('/api/newgame', function (request, response) {
         db.save(request.body, function (err, res) {
             if (res.ok) {
-                response.send({ 'reply': 'ok' });
+                response.send(200);
             }
         });
     });
