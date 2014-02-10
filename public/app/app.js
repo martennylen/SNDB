@@ -28,7 +28,7 @@ app.config(function($httpProvider, $routeProvider, $locationProvider, $urlRouter
             }
         })
         .state('user.list', {
-            url: '/:consoleName', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl',
+            url: '/:consoleName', templateUrl: 'app/game/masterlist.html', controller: 'UserListCtrl',
             resolve: {
                 gameResponse: function (UserGamesService, $stateParams) {
                     var games = UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName });
@@ -36,20 +36,24 @@ app.config(function($httpProvider, $routeProvider, $locationProvider, $urlRouter
                 }
             }
         })
+        .state('console', {
+            abstract: true, url: '/:consoleName', template: '<ui-view/>'
+        })
+        .state('console.region', {
+            url: '/:regionName', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl'
+            //resolve: {
+            //    gameResponse: function (GamesService, $stateParams) {
+            //        console.log('wei');
+            //        var games = GamesService.get({ consoleName: $stateParams.consoleName });
+            //        return games.$promise;
+            //    }
+            //}
+        })
         .state('game', {
             //url: '/:consoleId/{gameId:[A-z0-9]{32}}',
-            url: '/:consoleName/:gameName',
+            url: '/:consoleName/:regionName/:gameName',
             templateUrl: 'app/game/game.html',
             controller: 'GameDetailsCtrl'
-        })
-        .state('console', {
-            url: '/:consoleName', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl',
-            resolve: {
-                gameResponse: function (GamesService, $stateParams) {
-                    var games = GamesService.get({ consoleName: $stateParams.consoleName });
-                    return games.$promise;
-                }
-            }
         });
 });
 
@@ -76,12 +80,12 @@ app.factory('UserGamesService', function ($resource) {
     return $resource('/api/user/:userName/:consoleName');
 });
 
-app.factory('GameDetailsService', function ($resource) {
-    return $resource('/api/:consoleName/:gameName');
+app.factory('GamesService', function ($resource, $location) {
+    return $resource('/api/:consoleName/:regionName');
 });
 
-app.factory('GamesService', function ($resource, $location) {
-    return $resource('/api/:consoleName');
+app.factory('GameDetailsService', function ($resource) {
+    return $resource('/api/:consoleName/:regionName/:gameName');
 });
 
 app.constant('consoles', [
@@ -96,10 +100,10 @@ app.constant('consoles', [
 ]);
 
 app.constant('baseRegions', [
-  {'id': 'scn', 'name': 'SCN+ESP', 'selected': true},
-  {'id': 'pal-b', 'name': 'PAL-B', 'selected': true},
-  {'id': 'pal-a', 'name': 'PAL-A', 'selected': true},
-  {'id': 'ntsc', 'name': 'NTSC', 'selected': true}
+  { 'id': 'scn', 'name': 'SCN+ESP', 'selected': true },
+  { 'id': 'pal-b', 'name': 'PAL-B', 'selected': false },
+  { 'id': 'noe', 'name': 'NOE', 'selected': false},
+  { 'id': 'ntsc', 'name': 'NTSC', 'selected': false }
   ]);
 
 app.filter('codeFilter', function($filter){

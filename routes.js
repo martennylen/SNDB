@@ -217,8 +217,6 @@ module.exports = function(app, passport) {
             response = _u.uniq(response, function (g) { return g.id; });
             
             if (req.user !== undefined) {
-                var result = [];
-
                 db.view('games/by_user', {
                     startkey: [req.user.id, req.params.consoleName],
                     endkey: [req.user.id, req.params.consoleName, {}]
@@ -226,63 +224,73 @@ module.exports = function(app, passport) {
                     if (e) {
                         res.send(500);
                     }
-                    var hasGames = resp.length > 0;
-                    var found = -1;
-                    _u.each(response, function (game) {
 
-                        if (hasGames) {
-                            found = _u.indexOf(resp, function (comb) {
-                                return game.value.id === comb.value.game.id;
-                            });
-                        }
-
-                        game.value.attr.common = _u.map(game.value.attr.common, function (attr, i) {
-                            return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
-                        });
-                        game.value.attr.extras = _u.map(game.value.attr.extras, function (attr, i) {
-                            return { id: attr, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
-                        });
-                        game.value.attr.note = (found > -1) ? resp[found].value.game.attr.note : '';
-                        game.value.attr.extrasComplete = (found > -1) ? game.value.attr.extras.length ? _u.all(_u.pluck(game.value.attr.extras, 'status')) : true : false;
-                        game.value.attr.isComplete = (found > -1) ? _u.all(_u.pluck(game.value.attr.common, 'status')) && game.value.attr.extrasComplete : false;
-
-                        if (found > -1) {
-                            game.value.attr.isNew = false;
-                            game.item = resp[found].id;
-                            resp.splice(found, 1);
-                        } else {
-                            game.value.attr.isNew = true;
-                        }
-
-                        if (req.query.r === "false") {
-                            result.push(game.value);
-                        } else {
-                            if (found > -1) {
-                                result.push(game.value);
-                            }
-                        }
-                    });
-
-                    var list = result;
+                    var list = mapGameInformation(resp, response, (req.query.r !== undefined));
                     res.send({ games: list, loggedIn: true });
                 });
             } else {
                 res.send({
-                    games: _u.map(response, function (game) {
-                        game.value.attr.common = _u.map(game.value.attr.common, function (attr) {
-                            return { id: attr };
-                        });
-                        game.value.attr.extras = _u.map(game.value.attr.extras, function (attr) {
-                            return { id: attr };
-                        });
-                        return game.value;
-                    }), loggedIn: false
+                    games: mapAttributes(response), loggedIn: false
                 });
             }
         });
     });
     
-    app.get('/api/:consoleName', function (req, res) {        
+    function mapGameInformation(resp, response, isUserScope) {
+        var result = [];
+        var hasGames = resp.length > 0;
+        var found = -1;
+        _u.each(response, function (game) {
+
+            if (hasGames) {
+                found = _u.indexOf(resp, function (comb) {
+                    return game.value.id === comb.value.game.id;
+                });
+            }
+
+            game.value.attr.common = _u.map(game.value.attr.common, function (attr, i) {
+                return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
+            });
+            game.value.attr.extras = _u.map(game.value.attr.extras, function (attr, i) {
+                return { id: attr, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
+            });
+            game.value.attr.note = (found > -1) ? resp[found].value.game.attr.note : '';
+            game.value.attr.extrasComplete = (found > -1) ? game.value.attr.extras.length ? _u.all(_u.pluck(game.value.attr.extras, 'status')) : true : false;
+            game.value.attr.isComplete = (found > -1) ? _u.all(_u.pluck(game.value.attr.common, 'status')) && game.value.attr.extrasComplete : false;
+
+            if (found > -1) {
+                game.value.attr.isNew = false;
+                game.item = resp[found].id;
+                resp.splice(found, 1);
+            } else {
+                game.value.attr.isNew = true;
+            }
+
+            if (!isUserScope) {
+                result.push(game.value);
+            } else {
+                if (found > -1) {
+                    result.push(game.value);
+                }
+            }
+        });
+
+        return result;
+    }
+    
+    function mapAttributes(response) {
+        return _u.map(response, function(game) {
+            game.value.attr.common = _u.map(game.value.attr.common, function(attr) {
+                return { id: attr };
+            });
+            game.value.attr.extras = _u.map(game.value.attr.extras, function(attr) {
+                return { id: attr };
+            });
+            return game.value;
+        });
+    }
+    
+    app.get('/api/:consoleName/:regionName', function (req, res) {        
         var indexOfValue = _u.indexOf;
 
         // using .mixin allows both wrapped and unwrapped calls:
@@ -294,7 +302,7 @@ module.exports = function(app, passport) {
                 // delegate to standard indexOf if the test isn't a function
                 if (!_u.isFunction(test)) return indexOfValue(array, test);
                 // otherwise, look for the index
-                for (var x = 0; x < array.length; x++) {
+                for (var x = 0; x < array.length; x++) { 
                     if (test(array[x])) return x;
                 }
                 // not found, return fail value
@@ -303,7 +311,10 @@ module.exports = function(app, passport) {
 
         });
 
-        db.view('games/by_console', { key: req.params.consoleName }, function (err, response) {
+        db.view('games/by_console', { 
+                startkey: [req.params.consoleName, req.params.regionName],
+                endkey: [req.params.consoleName, req.params.regionName, '\uffff']
+            }, function (err, response) {
             console.log(req.user);
             if (req.user !== undefined) {
                 //var result = [];
@@ -315,57 +326,20 @@ module.exports = function(app, passport) {
                     if (e) {
                         res.send(500);
                     }
-                    var hasGames = resp.length > 0;
-                    var found = -1;
-                    _u.each(response, function (game) {
-                        if (hasGames) {
-                            found = _u.indexOf(resp, function(comb) {
-                                return game.value.id === comb.value.game.id;
-                            });
-                        }
-
-                        game.value.attr.common = _u.map(game.value.attr.common, function(attr, i) {
-                            return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
-                        });
-                        game.value.attr.extras = _u.map(game.value.attr.extras, function(attr, i) {
-                            return { id: i, 'longName': attr.name, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
-                        });
-                        game.value.attr.extrasComplete = (found > -1) ? game.value.attr.extras.length ? _u.all(_u.pluck(game.value.attr.extras, 'status')) : true : false;
-                        game.value.attr.isComplete = (found > -1) ? _u.all(_u.pluck(game.value.attr.common, 'status')) && game.value.attr.extrasComplete : false;
-                        game.value.attr.note = (found > -1) ? resp[found].value.game.attr.note : '';
-
-                        if (found > -1) {
-                            game.value.item = resp[found].id;
-                            game.value.attr.isNew = false;
-                            resp.splice(found, 1);
-                        } else {
-                            game.value.attr.isNew = true;
-                        }
-
-                        //result.push(game.value);
-                    });
-
-                    var list = _u.pluck(response, 'value');
-                        
+                    
+                    //var list = _u.pluck(response, 'value');
+                    var list = mapGameInformation(resp, response, false);  
                     res.send({ games: list, loggedIn: true });
                 });
             } else {
                 res.send({
-                    games: _u.map(response, function (game) {
-                        game.value.attr.common = _u.map(game.value.attr.common, function (attr) {
-                            return { id: attr };
-                        });
-                        game.value.attr.extras = _u.map(game.value.attr.extras, function (attr) {
-                            return { id: attr };
-                        });
-                        return game.value;
-                    }), loggedIn: false
+                    games: mapAttributes(response), loggedIn: false
                 });
             }
         });
     });
 
-    app.get('/api/:consoleName/:gameName', function (req, res) {
+    app.get('/api/:consoleName/:regionName/:gameName', function (req, res) {
         db.view('games/all', { key: req.params.gameName.split('-').join(' ') }, function (err, response) {
             //TA BARA DET VI BEHÖVER, INTE HELA COUCH-MODELLEN
             if (err) {

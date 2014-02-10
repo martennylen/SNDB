@@ -1,24 +1,38 @@
-﻿app.controller('GameListCtrl', function ($scope, $location, $route, $stateParams, $http, $timeout, GamesService, baseRegions, gameResponse) {
+﻿app.controller('GameListCtrl', function ($scope, $location, $route, $stateParams, $http, $timeout, GamesService, baseRegions) {
     console.log('gamelistctrl');
-    $scope.userName = $stateParams.userName || false;
+    $scope.regions = baseRegions;
     $scope.consoleName = $stateParams.consoleName || 'nes';
+    $scope.currentRegion = {
+        region: $stateParams.regionName.length > 0 ? _.find(baseRegions, function (r) {
+            return r.id === $stateParams.regionName;
+        }) : baseRegions[0]
+    };
+
+    $scope.regionChanged = function (r) {
+        $location.path('/' + $scope.consoleName + '/' + $scope.currentRegion.region.id).replace();
+    };
+
+    if ($stateParams.regionName.length === 0) {
+        $scope.regionChanged(baseRegions[0]);
+        return;
+    }
+    
+    $scope.regionName = $stateParams.regionName || $scope.currentRegion.region.id;
+
     $scope.selected = {};
     $scope.searchResult = [];
     
-    $scope.games = gameResponse.games;
-    $scope.loggedIn = gameResponse.loggedIn;
-    
+    //$scope.games = gameResponse.games;
+    //$scope.loggedIn = gameResponse.loggedIn;
+    GamesService.get({ consoleName: $stateParams.consoleName, regionName: $stateParams.regionName }).$promise.then(function(data) {
+        $scope.games = data.games;
+        $scope.loggedIn = data.loggedIn;
+    });
+
     $scope.$watch('consoleName', function (newValue) {
         if (newValue.length) {
             $scope.$emit('consoleChanged', newValue);
         }
-    });
-
-    $scope.regions = _.map(baseRegions, function (r) { r.selected = true; return r; });
-    $scope.filterBoxes = {};
-
-    _.each($scope.regions, function (f) {
-        $scope.filterBoxes[f.id] = f.selected;
     });
 
     $scope.idEditing = false;
@@ -67,10 +81,6 @@
                 $scope.$emit('gameRemoved', $scope.consoleName);
                 $http.post('/api/user/remove', { item: current.item })
                     .success(function () {
-                        if ($scope.userName) {
-                            g.isRemoved = true;
-                            $scope.$emit('gameRemoved', $scope.consoleName);
-                        }
                         $scope.editGame(g);
                     })
                     .error(function() {
@@ -102,7 +112,6 @@
         }
         
         if ($scope.q.length === 0) {
-            //latestResults = [];
             $scope.games = gameResponse.games;
             $scope.showQ = false;
             return;
@@ -133,7 +142,7 @@
 
             $timeout(function () {
                 if ($scope.pendingPromise) { $timeout.cancel($scope.pendingPromise); }
-                $scope.pendingPromise = $http.get('/api/search/' + $stateParams.consoleName + '?q=' + $scope.q.substring(0,3).toLowerCase() + '&r=' + $scope.userName);
+                $scope.pendingPromise = $http.get('/api/search/' + $stateParams.consoleName + '?q=' + $scope.q.substring(0,3).toLowerCase());
                 $scope.pendingPromise
                 .success(function (res) {
                     latestResults = res.games;
@@ -148,11 +157,4 @@
             }, 0);
         }
     };
-
-    //$scope.isComplete = function (game) {
-    //    console.log(game.attr.common);
-    //    return _.every(_.map(game.attr.common, function(attr) {
-    //        return attr.status;
-    //    }));
-    //};
 });
