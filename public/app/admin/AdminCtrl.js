@@ -6,19 +6,18 @@
     $scope.user = user;
     $scope.consoles = consoles;
     $scope.regions = baseRegions;
-    $scope.game = { type: 'game', attr: { extras: [] } };
-    $scope.game.regions = [];
+    $scope.game = { type: 'game', regions: {}, attr: { extras: [] } };
     $scope.postMessage = '';
-    $scope.game.attr.common = [{ id: 'c', longName: 'Kassett', selected: true }, { id: 'i', longName: 'Manual', selected: true }, { id: 'b', longName: 'Kartong', selected: true }];
+    $scope.attributes = [{ id: 'c', longName: 'Kassett', selected: true }, { id: 'i', longName: 'Manual', selected: true }, { id: 'b', longName: 'Kartong', selected: true }];
     $scope.currentExtra = '';
 
-    $scope.currentRegion = {
-        region: baseRegions[0],
-        subregion: baseRegions[0].regions[0]
+    $scope.currentRegions = {
+        main: baseRegions[0],
+        sub: baseRegions[0].regions[0]
     };
 
     $scope.regionChanged = function() {
-        $scope.currentRegion.subregion = $scope.currentRegion.region.regions[0];
+        $scope.currentRegions.sub = $scope.currentRegions.main.regions[0];
     };
 
     $scope.handleExtra = function (extra) {
@@ -32,12 +31,14 @@
     };
 
     $scope.addGame = function (game) {
-        console.log($scope.attributes);
-        $scope.game.attr.common = _.pluck(_.filter($scope.attributes, function(a) {
-            return a.selected;
+        $scope.game.attr.common = _.pluck(_.filter($scope.attributes, function (c) {
+            return c.selected;
         }), 'id');
 
-        console.log($scope.game.attr.common);
+        $scope.game.regions.main = $scope.currentRegions.main.id;
+        $scope.game.regions.sub = [$scope.currentRegions.sub.id];
+        
+        console.log($scope.game);
         //$http.post('/api/newgame', game).
         //success(function (response) {
         //    $scope.postMessage = 'Spel sparat';
