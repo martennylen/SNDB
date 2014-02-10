@@ -5,20 +5,20 @@
     //});
     $scope.user = user;
     $scope.consoles = consoles;
-    $scope.regions = _.map(baseRegions, function (r) { r.selected = false; return r; });
+    $scope.regions = baseRegions;
     $scope.game = { type: 'game', attr: { extras: [] } };
     $scope.game.regions = [];
     $scope.postMessage = '';
     $scope.game.attr.common = [{ id: 'c', longName: 'Kassett', selected: true }, { id: 'i', longName: 'Manual', selected: true }, { id: 'b', longName: 'Kartong', selected: true }];
     $scope.currentExtra = '';
 
-    $scope.addRegion = function (r) {
-        if (r.selected) {
-            $scope.game.regions.push(r.id);
-        }
-        else {
-            $scope.game.regions.splice(_.indexOf($scope.game.regions, r.id), 1);
-        }
+    $scope.currentRegion = {
+        region: baseRegions[0],
+        subregion: baseRegions[0].regions[0]
+    };
+
+    $scope.regionChanged = function() {
+        $scope.currentRegion.subregion = $scope.currentRegion.region.regions[0];
     };
 
     $scope.handleExtra = function (extra) {

@@ -6,6 +6,11 @@
 	</select>
     <span style="font-weight: bold">Namn:</span>
     <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Spelnamn" ng-model="game.name" required />
+    <span style="font-weight: bold">Kod:</span>
+    <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Spelkod" ng-model="game.code" required />
+    <span style="font-weight: bold">Utgivare:</span>
+    <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Spelutgivare" ng-model="game.publisher" required />
+
     <span style="font-weight: bold">Attribut:</span>
     <div style="background-color: #fff; padding: 10px; border-radius: 6px;">
         <ul style="margin: 0;display: inline-block">
@@ -27,13 +32,14 @@
             </li>
         </ul>
     </div>
-    <div style="margin-top: 10px;background-color: #fff;padding:10px;border-radius: 6px">
-        <span style="font-weight: bold">Regioner:</span>
-        <ul style="margin: 0">
-            <li ng-repeat="r in regions" style="display: inline">
-                <span>{{r.name}}</span>
-                <input type="checkbox" ng-model="r.selected" ng-change="addRegion(r)">
-            </li>
+
+    <span style="font-weight: bold">Region:</span>
+    <div style="background-color: #fff;padding:10px;border-radius: 6px">
+        <ul style="margin-bottom: 0">
+            <li ng-repeat="r in regions" style="display: inline"><label ng-class="{'selected': currentRegion.region.id === r.id}" for="{{r.id}}">{{r.name}}</label><input type="radio" id="{{r.id}}" ng-model="currentRegion.region" ng-value="r" ng-change="regionChanged(r)"></li>
+        </ul>
+        <ul style="margin-left: 20px;margin-top: 0">
+            <li ng-repeat="sr in currentRegion.region.regions" style="display: inline"><label ng-class="{'selected': currentRegion.subregion.id === sr.id}" for="{{sr.id}}">{{sr.name}}</label><input type="radio" id="{{sr.id}}" ng-model="currentRegion.subregion" ng-value="sr"></li>
         </ul>
     </div>
     <div style="margin-top:10px">

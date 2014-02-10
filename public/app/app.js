@@ -98,7 +98,7 @@ app.constant('consoles', [
     { 'id': 'n64', 'name': 'N64' },
     { 'id': 'gc', 'name': 'GC' },
     { 'id': 'wii', 'name': 'Wii' },
-    { 'id': 'gc', 'name': 'WiiU' },
+    { 'id': 'wiiu', 'name': 'WiiU' },
     { 'id': 'gw', 'name': 'G&W' }
 ]);
 
@@ -106,7 +106,7 @@ app.constant('baseRegions', [
     {
         id: 'pal-b', name: 'PAL-B', selected: true, regions:
         [
-            { id: 'scn', name: 'SCN+ESP', selected: true },
+            { id: 'scn', name: 'SCN', selected: true },
             { id: 'noe', name: 'NOE', selected: false },
             { id: 'esp', name: 'ESP', selected: false },
             { id: 'fra', name: 'FRA', selected: false },

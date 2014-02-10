@@ -35,7 +35,7 @@
                         <div>
                             <label style="font-size: 30px" for="{{game.id + '_note'}}">Anteckning:</label>
                             <input id="{{game.id + '_note'}}" type="text" ng-model="selected.attr.note">
-                            <button ng-disabled="!isDirty(game.attr)" ng-click="updateGame(game)">Spara</button>
+                            <button ng-disabled="!isDirty(game.attr)" class="yeah" ng-click="updateGame(game)">Spara</button>
                             <span ng-if="willRemove">Spelet kommer att tas bort ur din samling.</span>
                         </div>
                     </form>
