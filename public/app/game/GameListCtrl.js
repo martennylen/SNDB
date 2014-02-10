@@ -6,10 +6,10 @@
     }) : baseRegions[0].regions[0];
 
     $scope.selected = {};
-    $scope.searchResult = [];
+    $scope.initialResult = [];
     
     GamesService.get({ consoleName: $stateParams.consoleName, regionName: $stateParams.regionName, subRegionName: $scope.currentRegion.subregion.id }).$promise.then(function (data) {
-        console.log('kommer det härifrån?');
+        $scope.initialResult = data.games;
         $scope.games = data.games;
         $scope.loggedIn = data.loggedIn;
     });
@@ -97,7 +97,8 @@
         }
         
         if ($scope.q.length === 0) {
-            $scope.games = gameResponse.games;
+            //$scope.games = gameResponse.games;
+            $scope.games = $scope.initialResult;
             $scope.showQ = false;
             return;
         }

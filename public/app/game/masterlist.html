@@ -1,6 +1,6 @@
 <!--<div ng-if="games.length">-->
     <div class="view-wrapper">
-        <input type="text" id="game-search" placeholder="Sök spel..." ng-model="q" ng-change="search()" ng-minlength="3" />
+        <input type="text" id="game-search" placeholder="Sök i alla regioner" ng-model="q" ng-change="search()" ng-minlength="3" />
         <h3 style="margin: 0 5px" ng-if="showQ">{{games.length}} spel hittades</h3>
         <ul id="games">
             <li ng-repeat="game in games" ng-if="!game.isRemoved" ng-class-odd="'odd'" ng-class-even="'even'">
@@ -9,7 +9,7 @@
                         <div class="game-name">
                             <span>
                                 {{game.name}}
-                                <span>({{currentRegion.subregion.id.toUpperCase()}})</span>
+                                <span>({{game.regions.sub[0].toUpperCase()}})</span>
                             </span>
                         </div></a><a href ng-click="editGame(game)" ng-class="{disabled: !$parent.loggedIn}"><div class="game-data"><div class="game-attr">
                             <div class="common">
