@@ -2,9 +2,6 @@
     <div class="view-wrapper">
         <input type="text" id="game-search" placeholder="Sök spel..." ng-model="q" ng-change="search()" ng-minlength="3" />
         <h3 style="margin: 0 5px" ng-if="showQ">{{games.length}} spel hittades</h3>
-        <ul id="filters">
-            <li ng-repeat="r in regions" ng-style="{display: 'inline'}"><label for="{{r.id}}">{{r.name}}</label><input type="radio" id="{{r.id}}" ng-model="currentRegion.region" ng-value="r" ng-change="regionChanged(r)"></li>
-        </ul>
         <ul id="games">
             <li ng-repeat="game in games" ng-if="!game.isRemoved" ng-class-odd="'odd'" ng-class-even="'even'">
                 <div class="master-wrapper">
@@ -12,7 +9,7 @@
                         <div class="game-name">
                             <span>
                                 {{game.name}}
-                                <span ng-repeat="r in game.regions">{{r}}/</span>
+                                <span>({{currentRegion.subregion.id.toUpperCase()}})</span>
                             </span>
                         </div></a><a href ng-click="editGame(game)" ng-class="{disabled: !$parent.loggedIn}"><div class="game-data"><div class="game-attr">
                             <div class="common">

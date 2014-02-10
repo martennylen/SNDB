@@ -290,7 +290,7 @@ module.exports = function(app, passport) {
         });
     }
     
-    app.get('/api/:consoleName/:regionName', function (req, res) {        
+    app.get('/api/:consoleName/:regionName/:subRegionName', function (req, res) {        
         var indexOfValue = _u.indexOf;
 
         // using .mixin allows both wrapped and unwrapped calls:
@@ -312,8 +312,8 @@ module.exports = function(app, passport) {
         });
 
         db.view('games/by_console', { 
-                startkey: [req.params.consoleName, req.params.regionName],
-                endkey: [req.params.consoleName, req.params.regionName, '\uffff']
+                startkey: [req.params.consoleName, req.params.regionName, req.params.subRegionName],
+                endkey: [req.params.consoleName, req.params.regionName, req.params.subRegionName, '\uffff']
             }, function (err, response) {
             console.log(req.user);
             if (req.user !== undefined) {

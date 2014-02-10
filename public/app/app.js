@@ -40,7 +40,7 @@ app.config(function($httpProvider, $routeProvider, $locationProvider, $urlRouter
             abstract: true, url: '/:consoleName', template: '<ui-view/>'
         })
         .state('console.region', {
-            url: '/:regionName', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl'
+            url: '/:regionName', templateUrl: 'app/game/regionlist.html', controller: 'GameRegionCtrl'
             //resolve: {
             //    gameResponse: function (GamesService, $stateParams) {
             //        console.log('wei');
@@ -48,6 +48,9 @@ app.config(function($httpProvider, $routeProvider, $locationProvider, $urlRouter
             //        return games.$promise;
             //    }
             //}
+        })
+        .state('console.region.subregion', {
+            url: '/:subRegionName', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl'
         })
         .state('game', {
             //url: '/:consoleId/{gameId:[A-z0-9]{32}}',
@@ -81,7 +84,7 @@ app.factory('UserGamesService', function ($resource) {
 });
 
 app.factory('GamesService', function ($resource, $location) {
-    return $resource('/api/:consoleName/:regionName');
+    return $resource('/api/:consoleName/:regionName/:subRegionName');
 });
 
 app.factory('GameDetailsService', function ($resource) {
@@ -100,10 +103,36 @@ app.constant('consoles', [
 ]);
 
 app.constant('baseRegions', [
-  { 'id': 'scn', 'name': 'SCN+ESP', 'selected': true },
-  { 'id': 'pal-b', 'name': 'PAL-B', 'selected': false },
-  { 'id': 'noe', 'name': 'NOE', 'selected': false},
-  { 'id': 'ntsc', 'name': 'NTSC', 'selected': false }
+    {
+        id: 'pal-b', name: 'PAL-B', selected: true, regions:
+        [
+            { id: 'scn', name: 'SCN+ESP', selected: true },
+            { id: 'noe', name: 'NOE', selected: false },
+            { id: 'esp', name: 'ESP', selected: false },
+            { id: 'fra', name: 'FRA', selected: false },
+            { id: 'hol', name: 'HOL', selected: false }
+        ]
+    },
+    {
+        id: 'pal-a', name: 'PAL-A', selected: false, regions:
+        [
+            { id: 'ukv', name: 'UKV', selected: true },
+            { id: 'ita', name: 'ITA', selected: false },
+            { id: 'aus', name: 'AUS', selected: false }
+        ]
+    },
+    {
+        id: 'ntsc', name: 'NTSC', selected: false, regions:
+        [
+            { id: 'ntsc', name: 'NTSC', selected: true }
+        ]
+    },
+    {
+        id: 'ntsc-j', name: 'NTSC-J', selected: false, regions:
+        [
+            { id: 'ntsc-j', name: 'NTSC-J', selected: true }
+        ]
+    }
   ]);
 
 app.filter('codeFilter', function($filter){

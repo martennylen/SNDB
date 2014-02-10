@@ -1,30 +1,15 @@
 ﻿app.controller('GameListCtrl', function ($scope, $location, $route, $stateParams, $http, $timeout, GamesService, baseRegions) {
     console.log('gamelistctrl');
-    $scope.regions = baseRegions;
-    $scope.consoleName = $stateParams.consoleName || 'nes';
-    $scope.currentRegion = {
-        region: $stateParams.regionName.length > 0 ? _.find(baseRegions, function (r) {
-            return r.id === $stateParams.regionName;
-        }) : baseRegions[0]
-    };
 
-    $scope.regionChanged = function (r) {
-        $location.path('/' + $scope.consoleName + '/' + $scope.currentRegion.region.id).replace();
-    };
-
-    if ($stateParams.regionName.length === 0) {
-        $scope.regionChanged(baseRegions[0]);
-        return;
-    }
-    
-    $scope.regionName = $stateParams.regionName || $scope.currentRegion.region.id;
+    $scope.currentRegion.subregion = $stateParams.subRegionName.length > 0 ? _.find($scope.currentRegion.region.regions, function (sr) {
+        return sr.id === $stateParams.subRegionName;
+    }) : baseRegions[0].regions[0];
 
     $scope.selected = {};
     $scope.searchResult = [];
     
-    //$scope.games = gameResponse.games;
-    //$scope.loggedIn = gameResponse.loggedIn;
-    GamesService.get({ consoleName: $stateParams.consoleName, regionName: $stateParams.regionName }).$promise.then(function(data) {
+    GamesService.get({ consoleName: $stateParams.consoleName, regionName: $stateParams.regionName, subRegionName: $scope.currentRegion.subregion.id }).$promise.then(function (data) {
+        console.log('kommer det härifrån?');
         $scope.games = data.games;
         $scope.loggedIn = data.loggedIn;
     });
