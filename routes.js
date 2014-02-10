@@ -252,7 +252,7 @@ module.exports = function(app, passport) {
                 return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
             });
             game.value.attr.extras = _u.map(game.value.attr.extras, function (attr, i) {
-                return { id: attr, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
+                return { id: i, 'longName': attr.name, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
             });
             game.value.attr.note = (found > -1) ? resp[found].value.game.attr.note : '';
             game.value.attr.extrasComplete = (found > -1) ? game.value.attr.extras.length ? _u.all(_u.pluck(game.value.attr.extras, 'status')) : true : false;
