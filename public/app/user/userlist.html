@@ -1,47 +1,46 @@
-﻿<div ng-if="games.length">
-    <!--<input type="text" class="search-holder" placeholder="Sök spel..." ng-model="search.name" />-->
-    <!--<h3 style="display:inline">{{filtered.length}} spel hittades</h3>-->
-    <ul>
-        <li ng-repeat="r in regions" ng-style="{display: 'inline'}">
-            <label for="{{r.id}}">{{r.name}}</label>
-            <input id="{{r.id}}" type="checkbox" ng-checked="r.selected" ng-model="filterBoxes[r.id]">
+﻿<div class="view-wrapper">
+    <ul ng-if="regionStats.length">
+        <li ng-repeat="stat in regionStats" style="display: inline-block">
+            <span>{{stat.region.toUpperCase()}} ({{stat.count}})</span>
         </li>
     </ul>
+    <input type="text" id="game-search" placeholder="Sök i alla regioner" ng-model="q" ng-change="search()" ng-minlength="3" />
+    <h3 style="margin: 0 5px" ng-if="showQ">{{games.length}} spel hittades</h3>
     <ul id="games">
-        <!--<li ng-repeat="game in filtered = ((games | filter:search:strict) | codeFilter:filterBoxes)" ng-class-odd="'odd'" ng-class-even="'even'">-->
-    <li ng-repeat="game in games" ng-class-odd="'odd'" ng-class-even="'even'">
-        <div class="game-wrapper">
-            <a ng-class="{complete: game.attr.isComplete}" ui-sref="game({consoleName:consoleName, gameName:game.name.split(' ').join('-')})">
-                <div class="game-name">
-                    <span>
-                        {{game.name}}
-                    </span>
-                </div></a><a href ng-click="editGame(game)" ng-class="{disabled: !$parent.showControls}"><div class="game-attr">
-                        <span ng-repeat="attr in game.attr.common" ng-style="{marginRight: '10px'}" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
-                    </div><div class="game-note">
-                              <span>{{game.attr.note}}</span>
-                          </div>
-                </a>
+        <li ng-repeat="game in games" ng-if="!game.isRemoved" ng-class-odd="'odd'" ng-class-even="'even'">
+            <div class="master-wrapper">
+                <a ng-class="{complete: game.attr.isComplete}" ui-sref="game({consoleName:consoleName, regionName:currentRegion.region.id, subRegionName:currentRegion.subregion.id, gameName:game.name.split(' ').join('-')})">
+                    <div class="game-name">
+                        <span>
+                            {{game.name}}
+                            <span>({{game.regions.sub[0].toUpperCase()}})</span>
+                        </span>
+                    </div></a><a href ng-click="editGame(game)" ng-class="{disabled: !$parent.loggedIn}"><div class="game-data"><div class="game-attr">
+                            <div class="common">
+                                <span ng-repeat="attr in game.attr.common" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
+                            </div><span ng-if="game.attr.extras.length" ng-class="{exists: game.attr.extrasComplete}">+</span>
+                        </div><div class="game-note">
+                            <span>{{game.attr.note || '&nbsp;'}}</span></div></div></a>
             </div>
             <div class="game-content" ng-if="game.id === selected.id">
                 <form name="gameEditor">
                     <ul>
                         <li ng-repeat="attr in selected.attr.common" style="padding: 0; display: inline; margin-right: 20px">
                             <label style="font-size: 30px" for="{{selected.id + '_' + attr.id}}">{{attr.longName}}:</label>
-                            <input id="{{selected.id + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status">
+                            <input id="{{selected.id + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status" ng-change="attrChanged(selected.attr.common)">
                         </li>
                     </ul>
                     <ul ng-if="selected.attr.extras.length">
                         <li ng-repeat="attr in selected.attr.extras" style="padding: 0; display: inline; margin-right: 20px">
-                            <label style="font-size: 30px; color: #6495ed" for="{{selected.id + '_' + attr.id}}">{{attr.id.substring(0,1).toUpperCase() + attr.id.substring(1, attr.id.length)}}:</label>
+                            <label style="font-size: 30px; color: #6495ed" for="{{selected.id + '_' + attr.id}}">{{attr.longName}}:</label>
                             <input id="{{selected.id + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status">
                         </li>
                     </ul>
                     <div>
                         <label style="font-size: 30px" for="{{game.id + '_note'}}">Anteckning:</label>
                         <input id="{{game.id + '_note'}}" type="text" ng-model="selected.attr.note">
-                        <button ng-disabled="!isDirty(game.attr)" ng-click="updateGame(game)">Spara</button>
-                        <!--<button ng-disabled="!gameEditor.$dirty" ng-click="updateGame(game)">Spara</button>-->
+                        <button ng-disabled="!isDirty(game.attr)" class="yeah" ng-click="updateGame(game)">Spara</button>
+                        <span ng-if="willRemove">Spelet kommer att tas bort ur din samling.</span>
                     </div>
                 </form>
             </div>

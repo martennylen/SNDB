@@ -7,6 +7,7 @@
     $scope.selected = {};
     $scope.searchResult = [];
 
+    $scope.regionStats = gameResponse.regions;
     $scope.games = gameResponse.games;
     $scope.loggedIn = gameResponse.loggedIn;
 
