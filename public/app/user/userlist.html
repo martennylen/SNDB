@@ -1,7 +1,7 @@
 ﻿<div class="view-wrapper">
-    <ul ng-if="regionStats.length">
-        <li ng-repeat="stat in regionStats" style="display: inline-block">
-            <span>{{stat.region.toUpperCase()}} ({{stat.count}})</span>
+    <ul ng-if="regionStats.length" style="margin-top: 0">
+        <li ng-repeat="stat in regionStats" style="display: inline-block;margin-right:20px">
+            <a ui-sref="user.list.region({regionName: stat.region})">{{stat.region.toUpperCase()}} ({{stat.count}})</a>
         </li>
     </ul>
     <input type="text" id="game-search" placeholder="Sök i alla regioner" ng-model="q" ng-change="search()" ng-minlength="3" />

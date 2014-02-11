@@ -37,6 +37,15 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
                 }]
             }
         })
+        .state('user.list.region', {
+            url: '/:regionName', templateUrl: 'app/user/userlist.html', controller: 'UserListCtrl',
+            resolve: {
+                gameResponse: ['UserGamesService', '$stateParams', function (UserGamesService, $stateParams) {
+                    var games = UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName, regionName: $stateParams.regionName });
+                    return games.$promise;
+                }]
+            }
+        })
         .state('console', {
             abstract: true, url: '/:consoleName', template: '<ui-view/>'
         })

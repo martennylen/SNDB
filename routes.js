@@ -119,8 +119,8 @@ module.exports = function(app, passport) {
             }
             var userId = response[0].id;
             db.view('games/stats_by_user', {
-                    startkey: ["a04ecdc29276760e689dd8148d000e7c", "nes"],
-                    endkey: ["a04ecdc29276760e689dd8148d000e7c", "nes", {}],
+                    startkey: [userId, req.params.consoleName],
+                    endkey: [userId, req.params.consoleName, {}],
                     group_level: 3
                 }, function(err, stats) {
                     if (err) {
