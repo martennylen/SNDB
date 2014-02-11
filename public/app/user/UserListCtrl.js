@@ -10,12 +10,14 @@
         console.log(newValue + ' ' + oldValue);
         if (newValue !== undefined) {
             $scope.$emit('consoleChanged', newValue);
+        } else {
+            console.log('nu nollställer vi va');
         }
     });
 
     $scope.$watch('regionName', function (newValue, oldValue) {
         if (newValue !== undefined) {
-            $scope.$emit('regionChanged', newValue);
+            $scope.$emit('regionChanged', { consoleName: $scope.consoleName, regionName: newValue });
         }
     });
 

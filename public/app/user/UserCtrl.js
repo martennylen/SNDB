@@ -19,12 +19,20 @@
     //        // transitionTo() promise will be rejected with 
     //        // a 'transition prevented' error
     //    });
+
+    if ($stateParams.consoleName === undefined) {
+        console.log('NOLLSTÄLL');
+        $scope.regionStats = [];
+        $scope.subRegionStats = [];
+    }
     
     $scope.$on('consoleChanged', function (event, consoleName) {
         //console.log('user satte till: ' + consoleName);
         if ($scope.selectedConsole !== consoleName) {
             $scope.regionStats = [];
             $scope.subRegionStats = [];
+            $scope.selectedRegion = {};
+            $scope.selectedSubRegion = {};
             $scope.selectedConsole = consoleName;
             UserGamesService.get({ userName: $stateParams.userName, consoleName: consoleName }).$promise.then(function(gameResponse) {
                 $scope.regionStats = gameResponse.regions;
@@ -39,13 +47,13 @@
         $scope.regionStats = regions;
     });
 
-    $scope.$on('regionChanged', function (event, regionName) {
-        console.log('ny region: ' + regionName);
-        if ($scope.selectedRegion !== regionName) {
-            $scope.selectedRegion = regionName;
-            UserGamesRegionService.get({ userName: $stateParams.userName, consoleName: $scope.selectedConsole, regionName: regionName }).$promise.then(function(gameResponse) {
+    $scope.$on('regionChanged', function (event, data) {
+        console.log('ny region: ' + data.regionName);
+        if ($scope.selectedConsole !== data.consoleName || $scope.selectedRegion !== data.regionName) {
+            $scope.selectedRegion = data.regionName;
+            UserGamesRegionService.get({ userName: $stateParams.userName, consoleName: $scope.selectedConsole, regionName: data.regionName }).$promise.then(function(gameResponse) {
                 $scope.subRegionStats = gameResponse.regions;
-                console.log('triggar gamesReceived med: ' + regionName);
+                console.log('triggar gamesReceived med: ' + data.regionName);
                 $scope.$broadcast('gamesReceived', { games: gameResponse.games, loggedIn: gameResponse.loggedIn });
             });
         }
