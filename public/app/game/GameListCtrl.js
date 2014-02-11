@@ -1,4 +1,4 @@
-﻿app.controller('GameListCtrl', function ($scope, $location, $route, $stateParams, $http, $timeout, GamesService, baseRegions) {
+﻿app.controller('GameListCtrl', ['$scope', '$location', '$stateParams', '$http', '$timeout', 'GamesService', 'baseRegions', function ($scope, $location, $stateParams, $http, $timeout, GamesService, baseRegions) {
     console.log('gamelistctrl');
 
     $scope.currentRegion.subregion = $stateParams.subRegionName.length > 0 ? _.find($scope.currentRegion.region.regions, function (sr) {
@@ -143,4 +143,4 @@
             }, 0);
         }
     };
-});
+}]);

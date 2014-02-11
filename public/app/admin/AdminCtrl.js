@@ -1,8 +1,4 @@
-﻿app.controller('AdminCtrl', function ($scope, $http, $location, consoles, baseRegions, user) {
-    
-    //roles.$promise.then(function (roles) {
-    //    $scope.roles = roles;
-    //});
+﻿app.controller('AdminCtrl',  ['$scope', '$http', '$location', 'consoles', 'baseRegions', 'user', function ($scope, $http, $location, consoles, baseRegions, user) {
     $scope.user = user;
     $scope.consoles = consoles;
     $scope.regions = baseRegions;
@@ -52,4 +48,4 @@
     $scope.validateFields = function () {
         return $scope.addGameForm.$valid;
     };
-});
+}]);

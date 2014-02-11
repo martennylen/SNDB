@@ -1,4 +1,4 @@
-﻿app.controller('GameRegionCtrl', function($scope, $location, $route, $stateParams, $http, $timeout, baseRegions) {
+﻿app.controller('GameRegionCtrl', ['$scope', '$location', '$stateParams', 'baseRegions', function($scope, $location, $stateParams, baseRegions) {
     $scope.regions = baseRegions;
 
     if ($stateParams.regionName.length === 0) {
@@ -19,4 +19,4 @@
     $scope.subRegionChanged = function (sr) {
         $location.path('/' + $stateParams.consoleName + '/' + $scope.currentRegion.region.id + '/' + $scope.currentRegion.subregion.id).replace();
     };
-});
+}]);

@@ -2,7 +2,8 @@
 
 var app = angular.module('trackr', ['ngResource', 'ngRoute', 'ui.router', 'ngCookies']);
 
-app.config(function($httpProvider, $routeProvider, $locationProvider, $urlRouterProvider, $stateProvider) {
+app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterProvider', '$stateProvider',
+    function ($httpProvider, $routeProvider, $locationProvider, $urlRouterProvider, $stateProvider) {
     $urlRouterProvider
         .when('', '/nes');
 
@@ -21,19 +22,19 @@ app.config(function($httpProvider, $routeProvider, $locationProvider, $urlRouter
             templateUrl: 'app/user/user.html',
             controller: 'UserCtrl',
             resolve: {
-                stats: function (UserGamesStatsService, $stateParams) {
+                stats: ['UserGamesStatsService', '$stateParams', function (UserGamesStatsService, $stateParams) {
                     var stats = UserGamesStatsService.query({ userName: $stateParams.userName });
                     return stats.$promise;
-                }
+                }]
             }
         })
         .state('user.list', {
             url: '/:consoleName', templateUrl: 'app/game/masterlist.html', controller: 'UserListCtrl',
             resolve: {
-                gameResponse: function (UserGamesService, $stateParams) {
+                gameResponse: ['UserGamesService', '$stateParams', function (UserGamesService, $stateParams) {
                     var games = UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName });
                     return games.$promise;
-                }
+                }]
             }
         })
         .state('console', {
@@ -58,9 +59,9 @@ app.config(function($httpProvider, $routeProvider, $locationProvider, $urlRouter
             templateUrl: 'app/game/game.html',
             controller: 'GameDetailsCtrl'
         });
-});
+}]);
 
-var validateUser = function($q, $http, $location, $timeout) {
+var validateUser = ['$q', '$http', '$location', '$timeout', function($q, $http, $location, $timeout) {
     var deferred = $q.defer();
     $http.get('/api/loggedin')
         .success(function(res) {
@@ -73,23 +74,23 @@ var validateUser = function($q, $http, $location, $timeout) {
         });
 
     return deferred.promise;
-};
+}];
 
-app.factory('UserGamesStatsService', function ($resource) {
+app.factory('UserGamesStatsService', ['$resource', function ($resource) {
     return $resource('/api/user/:userName');
-});
+}]);
 
-app.factory('UserGamesService', function ($resource) {
+app.factory('UserGamesService', ['$resource', function ($resource) {
     return $resource('/api/user/:userName/:consoleName');
-});
+}]);
 
-app.factory('GamesService', function ($resource, $location) {
+app.factory('GamesService', ['$resource', function ($resource) {
     return $resource('/api/:consoleName/:regionName/:subRegionName');
-});
+}]);
 
-app.factory('GameDetailsService', function ($resource) {
+app.factory('GameDetailsService', ['$resource', function ($resource) {
     return $resource('/api/:consoleName/:regionName/:subRegionName/:gameName');
-});
+}]);
 
 app.constant('consoles', [
 	{'id': 'nes', 'name': 'NES'}, 
@@ -135,29 +136,29 @@ app.constant('baseRegions', [
     }
   ]);
 
-app.filter('codeFilter', function($filter){
-    return function (games, filters) {
-        var r = [], c = [];
-        if (games) {
-            c = getChecked(filters);
-            _.each(games, function (g) {
-                if (_.intersection(g.regions, c).length) {
-                    r.push(g);
-                }
-            });
-        }
-        return r;
-    };
+//app.filter('codeFilter', function($filter){
+//    return function (games, filters) {
+//        var r = [], c = [];
+//        if (games) {
+//            c = getChecked(filters);
+//            _.each(games, function (g) {
+//                if (_.intersection(g.regions, c).length) {
+//                    r.push(g);
+//                }
+//            });
+//        }
+//        return r;
+//    };
 
-  function getChecked(f){
-    var c = [];
-    for(var k in f){
-      if(f[k]){
-        c.push(k);
-      } 
-    }
-    return c;
-  }
-});
+//  function getChecked(f){
+//    var c = [];
+//    for(var k in f){
+//      if(f[k]){
+//        c.push(k);
+//      } 
+//    }
+//    return c;
+//  }
+//});
 
 _.mixin(_.str.exports());

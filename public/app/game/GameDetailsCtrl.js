@@ -1,4 +1,4 @@
-﻿app.controller('GameDetailsCtrl', function ($scope, $stateParams, GameDetailsService) {
+﻿app.controller('GameDetailsCtrl', ['$scope', '$stateParams', 'GameDetailsService', function ($scope, $stateParams, GameDetailsService) {
     console.log('gamedetailsctrl');
     //if (!$stateParams.gameId.length) {
     //    return;
@@ -17,4 +17,4 @@
             });
         //}
     //});
-});
+}]);

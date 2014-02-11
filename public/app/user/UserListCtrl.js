@@ -1,4 +1,4 @@
-﻿app.controller('UserListCtrl', function ($scope, $location, $stateParams, $http, $timeout, baseRegions, gameResponse) {
+﻿app.controller('UserListCtrl', ['$scope', '$location', '$stateParams', '$http', '$timeout', 'baseRegions', 'gameResponse', function ($scope, $location, $stateParams, $http, $timeout, baseRegions, gameResponse) {
     console.log('userlistctrl');
     $scope.userName = $stateParams.userName;
     $scope.consoleName = $stateParams.consoleName || 'nes';
@@ -160,4 +160,4 @@
             }, 0);
         }
     };
-});
+}]);

@@ -1,4 +1,4 @@
-﻿app.controller('IndexCtrl', function ($scope, consoles, $http, $rootScope) {
+﻿app.controller('IndexCtrl', ['$scope', '$http', 'consoles', function ($scope, $http, consoles) {
     $scope.consoles = consoles;
     console.log('index');
     $scope.loggedInUser = {};
@@ -19,9 +19,9 @@
         $scope.loggedInUser = user;
     });
     //$scope.loggedInUser = $cookieStore.get('trackr.sess').username || {};
-});
+}]);
 
-app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope) {
+app.controller('LoginCtrl', ['$scope', '$location', '$http', function ($scope, $location, $http) {
     console.log('loginctrl');
 
     $scope.credentials = {};
@@ -44,9 +44,9 @@ app.controller('LoginCtrl', function ($scope, $location, $http, $rootScope) {
     $scope.validateFields = function () {
         return $scope.loginForm.$valid;
     };
-});
+}]);
 
-app.controller('RegisterCtrl', function ($scope, $location, $http) {
+app.controller('RegisterCtrl', ['$scope', '$location', '$http', function ($scope, $location, $http) {
     console.log('registerctrl');
 
     $scope.credentials = { email: '', username: '', password: ''};
@@ -72,7 +72,7 @@ app.controller('RegisterCtrl', function ($scope, $location, $http) {
     $scope.validateFields = function () {
         return $scope.regForm.$valid;
     };
-});
+}]);
 
 app.controller('LogoutCtrl', function ($scope, $location, $http, $rootScope) {
     $scope.logout = function () {

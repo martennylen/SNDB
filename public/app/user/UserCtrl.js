@@ -1,4 +1,4 @@
-﻿app.controller('UserCtrl', function ($scope, $location, $state, $stateParams, $http, stats, $rootScope) {
+﻿app.controller('UserCtrl', ['$scope', '$stateParams', 'stats', function ($scope, $stateParams, stats) {
     $scope.userName = $stateParams.userName;
     $scope.stats = stats;
     //$scope.selected = stats.length ? stats[0].console : {};
@@ -34,4 +34,4 @@
             count--;
         }
     });
-});
+}]);
