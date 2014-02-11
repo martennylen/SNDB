@@ -15,15 +15,15 @@
         }
     });
 
-    $scope.$watch('regionName', function (newValue, oldValue) {
+    $scope.$watch('regionName', function (newValue) {
         if (newValue !== undefined) {
             $scope.$emit('regionChanged', { consoleName: $scope.consoleName, regionName: newValue });
         }
     });
 
-    $scope.$watch('subRegionName', function (newValue, oldValue) {
+    $scope.$watch('subRegionName', function (newValue) {
         if (newValue !== undefined) {
-            $scope.$emit('subRegionChanged', newValue);
+            $scope.$emit('subRegionChanged', { consoleName: $scope.consoleName, regionName: $scope.regionName, subRegionName: newValue });
         }
     });
 

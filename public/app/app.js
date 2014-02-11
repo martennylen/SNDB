@@ -89,15 +89,7 @@ var validateUser = ['$q', '$http', '$location', '$timeout', function($q, $http, 
 }];
 
 app.factory('UserGamesStatsService', ['$resource', function ($resource) {
-    return $resource('/api/user/:userName');
-}]);
-
-app.factory('UserGamesService', ['$resource', function ($resource) {
-    return $resource('/api/user/:userName/:consoleName');
-}]);
-
-app.factory('UserGamesRegionService', ['$resource', function ($resource) {
-    return $resource('/api/user/:userName/:consoleName/:regionName');
+    return $resource('/api/user/:userName/:consoleName/:regionName/:subRegionName');
 }]);
 
 app.factory('GamesService', ['$resource', function ($resource) {

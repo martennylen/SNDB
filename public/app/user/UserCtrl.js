@@ -1,4 +1,4 @@
-﻿app.controller('UserCtrl', ['$scope', '$stateParams', 'stats', 'UserGamesService', 'UserGamesRegionService', function ($scope, $stateParams, stats, UserGamesService, UserGamesRegionService) {
+﻿app.controller('UserCtrl', ['$scope', '$stateParams', 'stats', 'UserGamesStatsService', function ($scope, $stateParams, stats, UserGamesStatsService) {
     $scope.userName = $stateParams.userName;
     $scope.stats = stats;
   
@@ -38,7 +38,7 @@
             $scope.selectedRegion = {};
             $scope.selectedSubRegion = {};
             $scope.selectedConsole = consoleName;
-            UserGamesService.get({ userName: $stateParams.userName, consoleName: consoleName }).$promise.then(function(gameResponse) {
+            UserGamesStatsService.get({ userName: $stateParams.userName, consoleName: consoleName }).$promise.then(function (gameResponse) {
                 $scope.regionStats = gameResponse.regions;
                 console.log('triggar gamesReceived med: ' + consoleName);
                 $scope.$broadcast('gamesReceived', { games: gameResponse.games, loggedIn: gameResponse.loggedIn });
@@ -55,7 +55,7 @@
         console.log('ny region: ' + data.regionName);
         if ($scope.selectedConsole !== data.consoleName || $scope.selectedRegion !== data.regionName) {
             $scope.selectedRegion = data.regionName;
-            UserGamesRegionService.get({ userName: $stateParams.userName, consoleName: $scope.selectedConsole, regionName: data.regionName }).$promise.then(function(gameResponse) {
+            UserGamesStatsService.get({ userName: $stateParams.userName, consoleName: $scope.selectedConsole, regionName: data.regionName }).$promise.then(function (gameResponse) {
                 $scope.subRegionStats = gameResponse.regions;
                 console.log('triggar gamesReceived med: ' + data.regionName);
                 $scope.$broadcast('gamesReceived', { games: gameResponse.games, loggedIn: gameResponse.loggedIn });
@@ -63,15 +63,20 @@
         }
     });
     
-    $scope.$on('subRegionChanged', function (event, subRegionName) {
-        //console.log('user satte till: ' + consoleName);
-        console.log('ny subregion: ' + subRegionName);
-        $scope.selectedSubRegion = subRegionName;
-    });
-    
     $scope.$on('subRegionsLoaded', function (event, subRegions) {
         //console.log('user satte till: ' + consoleName);
         $scope.subRegionStats = subRegions;
+    });
+    
+    $scope.$on('subRegionChanged', function (event, data) {
+        //console.log('user satte till: ' + consoleName);
+        console.log('ny subregion: ' + data.subRegionName);
+        if ($scope.selectedConsole !== data.consoleName || $scope.selectedRegion !== data.regionName || $scope.selectedSubRegion !== data.subRegionName) {
+            $scope.selectedSubRegion = data.subRegionName;
+            UserGamesStatsService.get({ userName: $stateParams.userName, consoleName: $scope.selectedConsole, regionName: $scope.selectedRegion, subRegionName: data.subRegionName }).$promise.then(function(gameResponse) {
+                $scope.$broadcast('gamesReceived', { games: gameResponse.games, loggedIn: gameResponse.loggedIn });
+            });
+        }
     });
 
     $scope.$on('gameRemoved', function (event, consoleName) {
