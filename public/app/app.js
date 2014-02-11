@@ -54,7 +54,7 @@ app.config(function($httpProvider, $routeProvider, $locationProvider, $urlRouter
         })
         .state('game', {
             //url: '/:consoleId/{gameId:[A-z0-9]{32}}',
-            url: '/:consoleName/:regionName/:gameName',
+            url: '/:consoleName/:regionName/:subRegionName/:gameName',
             templateUrl: 'app/game/game.html',
             controller: 'GameDetailsCtrl'
         });
@@ -88,7 +88,7 @@ app.factory('GamesService', function ($resource, $location) {
 });
 
 app.factory('GameDetailsService', function ($resource) {
-    return $resource('/api/:consoleName/:regionName/:gameName');
+    return $resource('/api/:consoleName/:regionName/:subRegionName/:gameName');
 });
 
 app.constant('consoles', [

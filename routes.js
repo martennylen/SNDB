@@ -199,14 +199,14 @@ module.exports = function(app, passport) {
 
     app.post('/api/newgame', function (req, res) {
         console.log(JSON.stringify(req.body));
-        //db.save(req.body, function (err, resp) {
-        //    if (err) {
-        //        res.send(500);
-        //    }
+        db.save(req.body, function (err, resp) {
+            if (err) {
+                res.send(500);
+            }
 
-        //    res.send(200);
-        //});
-        res.send(200);
+            res.send(200);
+        });
+        //res.send(200);
     });
 
     app.get('/api/search/:consoleName', function (req, res) {
@@ -343,7 +343,7 @@ module.exports = function(app, passport) {
         });
     });
 
-    app.get('/api/:consoleName/:regionName/:gameName', function (req, res) {
+    app.get('/api/:consoleName/:regionName/:subRegionName/:gameName', function (req, res) {
         db.view('games/all', { key: req.params.gameName.split('-').join(' ') }, function (err, response) {
             //TA BARA DET VI BEHÖVER, INTE HELA COUCH-MODELLEN
             if (err) {

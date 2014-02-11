@@ -12,7 +12,7 @@
     $scope.game = {};
 
         //if (!current.content) {
-            GameDetailsService.get({ consoleName: $stateParams.consoleName, gameName: $stateParams.gameName }, function (game) {
+            GameDetailsService.get({ consoleName: $stateParams.consoleName, regionName: $stateParams.regionName, subRegionName: $stateParams.subRegionName, gameName: $stateParams.gameName }, function (game) {
                 $scope.game.content = game.name;
             });
         //}

@@ -5,7 +5,7 @@
         <ul id="games">
             <li ng-repeat="game in games" ng-if="!game.isRemoved" ng-class-odd="'odd'" ng-class-even="'even'">
                 <div class="master-wrapper">
-                    <a ng-class="{complete: game.attr.isComplete}" ui-sref="game({consoleName:consoleName, gameName:game.name.split(' ').join('-')})">
+                    <a ng-class="{complete: game.attr.isComplete}" ui-sref="game({consoleName:consoleName, regionName:currentRegion.region.id, subRegionName:currentRegion.subregion.id, gameName:game.name.split(' ').join('-')})">
                         <div class="game-name">
                             <span>
                                 {{game.name}}
