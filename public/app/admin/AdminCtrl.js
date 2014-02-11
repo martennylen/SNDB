@@ -30,7 +30,7 @@
         $scope.currentExtra = '';
     };
 
-    $scope.addGame = function (game) {
+    $scope.addGame = function () {
         $scope.game.attr.common = _.pluck(_.filter($scope.attributes, function (c) {
             return c.selected;
         }), 'id');
@@ -38,13 +38,18 @@
         $scope.game.regions.main = $scope.currentRegions.main.id;
         $scope.game.regions.sub = [$scope.currentRegions.sub.id];
         
-        console.log($scope.game);
-        //$http.post('/api/newgame', game).
-        //success(function (response) {
-        //    $scope.postMessage = 'Spel sparat';
-        //}).
-        //error(function (id) {
-        //    console.log('server response failed');
-        //});
+        console.log(angular.toJson($scope.game));
+        $http.post('/api/newgame', angular.toJson($scope.game)).
+        success(function (response) {
+            $scope.postMessage = 'Spel sparat';
+            $scope.game = { type: 'game', console: consoles[0].id, regions: {}, attr: { extras: [] } };
+        }).
+        error(function (id) {
+            console.log('nej nej NEJ');
+        });
+    };
+
+    $scope.validateFields = function () {
+        return $scope.addGameForm.$valid;
     };
 });

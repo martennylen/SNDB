@@ -1,6 +1,6 @@
 <h3>Hej {{ user.username }}!</h3>
 
-<form novalidate class="simple-form" ng-style="{width: '95%'}">
+<form novalidate name="addGameForm" style="padding: 0 20px">
 	<span style="font-weight: bold">Konsol:</span> 
 	<select style="width: 100%;padding: 10px;border:0" ng-model="game.console" ng-options="c.id as c.name for c in consoles" ng-init="game.console = consoles[0].id">
 	</select>
@@ -44,7 +44,7 @@
     </div>
     <div style="margin-top:10px">
         <!--<button ng-click="addGame(game)" ng-disabled="!game.regions.length" ng-class="{yeah: game.regions.length}">Spara</button>-->
-        <button ng-click="addGame(game)" class="yeah">Spara</button>
+        <button ng-click="addGame(game)" ng-disabled="!validateFields()" ng-class="{'yeah': validateFields()}">Spara</button>
         <span ng-show="postMessage" ng-style="{color: 'green'}">{{ postMessage }}</span>
     </div>
 </form>

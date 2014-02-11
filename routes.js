@@ -197,12 +197,16 @@ module.exports = function(app, passport) {
         });
     });
 
-    app.post('/api/newgame', function (request, response) {
-        db.save(request.body, function (err, res) {
-            if (res.ok) {
-                response.send(200);
-            }
-        });
+    app.post('/api/newgame', function (req, res) {
+        console.log(JSON.stringify(req.body));
+        //db.save(req.body, function (err, resp) {
+        //    if (err) {
+        //        res.send(500);
+        //    }
+
+        //    res.send(200);
+        //});
+        res.send(200);
     });
 
     app.get('/api/search/:consoleName', function (req, res) {
