@@ -1,26 +1,48 @@
-﻿app.controller('UserListCtrl', ['$scope', '$location', '$stateParams', '$http', '$timeout', 'baseRegions', 'gameResponse', function ($scope, $location, $stateParams, $http, $timeout, baseRegions, gameResponse) {
+﻿app.controller('UserListCtrl', ['$scope', '$location', '$stateParams', '$http', '$timeout', 'baseRegions',
+    function ($scope, $location, $stateParams, $http, $timeout, baseRegions) {
     console.log('userlistctrl');
     $scope.userName = $stateParams.userName;
-    $scope.consoleName = $stateParams.consoleName || 'nes';
-    $scope.regionName = $stateParams.regionName || 'scn';
+    $scope.consoleName = $stateParams.consoleName;
+    $scope.regionName = $stateParams.regionName;
+    $scope.subRegionName = $stateParams.subRegionName;
+    
+    $scope.$watch('consoleName', function (newValue, oldValue) {
+        console.log(newValue + ' ' + oldValue);
+        if (newValue !== undefined) {
+            $scope.$emit('consoleChanged', newValue);
+        }
+    });
+
+    $scope.$watch('regionName', function (newValue, oldValue) {
+        if (newValue !== undefined) {
+            $scope.$emit('regionChanged', newValue);
+        }
+    });
+
+    $scope.$watch('subRegionName', function (newValue, oldValue) {
+        if (newValue !== undefined) {
+            $scope.$emit('subRegionChanged', newValue);
+        }
+    });
 
     $scope.selected = {};
     $scope.searchResult = [];
 
-    $scope.regionStats = gameResponse.regions;
-    $scope.games = gameResponse.games;
-    $scope.loggedIn = gameResponse.loggedIn;
+    $scope.$on('gamesReceived', function (event, gameResponse) {
+        console.log('FICK SPEL!');
+        console.log(gameResponse);
+        $scope.games = gameResponse.games;
+        $scope.loggedIn = gameResponse.loggedIn;
+    });
+
+    //$scope.regionStats = gameResponse.regions;
+    //$scope.games = gameResponse.games;
+    //$scope.loggedIn = gameResponse.loggedIn;
 
     //UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName }).$promise.then(function (data) {
     //    $scope.games = data.games;
     //    $scope.loggedIn = data.loggedIn;
     //});
-    
-    $scope.$watch('consoleName', function (newValue) {
-        if (newValue.length) {
-            $scope.$emit('consoleChanged', newValue);
-        }
-    });
 
     $scope.regions = baseRegions;
     $scope.currentRegion = {

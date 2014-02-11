@@ -29,22 +29,25 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
             }
         })
         .state('user.list', {
-            url: '/:consoleName', templateUrl: 'app/user/userlist.html', controller: 'UserListCtrl',
-            resolve: {
-                gameResponse: ['UserGamesService', '$stateParams', function (UserGamesService, $stateParams) {
-                    var games = UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName });
-                    return games.$promise;
-                }]
-            }
+            url: '/:consoleName', templateUrl: 'app/user/userlist.html', controller: 'UserListCtrl'
+            //resolve: {
+            //    gameResponse: ['UserGamesService', '$stateParams', function (UserGamesService, $stateParams) {
+            //        var games = UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName });
+            //        return games.$promise;
+            //    }]
+            //}
         })
-        .state('user.list.region', {
-            url: '/:regionName', templateUrl: 'app/user/userlist.html', controller: 'UserListCtrl',
-            resolve: {
-                gameResponse: ['UserGamesService', '$stateParams', function (UserGamesService, $stateParams) {
-                    var games = UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName, regionName: $stateParams.regionName });
-                    return games.$promise;
-                }]
-            }
+        .state('user.region', {
+            url: '/:consoleName/:regionName', templateUrl: 'app/user/userlist.html', controller: 'UserListCtrl'
+            //resolve: {
+            //    gameResponse: ['UserGamesRegionService', '$stateParams', function (UserGamesRegionService, $stateParams) {
+            //        var games = UserGamesRegionService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName, regionName: $stateParams.regionName });
+            //        return games.$promise;
+            //    }]
+            //}
+        })
+        .state('user.subRegion', {
+            url: '/:consoleName/:regionName/:subRegionName', templateUrl: 'app/user/userlist.html', controller: 'UserListCtrl'
         })
         .state('console', {
             abstract: true, url: '/:consoleName', template: '<ui-view/>'
@@ -91,6 +94,10 @@ app.factory('UserGamesStatsService', ['$resource', function ($resource) {
 
 app.factory('UserGamesService', ['$resource', function ($resource) {
     return $resource('/api/user/:userName/:consoleName');
+}]);
+
+app.factory('UserGamesRegionService', ['$resource', function ($resource) {
+    return $resource('/api/user/:userName/:consoleName/:regionName');
 }]);
 
 app.factory('GamesService', ['$resource', function ($resource) {
