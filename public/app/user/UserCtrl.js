@@ -9,16 +9,20 @@
     //$state.go('user.list', { consoleName: $scope.selected });
     //$scope.$broadcast('consoleInit', $scope.selected);
 
-    //$rootScope.$on('$stateChangeStart',
-    //    function (event, toState, toParams, fromState, fromParams) {
-    //        //console.log(JSON.stringify(fromState) + ' ' + JSON.stringify(toState));
-    //        if (fromState.name === 'user.list' && toState.name === 'user') {
-    //            event.preventDefault();
-    //        }
-    //        //event.preventDefault();
-    //        // transitionTo() promise will be rejected with 
-    //        // a 'transition prevented' error
-    //    });
+    $scope.$on('$stateChangeStart',
+        function (event, toState, toParams, fromState, fromParams) {
+            //console.log(JSON.stringify(fromState) + ' ' + JSON.stringify(toState));
+            if (toState.name === 'user') {
+                $scope.selectedConsole = {};
+                $scope.regionStats = [];
+                $scope.subRegionStats = [];
+                $scope.selectedRegion = {};
+                $scope.selectedSubRegion = {};
+            }
+            //event.preventDefault();
+            // transitionTo() promise will be rejected with 
+            // a 'transition prevented' error
+        });
 
     if ($stateParams.consoleName === undefined) {
         console.log('NOLLSTÄLL');

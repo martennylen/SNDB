@@ -157,7 +157,8 @@ html {
             }
         }
 
-        ul#user-console-list{
+        ul.user-list{
+            display: inline-block;
             background-color: #ECECEA;
             padding: 10px;
             border-radius: 6px;
@@ -170,10 +171,6 @@ html {
                     color: #EA974F;
                     //font-weight: bold;
                 }
-
-                a.selected {
-                    font-weight: bold;
-                }
             }
         }
 
@@ -185,6 +182,10 @@ html {
                 //padding: 10px;
 
                 label.selected {
+                    font-weight: bold;
+                }
+
+                a.selected {
                     font-weight: bold;
                 }
             }
