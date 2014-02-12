@@ -6,8 +6,7 @@
     $scope.regionName = $stateParams.regionName;
     $scope.subRegionName = $stateParams.subRegionName;
     
-    $scope.$watch('consoleName', function (newValue, oldValue) {
-        console.log(newValue + ' ' + oldValue);
+    $scope.$watch('consoleName', function (newValue) {
         if (newValue !== undefined) {
             $scope.$emit('consoleChanged', newValue);
         } else {

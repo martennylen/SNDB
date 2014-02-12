@@ -86,7 +86,6 @@ module.exports = function(app, passport) {
     });
 
     app.get('/api/user/:userName', function (req, res) {
-        console.log(req.params);
         db.view('users/by_user', { key: req.params.userName }, function(err, response) {
             if (err) {
                 console.log("Ingen användare hittades");
@@ -94,138 +93,73 @@ module.exports = function(app, passport) {
             }
             var userId = response[0].id;
 
-            db.view('games/console_stats_by_user', {
+            db.view('games/stats_by_user', {
                 startkey: [userId],
-                group: true
-            }, function (err, response) {
-            if (err) {
-                res.send(500);
-            }
-            var list = [];
-            _u.each(response, function (unique) {
-                list.push({ console: unique.key[1], count: unique.value });
-            });
-
-            res.send(list);
+                endkey: [userId, {}],
+                group_level: 2
+            }, function (err, stats) {
+                if (err) {
+                    res.send(500);
+                }
+                res.send(
+                    _u.map(stats, function (s) {
+                        return({ console: s.key[1], count: s.value });
+                    })
+                );
             });
         });
     });
 
-    app.get('/api/user/:userName/:consoleName', function (req, res) {
-        db.view('users/by_user', { key: req.params.userName }, function (err, response) {
+    function getUserGamesByLevel(req, res, requestObj, level) {
+        db.view('users/by_user', { key: req.params.userName }, function(err, response) {
             if (err) {
                 console.log("Ingen användare hittades");
                 res.send(404);
             }
             var userId = response[0].id;
+            requestObj.startkey[0] = userId;
+            requestObj.endkey[0] = userId;
             db.view('games/stats_by_user', {
-                    startkey: [userId, req.params.consoleName],
-                    endkey: [userId, req.params.consoleName, {}],
-                    group_level: 3
+                    startkey: requestObj.startkey,
+                    endkey: requestObj.endkey,
+                    group_level: level + 1
                 }, function(err, stats) {
                     if (err) {
                         res.send(409);
                     }
-                    console.log(JSON.stringify(stats));
-                    
+
                     db.view('games/by_user', {
-                            startkey: [userId, req.params.consoleName],
-                            endkey: [userId, req.params.consoleName, {}],
+                            startkey: requestObj.startkey,
+                            endkey: requestObj.endkey,
                             include_docs: true
                         }, function(err, response) {
-                            var list = [];
-                            _u.each(response, function(game, i) {
-                                var current = {};
-                                current.id = game.doc._id;
-                                current.name = game.doc.name;
-                                current.attr = {};
-                                var currentAttr = {};
-                                current.attr.common = _u.map(game.value.game.attr.common, function(attr, iter) {
-                                    currentAttr = game.doc.attr.common[iter];
-                                    return { 'id': currentAttr, 'longName': currentAttr === 'c' ? 'Kassett' : currentAttr === 'i' ? 'Manual' : 'Kartong', 'status': game.value.game.attr.common[iter] };
-                                });
-                                current.attr.extras = _u.map(game.value.game.attr.extras, function(attr, iter) {
-                                    currentAttr = game.doc.attr.extras[iter];
-                                    return { 'id': iter, 'longName': currentAttr.name, 'status': game.value.game.attr.extras[iter] };
-                                });
-                                current.attr.note = game.value.game.attr.note;
-                                current.attr.extrasComplete = current.attr.extras.length ? _u.all(_u.pluck(current.attr.extras, 'status')) : true;
-                                current.attr.isComplete = _u.every(_u.pluck(current.attr.common, 'status')) && current.attr.extrasComplete;
-                                current.regions = game.doc.regions;
-                                current.item = game.id;
-                                list.push(current);
+                            var managed = mapUserGameResponse(response, req.user);
+                            res.send({
+                                regions: _u.map(stats, function(s) {
+                                    return { region: s.key[level], count: s.value };
+                                }),
+                                games: managed.list,
+                                loggedIn: userId === managed.userId
                             });
-
-                            var requestId = '';
-                            if (req.user !== undefined) {
-                                requestId = req.user.id;
-                            }
-                            res.send({ regions: _u.map(stats, function(s) {
-                                return { region: s.key[2], count: s.value };
-                            }), games: list, loggedIn: userId === requestId });
                         });
                 });
         });
+    }
+
+    app.get('/api/user/:userName/:consoleName', function(req, res) {
+        var requestObj = {
+            startkey: [0, req.params.consoleName],
+            endkey: [0, req.params.consoleName, {}]
+        };
+        return getUserGamesByLevel(req, res, requestObj, 2);
     });
 
     app.get('/api/user/:userName/:consoleName/:regionName', function (req, res) {
-        console.log('yo!');
-        db.view('users/by_user', { key: req.params.userName }, function (err, response) {
-            if (err) {
-                console.log("Ingen användare hittades");
-                res.send(404);
-            }
-            var userId = response[0].id;
-            db.view('games/stats_by_user', {
-                startkey: [userId, req.params.consoleName, req.params.regionName],
-                endkey: [userId, req.params.consoleName, req.params.regionName, {}],
-                group_level: 4
-            }, function (err, stats) {
-                if (err) {
-                    res.send(409);
-                }
-                console.log(JSON.stringify(stats));
-
-                db.view('games/by_user', {
-                    startkey: [userId, req.params.consoleName, req.params.regionName],
-                    endkey: [userId, req.params.consoleName, req.params.regionName, {}],
-                    include_docs: true
-                }, function (err, response) {
-                    var list = [];
-                    _u.each(response, function (game, i) {
-                        var current = {};
-                        current.id = game.doc._id;
-                        current.name = game.doc.name;
-                        current.attr = {};
-                        var currentAttr = {};
-                        current.attr.common = _u.map(game.value.game.attr.common, function (attr, iter) {
-                            currentAttr = game.doc.attr.common[iter];
-                            return { 'id': currentAttr, 'longName': currentAttr === 'c' ? 'Kassett' : currentAttr === 'i' ? 'Manual' : 'Kartong', 'status': game.value.game.attr.common[iter] };
-                        });
-                        current.attr.extras = _u.map(game.value.game.attr.extras, function (attr, iter) {
-                            currentAttr = game.doc.attr.extras[iter];
-                            return { 'id': iter, 'longName': currentAttr.name, 'status': game.value.game.attr.extras[iter] };
-                        });
-                        current.attr.note = game.value.game.attr.note;
-                        current.attr.extrasComplete = current.attr.extras.length ? _u.all(_u.pluck(current.attr.extras, 'status')) : true;
-                        current.attr.isComplete = _u.every(_u.pluck(current.attr.common, 'status')) && current.attr.extrasComplete;
-                        current.regions = game.doc.regions;
-                        current.item = game.id;
-                        list.push(current);
-                    });
-
-                    var requestId = '';
-                    if (req.user !== undefined) {
-                        requestId = req.user.id;
-                    }
-                    res.send({
-                        regions: _u.map(stats, function (s) {
-                            return { region: s.key[3], count: s.value };
-                        }), games: list, loggedIn: userId === requestId
-                    });
-                });
-            });
-        });
+        var requestObj = {
+            startkey: [0, req.params.consoleName, req.params.regionName],
+            endkey: [0, req.params.consoleName, req.params.regionName, {}]
+        };
+        return getUserGamesByLevel(req, res, requestObj, 3);
     });
 
     app.get('/api/user/:userName/:consoleName/:regionName/:subRegionName', function (req, res) {
@@ -242,39 +176,45 @@ module.exports = function(app, passport) {
                 endkey: [userId, req.params.consoleName, req.params.regionName, req.params.subRegionName, {}],
                 include_docs: true
             }, function (err, response) {
-                var list = [];
-                _u.each(response, function (game, i) {
-                    var current = {};
-                    current.id = game.doc._id;
-                    current.name = game.doc.name;
-                    current.attr = {};
-                    var currentAttr = {};
-                    current.attr.common = _u.map(game.value.game.attr.common, function (attr, iter) {
-                        currentAttr = game.doc.attr.common[iter];
-                        return { 'id': currentAttr, 'longName': currentAttr === 'c' ? 'Kassett' : currentAttr === 'i' ? 'Manual' : 'Kartong', 'status': game.value.game.attr.common[iter] };
-                    });
-                    current.attr.extras = _u.map(game.value.game.attr.extras, function (attr, iter) {
-                        currentAttr = game.doc.attr.extras[iter];
-                        return { 'id': iter, 'longName': currentAttr.name, 'status': game.value.game.attr.extras[iter] };
-                    });
-                    current.attr.note = game.value.game.attr.note;
-                    current.attr.extrasComplete = current.attr.extras.length ? _u.all(_u.pluck(current.attr.extras, 'status')) : true;
-                    current.attr.isComplete = _u.every(_u.pluck(current.attr.common, 'status')) && current.attr.extrasComplete;
-                    current.regions = game.doc.regions;
-                    current.item = game.id;
-                    list.push(current);
-                });
-
-                var requestId = '';
-                if (req.user !== undefined) {
-                    requestId = req.user.id;
-                }
+                var managed = mapUserGameResponse(response, req.user);
                 res.send({
-                    games: list, loggedIn: userId === requestId
+                    games: managed.list, loggedIn: userId === managed.userId
                 });
             });
         });
     });
+    
+    function mapUserGameResponse(response, user) {
+        var list = [];
+        _u.each(response, function (game) {
+            var current = {};
+            current.id = game.doc._id;
+            current.name = game.doc.name;
+            current.attr = {};
+            var currentAttr = {};
+            current.attr.common = _u.map(game.value.game.attr.common, function (attr, iter) {
+                currentAttr = game.doc.attr.common[iter];
+                return { 'id': currentAttr, 'longName': currentAttr === 'c' ? 'Kassett' : currentAttr === 'i' ? 'Manual' : 'Kartong', 'status': game.value.game.attr.common[iter] };
+            });
+            current.attr.extras = _u.map(game.value.game.attr.extras, function (attr, iter) {
+                currentAttr = game.doc.attr.extras[iter];
+                return { 'id': iter, 'longName': currentAttr.name, 'status': game.value.game.attr.extras[iter] };
+            });
+            current.attr.note = game.value.game.attr.note;
+            current.attr.extrasComplete = current.attr.extras.length ? _u.all(_u.pluck(current.attr.extras, 'status')) : true;
+            current.attr.isComplete = _u.every(_u.pluck(current.attr.common, 'status')) && current.attr.extrasComplete;
+            current.regions = game.doc.regions;
+            current.item = game.id;
+            list.push(current);
+        });
+
+        var requestId = '';
+        if (user !== undefined) {
+            requestId = user.id;
+        }
+
+        return { list: list, userId: requestId };
+    }
 
     app.post('/api/user/add', function (req, res) {
         var gameItem = {
