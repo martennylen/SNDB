@@ -163,7 +163,6 @@ module.exports = function(app, passport) {
     });
 
     app.get('/api/user/:userName/:consoleName/:regionName/:subRegionName', function (req, res) {
-        console.log('yo!');
         db.view('users/by_user', { key: req.params.userName }, function (err, response) {
             if (err) {
                 console.log("Ingen användare hittades");
@@ -220,11 +219,7 @@ module.exports = function(app, passport) {
         var gameItem = {
             type: 'item',
             owner: req.user.id,
-            game: {            
-                id: req.body.id,
-                console: req.body.console,
-                attr: req.body.attr
-            }
+            game: req.body
         };
         db.save(gameItem, function (err, resp) {
             if (err) {

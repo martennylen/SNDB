@@ -44,14 +44,16 @@
 
     $scope.updateGame = function (g) {
         var current = $scope.selected;
-        var obj = {
+
+        var attrs = {
             common: _.pluck(current.attr.common, 'status'),
             extras: _.pluck(current.attr.extras, 'status'),
             note: current.attr.note
         };
+        var combObj = { id: current.id, console: g.console, regions: g.regions, attr: attrs };
         
         if (current.attr.isNew) {
-            $http.post('/api/user/add', { id: current.id, console: $stateParams.consoleName, attr: obj })
+            $http.post('/api/user/add', combObj)
                 .success(function () {
                     g.attr = current.attr;
                     g.attr.isNew = false;
@@ -61,7 +63,7 @@
                     console.log('HIELP');
                 });
         } else {
-            if ((_.every(obj.common, function(a) { return !a; }) && !$scope.selected.attr.isNew)) {
+            if ((_.every(attrs.common, function (a) { return !a; }) && !$scope.selected.attr.isNew)) {
                 console.log('vill ta bort ' + current.item);
                 $scope.$emit('gameRemoved', $scope.consoleName);
                 $http.post('/api/user/remove', { item: current.item })
@@ -72,7 +74,7 @@
                         console.log('HIELP');
                     });
             } else {
-                $http.post('/api/user/update', { item: current.item, attr: obj })
+                $http.post('/api/user/update', { item: current.item, attr: attrs })
                     .success(function() {
                         g.attr = current.attr;
                         g.attr.isComplete = _.every(_.pluck(g.attr.common, 'status')) && (g.attr.extras.length ? _.every(_.pluck(g.attr.extras, 'status')) : true);

@@ -2,26 +2,30 @@
     function ($scope, $location, $stateParams, $http, $timeout, baseRegions) {
     console.log('userlistctrl');
     $scope.userName = $stateParams.userName;
-    $scope.consoleName = $stateParams.consoleName;
-    $scope.regionName = $stateParams.regionName;
     $scope.subRegionName = $stateParams.subRegionName;
-    
-    $scope.$watch('consoleName', function (newValue) {
+    $scope.regionName = $stateParams.regionName;
+    $scope.consoleName = $stateParams.consoleName;
+        
+    $scope.$watch('consoleName', function (newValue, oldValue) {
+        console.log(newValue + ' ' + oldValue);
         if (newValue !== undefined) {
+            console.log('userlistctrl triggar consoleChanged med ' + newValue);
             $scope.$emit('consoleChanged', newValue);
-        } else {
-            console.log('nu nollställer vi va');
         }
     });
-
-    $scope.$watch('regionName', function (newValue) {
+        
+    $scope.$watch('regionName', function (newValue, oldValue) {
+        console.log(newValue + ' ' + oldValue);
         if (newValue !== undefined) {
+            console.log('userlistctrl triggar regionChanged med ' + newValue);
             $scope.$emit('regionChanged', { consoleName: $scope.consoleName, regionName: newValue });
         }
     });
-
-    $scope.$watch('subRegionName', function (newValue) {
+        
+    $scope.$watch('subRegionName', function (newValue, oldValue) {
+        console.log(newValue + ' ' + oldValue);
         if (newValue !== undefined) {
+            console.log('userlistctrl triggar subRegionChanged med ' + newValue);
             $scope.$emit('subRegionChanged', { consoleName: $scope.consoleName, regionName: $scope.regionName, subRegionName: newValue });
         }
     });
@@ -32,18 +36,27 @@
     $scope.$on('gamesReceived', function (event, gameResponse) {
         console.log('FICK SPEL!');
         console.log(gameResponse);
+        if ($scope.subRegionName !== undefined) {
+            if (gameResponse.level === 'subregion') {
+                $scope.games = gameResponse.games;
+                $scope.loggedIn = gameResponse.loggedIn;
+            }
+
+            return;
+        }
+    
+        if ($scope.regionName !== undefined) {
+            if (gameResponse.level === 'region') {
+                $scope.games = gameResponse.games;
+                $scope.loggedIn = gameResponse.loggedIn;
+            }
+
+            return;
+        }
+        
         $scope.games = gameResponse.games;
         $scope.loggedIn = gameResponse.loggedIn;
     });
-
-    //$scope.regionStats = gameResponse.regions;
-    //$scope.games = gameResponse.games;
-    //$scope.loggedIn = gameResponse.loggedIn;
-
-    //UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName }).$promise.then(function (data) {
-    //    $scope.games = data.games;
-    //    $scope.loggedIn = data.loggedIn;
-    //});
 
     $scope.regions = baseRegions;
     $scope.currentRegion = {
@@ -51,12 +64,6 @@
             return r.id === $scope.regionName;
         })
     };
-    //$stateParams.regionName = $scope.currentRegion.region.id;
-    //$scope.filterBoxes = {};
-
-    //_.each($scope.regions, function (f) {
-    //    $scope.filterBoxes[f.id] = f.selected;
-    //});
 
     $scope.idEditing = false;
     $scope.editGame = function (g) {
@@ -82,49 +89,34 @@
 
     $scope.updateGame = function (g) {
         var current = $scope.selected;
-        var obj = {
+
+        var attrs = {
             common: _.pluck(current.attr.common, 'status'),
             extras: _.pluck(current.attr.extras, 'status'),
             note: current.attr.note
         };
 
-        if (current.attr.isNew) {
-            $http.post('/api/user/add', { id: current.id, console: $stateParams.consoleName, attr: obj })
+        if ((_.every(attrs.common, function (a) { return !a; }) && !$scope.selected.attr.isNew)) {
+            console.log('vill ta bort ' + current.item);
+            $scope.$emit('gameRemoved', $scope.consoleName);
+            $http.post('/api/user/remove', { item: current.item })
                 .success(function () {
-                    g.attr = current.attr;
-                    g.attr.isNew = false;
                     $scope.editGame(g);
                 })
                 .error(function () {
                     console.log('HIELP');
                 });
         } else {
-            if ((_.every(obj.common, function (a) { return !a; }) && !$scope.selected.attr.isNew)) {
-                console.log('vill ta bort ' + current.item);
-                $scope.$emit('gameRemoved', $scope.consoleName);
-                $http.post('/api/user/remove', { item: current.item })
-                    .success(function () {
-                        if ($scope.userName !== undefined) {
-                            g.isRemoved = true;
-                            $scope.$emit('gameRemoved', $scope.consoleName);
-                        }
-                        $scope.editGame(g);
-                    })
-                    .error(function () {
-                        console.log('HIELP');
-                    });
-            } else {
-                $http.post('/api/user/update', { item: current.item, attr: obj })
-                    .success(function () {
-                        g.attr = current.attr;
-                        g.attr.isComplete = _.every(_.pluck(g.attr.common, 'status')) && (g.attr.extras.length ? _.every(_.pluck(g.attr.extras, 'status')) : true);
-                        console.log(g.attr.isComplete);
-                        $scope.editGame(g);
-                    })
-                    .error(function () {
-                        console.log('HIELP');
-                    });
-            }
+            $http.post('/api/user/update', { item: current.item, attr: attrs })
+                .success(function () {
+                    g.attr = current.attr;
+                    g.attr.isComplete = _.every(_.pluck(g.attr.common, 'status')) && (g.attr.extras.length ? _.every(_.pluck(g.attr.extras, 'status')) : true);
+                    console.log(g.attr.isComplete);
+                    $scope.editGame(g);
+                })
+                .error(function () {
+                    console.log('HIELP');
+                });
         }
     };
 
