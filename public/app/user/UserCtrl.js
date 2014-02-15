@@ -2,10 +2,6 @@
     function ($scope, $location, $state, $stateParams, stats, UserGamesStatsService) {
     $scope.userName = $stateParams.userName;
     $scope.stats = stats;
-        
-    //if ($scope.stats.length && $stateParams.consoleName === undefined) {
-    //    $state.go('user.list', { consoleName: stats[0].console });
-    //}
 
     $scope.$on('$stateChangeStart',
     function (event, toState, toParams, fromState, fromParams) {
@@ -83,4 +79,18 @@
             count--;
         }
     });
+        
+
+    var redirectDelayed = function () {
+        $scope.$apply(function () { redirectEmptyResult(); });
+    };
+    var redirectThrottled = _.debounce(redirectDelayed, 500);
+    var redirectEmptyResult = function () {
+        console.log('redirect säger att console är ' + $scope.selectedConsole);
+        if ($scope.stats.length && $scope.selectedConsole === undefined) {
+            $state.go('user.list', { consoleName: stats[0].console });
+        }
+    };
+        
+    redirectThrottled($scope);
 }]);

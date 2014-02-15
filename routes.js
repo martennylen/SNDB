@@ -189,6 +189,7 @@ module.exports = function(app, passport) {
             var current = {};
             current.id = game.doc._id;
             current.name = game.doc.name;
+            current.console = game.doc.console;
             current.attr = {};
             var currentAttr = {};
             current.attr.common = _u.map(game.value.game.attr.common, function (attr, iter) {
@@ -252,7 +253,14 @@ module.exports = function(app, passport) {
     });
 
     app.post('/api/newgame', function (req, res) {
-        console.log(JSON.stringify(req.body));
+        req.body.tags = [req.body.name.replace(/[^a-z0-9\s]/gi, '').toLowerCase()];
+        
+        _u.each(req.body.name.split(' '), function (word) {
+            if (word.length > 2) {
+                req.body.tags.push(word.replace(/[^a-z0-9\s]/gi, '').toLowerCase());
+            }
+        });
+
         db.save(req.body, function (err, resp) {
             if (err) {
                 res.send(500);
@@ -260,7 +268,6 @@ module.exports = function(app, passport) {
 
             res.send(200);
         });
-        //res.send(200);
     });
 
     app.get('/api/search/:consoleName', function (req, res) {
@@ -318,7 +325,7 @@ module.exports = function(app, passport) {
 
             if (found > -1) {
                 game.value.attr.isNew = false;
-                game.item = resp[found].id;
+                game.value.item = resp[found].id;
                 resp.splice(found, 1);
             } else {
                 game.value.attr.isNew = true;
@@ -372,8 +379,8 @@ module.exports = function(app, passport) {
         db.view('games/by_console', { 
                 startkey: [req.params.consoleName, req.params.regionName, req.params.subRegionName],
                 endkey: [req.params.consoleName, req.params.regionName, req.params.subRegionName, '\uffff']
-            }, function (err, response) {
-            console.log(req.user);
+        }, function (err, response) {
+
             if (req.user !== undefined) {
                 //var result = [];
 
