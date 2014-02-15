@@ -27,10 +27,10 @@
         }
         $scope.isEditing = !$scope.isEditing;
         if ($scope.isEditing) {
-            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, attr: g.attr }));
+            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants }));
         } else {
             if ($scope.selected.id !== g.id) {
-                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, attr: g.attr }));
+                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants }));
                 $scope.isEditing = true;
             } else {
                 $scope.selected = {};
@@ -39,7 +39,7 @@
     };
 
     $scope.attrChanged = function (attrs) {
-        $scope.willRemove = (_.every(_.pluck(attrs, 'status'), function(a) { return !a; }) && !$scope.selected.attr.isNew) ? true : false; 
+        $scope.willRemove = (_.every(_.pluck(attrs.common, 'status'), function(a) { return !a; }) && !attrs.isNew) ? true : false; 
     };
 
     $scope.updateGame = function (g) {
@@ -89,7 +89,7 @@
     };
 
     $scope.isDirty = function (attrs) {
-        return (angular.toJson(attrs) !== angular.toJson($scope.selected.attr));
+        return (angular.toJson(attrs) !== angular.toJson($scope.selected.variants));
     };
 
     var latestResults = [];

@@ -313,29 +313,60 @@ module.exports = function(app, passport) {
                 });
             }
 
-            game.value.attr.common = _u.map(game.value.attr.common, function (attr, i) {
-                return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
-            });
-            game.value.attr.extras = _u.map(game.value.attr.extras, function (attr, i) {
-                return { id: i, 'longName': attr.name, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
-            });
-            game.value.attr.note = (found > -1) ? resp[found].value.game.attr.note : '';
-            game.value.attr.extrasComplete = (found > -1) ? game.value.attr.extras.length ? _u.all(_u.pluck(game.value.attr.extras, 'status')) : true : false;
-            game.value.attr.isComplete = (found > -1) ? _u.all(_u.pluck(game.value.attr.common, 'status')) && game.value.attr.extrasComplete : false;
+            if (game.value.attr) {
+                game.value.attr.common = _u.map(game.value.attr.common, function(attr, i) {
+                    return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
+                });
+                game.value.attr.extras = _u.map(game.value.attr.extras, function(attr, i) {
+                    return { id: i, 'longName': attr.name, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
+                });
+                game.value.attr.note = (found > -1) ? resp[found].value.game.attr.note : '';
+                game.value.attr.extrasComplete = (found > -1) ? game.value.attr.extras.length ? _u.all(_u.pluck(game.value.attr.extras, 'status')) : true : false;
+                game.value.attr.isComplete = (found > -1) ? _u.all(_u.pluck(game.value.attr.common, 'status')) && game.value.attr.extrasComplete : false;
 
-            if (found > -1) {
-                game.value.attr.isNew = false;
-                game.value.item = resp[found].id;
-                resp.splice(found, 1);
-            } else {
-                game.value.attr.isNew = true;
-            }
-
-            if (!isUserScope) {
-                result.push(game.value);
-            } else {
                 if (found > -1) {
+                    game.value.attr.isNew = false;
+                    game.value.item = resp[found].id;
+                    resp.splice(found, 1);
+                } else {
+                    game.value.attr.isNew = true;
+                }
+
+                if (!isUserScope) {
                     result.push(game.value);
+                } else {
+                    if (found > -1) {
+                        result.push(game.value);
+                    }
+                }
+            } else {
+                _u.each(game.value.variants, function (v, j) {
+                    v.attr.common = _u.map(v.attr.common, function (attr, i) {
+                        return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr[j].common[i] : false) };
+                    });
+
+                    v.attr.extras = _u.map(v.attr.extras, function (attr, i) {
+                        return { id: i, 'longName': attr.name, status: ((found > -1) ? resp[found].value.game.attr[j].extras[i] : false) };
+                    });
+
+                    v.attr.note = (found > -1) ? resp[found].value.game.attr[j].note : '';
+                    v.attr.extrasComplete = (found > -1) ? v.attr.extras.length ? _u.all(_u.pluck(v.attr.extras, 'status')) : true : false;
+                    v.attr.isComplete = (found > -1) ? _u.all(_u.pluck(v.attr.common, 'status')) && v.attr.extrasComplete : false;
+
+                    v.attr.isNew = (found > 1) ? false : true;
+                });
+
+                if (found > -1) {
+                    game.value.item = resp[found].id;
+                    resp.splice(found, 1);
+                }
+
+                if (!isUserScope) {
+                    result.push(game.value);
+                } else {
+                    if (found > -1) {
+                        result.push(game.value);
+                    }
                 }
             }
         });
@@ -392,7 +423,6 @@ module.exports = function(app, passport) {
                         res.send(500);
                     }
                     
-                    //var list = _u.pluck(response, 'value');
                     var list = mapGameInformation(resp, response, false);  
                     res.send({ games: list, loggedIn: true });
                 });
