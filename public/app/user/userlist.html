@@ -28,9 +28,9 @@
                     <div ng-repeat="variant in selected.variants">
                         <h3 ng-if="variant.desc.length" style="margin: 0">{{variant.desc}}</h3>
                         <ul>
-                            <li ng-repeat="attr in variant.attr.common" style="padding: 0; display: inline; margin-right: 20px">
-                                <label for="{{selected.id + '_' + $parent.$index + '_' + attr.id}}">{{attr.longName}}:</label>
+                            <li ng-repeat="attr in variant.attr.common" style="padding: 0;margin-right: 20px">
                                 <input id="{{selected.id + '_' + $parent.$index + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status" ng-change="attrChanged(variant.attr)">
+                                <label for="{{selected.id + '_' + $parent.$index + '_' + attr.id}}">{{attr.longName}} <span ng-if="attr.desc.length">({{attr.desc}})</span></label>
                             </li>
                         </ul>
                         <ul ng-if="variant.attr.extras.length">

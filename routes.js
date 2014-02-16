@@ -194,7 +194,7 @@ module.exports = function(app, passport) {
             current.variants = game.doc.variants;
             _u.each(current.variants, function (v, j) {
                 v.attr.common = _u.map(v.attr.common, function (attr, i) {
-                    return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: game.value.game.attr[j].common[i] };
+                    return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: game.value.game.attr[j].common[i] };
                 });
 
                 v.attr.extras = _u.map(v.attr.extras, function (attr, i) {
@@ -322,7 +322,10 @@ module.exports = function(app, passport) {
 
             _u.each(game.value.variants, function (v, j) {
                 v.attr.common = _u.map(v.attr.common, function (attr, i) {
-                    return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr[j].common[i] : false) };
+                    if (found > -1) {
+                        console.log(resp[found].value.game.attr[j]);
+                    }
+                    return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr[j].common[i] : false) };
                 });
 
                 v.attr.extras = _u.map(v.attr.extras, function (attr, i) {
