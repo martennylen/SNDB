@@ -11,33 +11,44 @@
                             <span>({{game.regions.sub[0].toUpperCase()}})</span>
                         </span>
                     </div></a><a href ng-click="editGame(game)" ng-class="{disabled: !$parent.loggedIn}"><div class="game-data"><div class="game-attr">
-                            <div class="common">
-                                <span ng-repeat="attr in game.attr.common" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
-                            </div><span ng-if="game.attr.extras.length" ng-class="{exists: game.attr.extrasComplete}">+</span>
-                        </div><div class="game-note">
-                            <span>{{game.attr.note || '&nbsp;'}}</span></div></div></a>
+                        <div class="common">
+                            <span ng-if="game.variants.length === 1" ng-repeat="attr in game.variants[0].attr.common" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
+                            <div ng-if="game.variants.length > 1" ng-repeat="v in game.variants" style="display: inline-block;margin-right:5px">
+                                <span ng-repeat="attr in v.attr.common" ng-class="{exists: attr.status}" style="margin-right: 0">
+                                    {{attr.id.toUpperCase()}}
+                                </span>
+                                <span ng-if="$index !== game.variants.length-1">/ </span>
+                            </div>
+                        </div><span ng-if="game.variants.length === 1 && game.variants[0].attr.extras.length" ng-class="{exists: game.attr.extrasComplete}">+</span>
+                    </div><div class="game-note">
+                        <span>{{game.attr.note || '&nbsp;'}}</span></div></div></a>
             </div>
             <div class="game-content" ng-if="game.id === selected.id">
-                <form name="gameEditor">
-                    <ul>
-                        <li ng-repeat="attr in selected.attr.common" style="padding: 0; display: inline; margin-right: 20px">
-                            <label style="font-size: 30px" for="{{selected.id + '_' + attr.id}}">{{attr.longName}}:</label>
-                            <input id="{{selected.id + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status" ng-change="attrChanged(selected.attr.common)">
-                        </li>
-                    </ul>
-                    <ul ng-if="selected.attr.extras.length">
-                        <li ng-repeat="attr in selected.attr.extras" style="padding: 0; display: inline; margin-right: 20px">
-                            <label style="font-size: 30px; color: #6495ed" for="{{selected.id + '_' + attr.id}}">{{attr.longName}}:</label>
-                            <input id="{{selected.id + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status">
-                        </li>
-                    </ul>
-                    <div>
-                        <label style="font-size: 30px" for="{{game.id + '_note'}}">Anteckning:</label>
-                        <input id="{{game.id + '_note'}}" type="text" ng-model="selected.attr.note">
-                        <button ng-disabled="!isDirty(game.attr)" class="yeah" ng-click="updateGame(game)">Spara</button>
-                        <span ng-if="willRemove">Spelet kommer att tas bort ur din samling.</span>
+                <div style="display: inline-block">
+                    <div ng-repeat="variant in selected.variants">
+                        <h3 ng-if="variant.desc.length" style="margin: 0">{{variant.desc}}</h3>
+                        <ul>
+                            <li ng-repeat="attr in variant.attr.common" style="padding: 0; display: inline; margin-right: 20px">
+                                <label for="{{selected.id + '_' + $parent.$index + '_' + attr.id}}">{{attr.longName}}:</label>
+                                <input id="{{selected.id + '_' + $parent.$index + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status" ng-change="attrChanged(variant.attr)">
+                            </li>
+                        </ul>
+                        <ul ng-if="variant.attr.extras.length">
+                            <li ng-repeat="attr in variant.attr.extras" style="padding: 0; display: inline; margin-right: 20px">
+                                <label style="color: #6495ed" for="{{selected.id + '_' + $parent.$index + '_' + attr.id}}">{{attr.longName}}:</label>
+                                <input id="{{selected.id + '_' + $parent.$index + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status">
+                            </li>
+                        </ul>
+                        <div>
+                            <label for="{{selected.id + '_' + $parent.$index + '_' + '_note'}}">Anteckning:</label>
+                            <input id="{{selected.id + '_' + $parent.$index + '_' + '_note'}}" type="text" ng-model="variant.attr.note">
+                        </div>
                     </div>
-                </form>
+                </div>
+                <div style="display: inline-block">
+                    <button ng-disabled="!isDirty(game.variants)" class="yeah" ng-click="updateGame(game)">Spara</button>
+                    <span ng-if="willRemove">Spelet kommer att tas bort ur din samling.</span>
+                </div>
             </div>
         </li>
     </ul>

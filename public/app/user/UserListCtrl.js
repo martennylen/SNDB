@@ -38,6 +38,7 @@
         console.log(gameResponse);
         if ($scope.subRegionName !== undefined) {
             if (gameResponse.level === 'subregion') {
+                $scope.initialResult = gameResponse.games;
                 $scope.games = gameResponse.games;
                 $scope.loggedIn = gameResponse.loggedIn;
             }
@@ -47,6 +48,7 @@
     
         if ($scope.regionName !== undefined) {
             if (gameResponse.level === 'region') {
+                $scope.initialResult = gameResponse.games;
                 $scope.games = gameResponse.games;
                 $scope.loggedIn = gameResponse.loggedIn;
             }
@@ -54,6 +56,7 @@
             return;
         }
         
+        $scope.initialResult = gameResponse.games;
         $scope.games = gameResponse.games;
         $scope.loggedIn = gameResponse.loggedIn;
     });
@@ -72,10 +75,10 @@
         }
         $scope.isEditing = !$scope.isEditing;
         if ($scope.isEditing) {
-            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, attr: g.attr }));
+            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants }));
         } else {
             if ($scope.selected.id !== g.id) {
-                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, attr: g.attr }));
+                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants }));
                 $scope.isEditing = true;
             } else {
                 $scope.selected = {};
@@ -84,23 +87,29 @@
     };
 
     $scope.attrChanged = function (attrs) {
-        $scope.willRemove = (_.every(_.pluck(attrs, 'status'), function (a) { return !a; }) && !$scope.selected.attr.isNew) ? true : false;
+        $scope.willRemove = (_.every(_.pluck(attrs.common, 'status'), function (a) { return !a; }) && !attrs.isNew) ? true : false;
     };
 
     $scope.updateGame = function (g) {
         var current = $scope.selected;
 
-        var attrs = {
-            common: _.pluck(current.attr.common, 'status'),
-            extras: _.pluck(current.attr.extras, 'status'),
-            note: current.attr.note
-        };
+        var attrs = _.map(current.variants, function (v) {
+            return {
+                common: _.pluck(v.attr.common, 'status'),
+                extras: _.pluck(v.attr.extras, 'status'),
+                note: v.attr.note
+            };
+        });
 
-        if ((_.every(attrs.common, function (a) { return !a; }) && !$scope.selected.attr.isNew)) {
+        var flat = _.reduceRight(attrs, function (a, b) {return a.concat(b.common); }, []);
+
+        if (_.every(flat, function (a) {
+            console.log(a); return !a; })) {
             console.log('vill ta bort ' + current.item);
-            $scope.$emit('gameRemoved', $scope.consoleName);
+            //$scope.$emit('gameRemoved', $scope.consoleName);
             $http.post('/api/user/remove', { item: current.item })
                 .success(function () {
+                    $scope.games.splice(_.indexOf($scope.games, g), 1);
                     $scope.editGame(g);
                 })
                 .error(function () {
@@ -109,9 +118,11 @@
         } else {
             $http.post('/api/user/update', { item: current.item, attr: attrs })
                 .success(function () {
-                    g.attr = current.attr;
-                    g.attr.isComplete = _.every(_.pluck(g.attr.common, 'status')) && (g.attr.extras.length ? _.every(_.pluck(g.attr.extras, 'status')) : true);
-                    console.log(g.attr.isComplete);
+                    g.variants = current.variants;
+                    _.each(g.variants, function (v) {
+                        v.attr.isComplete = _.every(_.pluck(v.attr.common, 'status')) && (v.attr.extras.length ? _.every(_.pluck(v.attr.extras, 'status')) : true);
+                    });
+
                     $scope.editGame(g);
                 })
                 .error(function () {
@@ -121,7 +132,7 @@
     };
 
     $scope.isDirty = function (attrs) {
-        return (angular.toJson(attrs) !== angular.toJson($scope.selected.attr));
+        return (angular.toJson(attrs) !== angular.toJson($scope.selected.variants));
     };
 
     var latestResults = [];
@@ -131,7 +142,7 @@
         }
 
         if ($scope.q.length === 0) {
-            $scope.games = gameResponse.games;
+            $scope.games = $scope.initialResult;
             $scope.showQ = false;
             return;
         }

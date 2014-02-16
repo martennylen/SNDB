@@ -190,19 +190,24 @@ module.exports = function(app, passport) {
             current.id = game.doc._id;
             current.name = game.doc.name;
             current.console = game.doc.console;
-            current.attr = {};
-            var currentAttr = {};
-            current.attr.common = _u.map(game.value.game.attr.common, function (attr, iter) {
-                currentAttr = game.doc.attr.common[iter];
-                return { 'id': currentAttr, 'longName': currentAttr === 'c' ? 'Kassett' : currentAttr === 'i' ? 'Manual' : 'Kartong', 'status': game.value.game.attr.common[iter] };
+            
+            current.variants = game.doc.variants;
+            _u.each(current.variants, function (v, j) {
+                v.attr.common = _u.map(v.attr.common, function (attr, i) {
+                    return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: game.value.game.attr[j].common[i] };
+                });
+
+                v.attr.extras = _u.map(v.attr.extras, function (attr, i) {
+                    return { id: i, 'longName': attr.name, status: game.value.game.attr[j].extras[i] };
+                });
+
+                v.attr.note = game.value.game.attr[j].note;
+                v.attr.extrasComplete = v.attr.extras.length ? _u.all(_u.pluck(v.attr.extras, 'status')) : false;
+                v.attr.isComplete = _u.all(_u.pluck(v.attr.common, 'status')) && v.attr.extrasComplete;
+
+                v.attr.isNew = false;
             });
-            current.attr.extras = _u.map(game.value.game.attr.extras, function (attr, iter) {
-                currentAttr = game.doc.attr.extras[iter];
-                return { 'id': iter, 'longName': currentAttr.name, 'status': game.value.game.attr.extras[iter] };
-            });
-            current.attr.note = game.value.game.attr.note;
-            current.attr.extrasComplete = current.attr.extras.length ? _u.all(_u.pluck(current.attr.extras, 'status')) : true;
-            current.attr.isComplete = _u.every(_u.pluck(current.attr.common, 'status')) && current.attr.extrasComplete;
+            
             current.regions = game.doc.regions;
             current.item = game.id;
             list.push(current);
@@ -228,6 +233,7 @@ module.exports = function(app, passport) {
             }
             res.send(200);
         });
+        res.send(200);
     });
 
     app.post('/api/user/update', function(req, res) {
@@ -245,6 +251,7 @@ module.exports = function(app, passport) {
     app.post('/api/user/remove', function(req, res) {
         db.remove(req.body.item, function(err, resp) {
             if (err) {
+                console.log(err);
                 res.send(500);
             }
 
@@ -313,60 +320,35 @@ module.exports = function(app, passport) {
                 });
             }
 
-            if (game.value.attr) {
-                game.value.attr.common = _u.map(game.value.attr.common, function(attr, i) {
-                    return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
+            _u.each(game.value.variants, function (v, j) {
+                v.attr.common = _u.map(v.attr.common, function (attr, i) {
+                    return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr[j].common[i] : false) };
                 });
-                game.value.attr.extras = _u.map(game.value.attr.extras, function(attr, i) {
-                    return { id: i, 'longName': attr.name, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
+
+                v.attr.extras = _u.map(v.attr.extras, function (attr, i) {
+                    return { id: i, 'longName': attr.name, status: ((found > -1) ? resp[found].value.game.attr[j].extras[i] : false) };
                 });
-                game.value.attr.note = (found > -1) ? resp[found].value.game.attr.note : '';
-                game.value.attr.extrasComplete = (found > -1) ? game.value.attr.extras.length ? _u.all(_u.pluck(game.value.attr.extras, 'status')) : true : false;
-                game.value.attr.isComplete = (found > -1) ? _u.all(_u.pluck(game.value.attr.common, 'status')) && game.value.attr.extrasComplete : false;
 
-                if (found > -1) {
-                    game.value.attr.isNew = false;
-                    game.value.item = resp[found].id;
-                    resp.splice(found, 1);
-                } else {
-                    game.value.attr.isNew = true;
-                }
+                v.attr.note = (found > -1) ? resp[found].value.game.attr[j].note : '';
+                v.attr.extrasComplete = (found > -1) ? v.attr.extras.length ? _u.all(_u.pluck(v.attr.extras, 'status')) : true : false;
+                v.attr.isComplete = (found > -1) ? _u.all(_u.pluck(v.attr.common, 'status')) && v.attr.extrasComplete : false;
 
-                if (!isUserScope) {
-                    result.push(game.value);
-                } else {
-                    if (found > -1) {
-                        result.push(game.value);
-                    }
-                }
+                v.attr.isNew = (found > 1) ? false : true;
+            });
+
+            if (found > -1) {
+                game.value.item = resp[found].id;
+                game.value.isNew = false;
+                resp.splice(found, 1);
             } else {
-                _u.each(game.value.variants, function (v, j) {
-                    v.attr.common = _u.map(v.attr.common, function (attr, i) {
-                        return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr[j].common[i] : false) };
-                    });
+                game.value.isNew = true;
+            }
 
-                    v.attr.extras = _u.map(v.attr.extras, function (attr, i) {
-                        return { id: i, 'longName': attr.name, status: ((found > -1) ? resp[found].value.game.attr[j].extras[i] : false) };
-                    });
-
-                    v.attr.note = (found > -1) ? resp[found].value.game.attr[j].note : '';
-                    v.attr.extrasComplete = (found > -1) ? v.attr.extras.length ? _u.all(_u.pluck(v.attr.extras, 'status')) : true : false;
-                    v.attr.isComplete = (found > -1) ? _u.all(_u.pluck(v.attr.common, 'status')) && v.attr.extrasComplete : false;
-
-                    v.attr.isNew = (found > 1) ? false : true;
-                });
-
+            if (!isUserScope) {
+                result.push(game.value);
+            } else {
                 if (found > -1) {
-                    game.value.item = resp[found].id;
-                    resp.splice(found, 1);
-                }
-
-                if (!isUserScope) {
                     result.push(game.value);
-                } else {
-                    if (found > -1) {
-                        result.push(game.value);
-                    }
                 }
             }
         });

@@ -27,10 +27,10 @@
         }
         $scope.isEditing = !$scope.isEditing;
         if ($scope.isEditing) {
-            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants }));
+            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants, isNew: g.isNew }));
         } else {
             if ($scope.selected.id !== g.id) {
-                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants }));
+                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants, isNew: g.isNew }));
                 $scope.isEditing = true;
             } else {
                 $scope.selected = {};
@@ -44,26 +44,36 @@
 
     $scope.updateGame = function (g) {
         var current = $scope.selected;
-
-        var attrs = {
-            common: _.pluck(current.attr.common, 'status'),
-            extras: _.pluck(current.attr.extras, 'status'),
-            note: current.attr.note
-        };
-        var combObj = { id: current.id, console: g.console, regions: g.regions, attr: attrs };
         
-        if (current.attr.isNew) {
+        var attrs = _.map(current.variants, function(v) {
+            return {
+                common: _.pluck(v.attr.common, 'status'),
+                extras: _.pluck(v.attr.extras, 'status'),
+                note: v.attr.note
+            };
+        });
+
+        var flat = _.reduceRight(attrs, function (a, b) { return a.concat(b.common); }, []);
+        var combObj = { id: current.id, console: g.console, regions: g.regions, attr: attrs };
+
+        console.log(current);
+
+        if (current.isNew) {
+            console.log('lägger till!');
             $http.post('/api/user/add', combObj)
                 .success(function () {
-                    g.attr = current.attr;
-                    g.attr.isNew = false;
+                    g.variants = current.variants;
+                    _.each(g.variants, function (v) {
+                        v.attr.isComplete = _.every(_.pluck(v.attr.common, 'status')) && (v.attr.extras.length ? _.every(_.pluck(v.attr.extras, 'status')) : true);
+                    });
+                    g.isNew = false;
                     $scope.editGame(g);
                 })
                 .error(function () {
                     console.log('HIELP');
                 });
         } else {
-            if ((_.every(attrs.common, function (a) { return !a; }) && !$scope.selected.attr.isNew)) {
+            if (_.every(flat, function (a) { return !a; })) {
                 console.log('vill ta bort ' + current.item);
                 $scope.$emit('gameRemoved', $scope.consoleName);
                 $http.post('/api/user/remove', { item: current.item })
@@ -75,10 +85,12 @@
                     });
             } else {
                 $http.post('/api/user/update', { item: current.item, attr: attrs })
-                    .success(function() {
-                        g.attr = current.attr;
-                        g.attr.isComplete = _.every(_.pluck(g.attr.common, 'status')) && (g.attr.extras.length ? _.every(_.pluck(g.attr.extras, 'status')) : true);
-                        console.log(g.attr.isComplete);
+                    .success(function () {
+                        g.variants = current.variants;
+                        _.each(g.variants, function(v) {
+                            v.attr.isComplete = _.every(_.pluck(v.attr.common, 'status')) && (v.attr.extras.length ? _.every(_.pluck(v.attr.extras, 'status')) : true);
+                        });
+                        
                         $scope.editGame(g);
                     })
                     .error(function() {

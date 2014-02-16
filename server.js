@@ -48,7 +48,7 @@ var http = require('http'),
     
     app.configure(function(){ 
         app.set('port', port);
-        app.set('json spaces', 0); 
+        //app.set('json spaces', 0); 
         app.use(express.static(__dirname + '/public')); 
         app.use(require('less-middleware')({ src: __dirname + '/public' }));
         app.use(express.cookieParser()); 

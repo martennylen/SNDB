@@ -76,7 +76,7 @@
         if (obj.count === 1) {
             $scope.stats.splice(_.indexOf($scope.stats, obj), 1);
         } else {
-            count--;
+            obj.count--;
         }
     });
         
