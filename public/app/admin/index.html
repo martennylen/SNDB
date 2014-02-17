@@ -11,28 +11,39 @@
     <span style="font-weight: bold">Utgivare:</span>
     <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Spelutgivare" ng-model="game.publisher" required />
 
-    <span style="font-weight: bold">Attribut:</span>
+    <span style="font-weight: bold">Varianter:</span>
     <div style="background-color: #fff; padding: 10px; border-radius: 6px;">
-        <ul style="margin: 0;display: inline-block">
-            <li style="display: inline-block" ng-repeat="attr in attributes">
-                <span>{{attr.longName}}</span>
+        <input style="width: 100%; padding: 10px; border: 1px solid #74AFAD" type="text" placeholder="Variantbeskrivning" ng-model="currentVariant.desc" />
+        <label>Vanliga delar</label>
+        <ul style="margin: 0">
+            <li ng-repeat="attr in currentVariant.attr.common">
                 <input type="checkbox" ng-model="attr.selected">
+                <span>{{attr.longName}}</span>
+                <input style="width: 100%; padding: 10px; border: 1px solid #74AFAD" type="text" placeholder="Beskrivning" ng-model="attr.desc" />
             </li>
         </ul>
-    </div>
-    
-    <span style="font-weight: bold">Extra:</span>
-    <div style="background-color: #fff; padding: 10px; border-radius: 6px;">
-        <input style="width: 90%; padding: 5px; border: 1px solid #74AFAD" type="text" placeholder="Extratillbeh&ouml;r" ng-model="currentExtra" />
+        <label style="display: block">Extratillbeh&ouml;r</label>
+        <input style="width: 80%; padding: 10px; border: 1px solid #74AFAD" type="text" placeholder="Extratillbeh&ouml;r" ng-model="currentExtra" />
         <button class="yeah" ng-click="handleExtra(currentExtra)" ng-disabled="currentExtra.length === 0">L&auml;gg till</button>
         <ul style="margin: 0">
-            <li style="display: inline-block" ng-repeat="attr in game.attr.extras">
+            <li style="display: inline-block" ng-repeat="attr in currentVariant.attr.extras">
                 <span>{{attr.name}}</span>
                 <button class="danger" ng-click="handleExtra(attr)">Ta bort</button>
             </li>
         </ul>
+        <button class="yeah" ng-click="handleVariant(currentVariant)">L&auml;gg till variant</button>
     </div>
-
+    
+    <span ng-if="game.variants.length" style="font-weight: bold">Aktuella varianter:</span>
+    <div ng-if="game.variants.length" style="background-color: #fff; padding: 10px; border-radius: 6px;">
+        <ul style="margin: 0">
+            <li style="display: inline-block" ng-repeat="v in game.variants">
+                <span>{{v.desc}}</span>
+                <button class="danger" ng-click="handleVariant(v)">Ta bort</button>
+            </li>
+        </ul>
+    </div>
+        
     <span style="font-weight: bold">Region:</span>
     <div style="background-color: #fff;padding:10px;border-radius: 6px">
         <ul style="margin-bottom: 0">
