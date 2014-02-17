@@ -322,9 +322,6 @@ module.exports = function(app, passport) {
 
             _u.each(game.value.variants, function (v, j) {
                 v.attr.common = _u.map(v.attr.common, function (attr, i) {
-                    if (found > -1) {
-                        console.log(resp[found].value.game.attr[j]);
-                    }
                     return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr[j].common[i] : false) };
                 });
 
@@ -360,15 +357,21 @@ module.exports = function(app, passport) {
     }
     
     function mapAttributes(response) {
-        return _u.map(response, function(game) {
-            game.value.attr.common = _u.map(game.value.attr.common, function(attr) {
-                return { id: attr };
+        var result = [];
+        _u.each(response, function (game) {
+            _u.each(game.value.variants, function(v) {
+                v.attr.common = _u.map(v.attr.common, function (attr) {
+                    return { id: attr.id };
+                });
+                v.attr.extras = _u.map(v.attr.extras, function (attr) {
+                    return { id: attr.id };
+                });
             });
-            game.value.attr.extras = _u.map(game.value.attr.extras, function(attr) {
-                return { id: attr };
-            });
-            return game.value;
+
+            result.push(game.value);
         });
+
+        return result;
     }
     
     app.get('/api/:consoleName/:regionName/:subRegionName', function (req, res) {        
