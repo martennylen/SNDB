@@ -262,12 +262,14 @@ module.exports = function(app, passport) {
 
     app.post('/api/newgame', function (req, res) {
         req.body.tags = [req.body.name.replace(/[^a-z0-9\s]/gi, '').toLowerCase()];
-        
-        _u.each(req.body.name.split(' '), function (word) {
-            if (word.length > 2) {
-                req.body.tags.push(word.replace(/[^a-z0-9\s]/gi, '').toLowerCase());
-            }
-        });
+
+        if (_u.indexOf(req.body.name, ' ') > -1) {
+            _u.each(req.body.name.split(' '), function(word) {
+                if (word.length > 2) {
+                    req.body.tags.push(word.replace(/[^a-z0-9\s]/gi, '').toLowerCase());
+                }
+            });
+        }
 
         db.save(req.body, function (err, resp) {
             if (err) {

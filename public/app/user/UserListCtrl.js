@@ -96,8 +96,11 @@
 
     $scope.updateGame = function (g) {
         var current = $scope.selected;
-
-        if (mapCheckboxAttributes(current.variants)) {
+        var attrs = _.map(current.variants, function (v, i) {
+            return { common: current.attrs[i], extras: v.attr.extras, note: v.attr.note };
+        });
+        
+        if (mapCheckboxAttributes(current.attrs)) {
             console.log('vill ta bort ' + current.item);
             //$scope.$emit('gameRemoved', $scope.consoleName);
             $http.post('/api/user/remove', { item: current.item })
@@ -113,8 +116,10 @@
                 .success(function () {
                     g.variants = current.variants;
                     _.each(g.variants, function (v) {
-                        v.attr.isComplete = _.every(_.pluck(v.attr.common, 'status')) && (v.attr.extras.length ? _.every(_.pluck(v.attr.extras, 'status')) : true);
+                        v.isComplete = _.every(_.pluck(v.attr.common, 'status')) && (v.attr.extras.length ? _.every(_.pluck(v.attr.extras, 'status')) : true);
                     });
+
+                    g.isComplete = _.every(_.pluck(g.variants, 'isComplete'));
 
                     $scope.editGame(g);
                 })

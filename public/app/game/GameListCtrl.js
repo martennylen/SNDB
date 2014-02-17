@@ -29,7 +29,7 @@
         var attrs = _.map(g.variants, function (v) {
             return _.pluck(v.attr.common, 'status');
         });
-
+        console.log(attrs);
         if ($scope.isEditing) {
             $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants, attrs: attrs, isNew: g.isNew }));
             console.log($scope.selected);
@@ -45,11 +45,14 @@
 
     $scope.attrChanged = function (variant, attr, status) {
         $scope.selected.attrs[variant][attr] = status;
-        $scope.willRemove = mapCheckboxAttributes($scope.selected.attrs);
+        $scope.willRemove = !$scope.selected.isNew && mapCheckboxAttributes($scope.selected.attrs);
     };
 
     $scope.updateGame = function (g) {
         var current = $scope.selected;
+        var attrs = _.map(current.variants, function(v, i) {
+            return { common: current.attrs[i], extras: v.attr.extras, note: v.attr.note };
+        });
         var combObj = { id: current.id, console: g.console, regions: g.regions, attr: attrs };
 
         if (current.isNew) {
@@ -82,9 +85,10 @@
                     .success(function () {
                         g.variants = current.variants;
                         _.each(g.variants, function(v) {
-                            v.attr.isComplete = _.every(_.pluck(v.attr.common, 'status')) && (v.attr.extras.length ? _.every(_.pluck(v.attr.extras, 'status')) : true);
+                            v.isComplete = _.every(_.pluck(v.attr.common, 'status')) && (v.attr.extras.length ? _.every(_.pluck(v.attr.extras, 'status')) : true);
                         });
-                        
+
+                        g.isComplete = _.every(_.pluck(g.variants, 'isComplete'));
                         $scope.editGame(g);
                     })
                     .error(function() {
