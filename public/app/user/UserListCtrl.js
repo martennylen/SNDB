@@ -74,11 +74,14 @@
             return;
         }
         $scope.isEditing = !$scope.isEditing;
+        var attrs = _.map(g.variants, function (v) {
+            return _.pluck(v.attr.common, 'status');
+        });
         if ($scope.isEditing) {
-            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants }));
+            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants, attrs: attrs }));
         } else {
             if ($scope.selected.id !== g.id) {
-                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants }));
+                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants, attrs: attrs }));
                 $scope.isEditing = true;
             } else {
                 $scope.selected = {};
@@ -86,25 +89,15 @@
         }
     };
 
-    $scope.attrChanged = function (attrs) {
-        $scope.willRemove = (_.every(_.pluck(attrs.common, 'status'), function (a) { return !a; }) && !attrs.isNew) ? true : false;
+    $scope.attrChanged = function (variant, attr, status) {
+        $scope.selected.attrs[variant][attr] = status;
+        $scope.willRemove = mapCheckboxAttributes($scope.selected.attrs);
     };
 
     $scope.updateGame = function (g) {
         var current = $scope.selected;
 
-        var attrs = _.map(current.variants, function (v) {
-            return {
-                common: _.pluck(v.attr.common, 'status'),
-                extras: _.pluck(v.attr.extras, 'status'),
-                note: v.attr.note
-            };
-        });
-
-        var flat = _.reduceRight(attrs, function (a, b) {return a.concat(b.common); }, []);
-
-        if (_.every(flat, function (a) {
-            console.log(a); return !a; })) {
+        if (mapCheckboxAttributes(current.variants)) {
             console.log('vill ta bort ' + current.item);
             //$scope.$emit('gameRemoved', $scope.consoleName);
             $http.post('/api/user/remove', { item: current.item })
@@ -134,6 +127,11 @@
     $scope.isDirty = function (attrs) {
         return (angular.toJson(attrs) !== angular.toJson($scope.selected.variants));
     };
+
+    function mapCheckboxAttributes(attrs) {
+        var flat = _.reduceRight(attrs, function (a, b) { return a.concat(b); }, []);
+        return _.every(flat, function (a) { return !a; });
+    }
 
     var latestResults = [];
     $scope.search = function () {

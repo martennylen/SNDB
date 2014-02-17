@@ -202,14 +202,15 @@ module.exports = function(app, passport) {
                 });
 
                 v.attr.note = game.value.game.attr[j].note;
-                v.attr.extrasComplete = v.attr.extras.length ? _u.all(_u.pluck(v.attr.extras, 'status')) : false;
-                v.attr.isComplete = _u.all(_u.pluck(v.attr.common, 'status')) && v.attr.extrasComplete;
+                v.extrasComplete = v.attr.extras.length ? _u.all(_u.pluck(v.attr.extras, 'status')) : true;
+                v.isComplete = _u.all(_u.pluck(v.attr.common, 'status')) && v.extrasComplete;
 
                 v.attr.isNew = false;
             });
             
             current.regions = game.doc.regions;
             current.item = game.id;
+            current.isComplete = _u.all(_u.pluck(current.variants, 'isComplete'));
             list.push(current);
         });
 
@@ -330,15 +331,16 @@ module.exports = function(app, passport) {
                 });
 
                 v.attr.note = (found > -1) ? resp[found].value.game.attr[j].note : '';
-                v.attr.extrasComplete = (found > -1) ? v.attr.extras.length ? _u.all(_u.pluck(v.attr.extras, 'status')) : true : false;
-                v.attr.isComplete = (found > -1) ? _u.all(_u.pluck(v.attr.common, 'status')) && v.attr.extrasComplete : false;
+                v.extrasComplete = (found > -1) ? v.attr.extras.length ? _u.all(_u.pluck(v.attr.extras, 'status')) : true : false;
+                v.isComplete = (found > -1) ? _u.all(_u.pluck(v.attr.common, 'status')) && v.extrasComplete : false;
 
-                v.attr.isNew = (found > 1) ? false : true;
+                v.isNew = (found > 1) ? false : true;
             });
 
             if (found > -1) {
                 game.value.item = resp[found].id;
                 game.value.isNew = false;
+                game.value.isComplete = _u.all(_u.pluck(game.value.variants, 'isComplete'));
                 resp.splice(found, 1);
             } else {
                 game.value.isNew = true;

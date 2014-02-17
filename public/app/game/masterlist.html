@@ -4,7 +4,7 @@
     <ul id="games">
         <li ng-repeat="game in games" ng-if="!game.isRemoved" ng-class-odd="'odd'" ng-class-even="'even'">
             <div class="master-wrapper">
-                <a ng-class="{complete: game.attr.isComplete}" ui-sref="game({consoleName:game.console, regionName:game.regions.main, subRegionName:game.regions.sub[0], gameName:game.name.split(' ').join('-')})">
+                <a ng-class="{complete: game.isComplete}" ui-sref="game({consoleName:game.console, regionName:game.regions.main, subRegionName:game.regions.sub[0], gameName:game.name.split(' ').join('-')})">
                     <div class="game-name">
                         <span>
                             {{game.name}}
@@ -29,7 +29,7 @@
                         <h3 ng-if="variant.desc.length" style="margin: 0">{{variant.desc}}</h3>
                         <ul>
                             <li ng-repeat="attr in variant.attr.common" style="padding: 0; margin-right: 20px">
-                                <input id="{{selected.id + '_' + $parent.$index + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status" ng-change="attrChanged(variant.attr)">
+                                <input id="{{selected.id + '_' + $parent.$index + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status" ng-change="attrChanged($parent.$index, $index, attr.status)">
                                 <label for="{{selected.id + '_' + $parent.$index + '_' + attr.id}}">{{attr.longName}} <span ng-if="attr.desc.length">({{attr.desc}})</span></label>
                             </li>
                         </ul>
@@ -41,13 +41,13 @@
                         </ul>
                         <div>
                             <label for="{{selected.id + '_' + $parent.$index + '_' + '_note'}}">Anteckning:</label>
-                            <input id="{{selected.id + '_' + $parent.$index + '_' + '_note'}}" type="text" ng-model="variant.attr.note">
+                            <input id="{{selected.id + '_' + $parent.$index + '_' + '_note'}}" type="text" ng-model="variant.attr.note" style="border: 1px solid #ccc">
                         </div>
                     </div>
                 </div>
-                <div style="display: inline-block">
+                <div>
                     <button ng-disabled="!isDirty(game.variants)" class="yeah" ng-click="updateGame(game)">Spara</button>
-                    <span ng-if="willRemove">Spelet kommer att tas bort ur din samling.</span>
+                    <span ng-if="willRemove">Spelet kommer att tas bort från din samling.</span>
                 </div>
             </div>
         </li>
