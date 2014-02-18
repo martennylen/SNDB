@@ -26,16 +26,16 @@
             return;
         }
         $scope.isEditing = !$scope.isEditing;
-        var attrs = _.map(g.variants, function (v) {
+        var attrs = _.map(g.data.variants, function (v) {
             return _.pluck(v.attr.common, 'status');
         });
         console.log(attrs);
         if ($scope.isEditing) {
-            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants, attrs: attrs, isNew: g.isNew }));
+            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.data.variants, attrs: attrs, isNew: g.isNew }));
             console.log($scope.selected);
         } else {
             if ($scope.selected.id !== g.id) {
-                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants, attrs: attrs, isNew: g.isNew }));
+                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.data.variants, attrs: attrs, isNew: g.isNew }));
                 $scope.isEditing = true;
             } else {
                 $scope.selected = {};
@@ -53,16 +53,18 @@
         var attrs = _.map(current.variants, function(v, i) {
             return { common: current.attrs[i], extras: v.attr.extras, note: v.attr.note };
         });
-        var combObj = { id: current.id, console: g.console, regions: g.regions, attr: attrs };
+        var combObj = { id: current.id, console: g.data.console, regions: g.data.regions, attr: attrs };
 
         if (current.isNew) {
             console.log('lägger till!');
             $http.post('/api/user/add', combObj)
-                .success(function () {
-                    g.variants = current.variants;
-                    _.each(g.variants, function (v) {
-                        v.attr.isComplete = _.every(_.pluck(v.attr.common, 'status')) && (v.attr.extras.length ? _.every(_.pluck(v.attr.extras, 'status')) : true);
+                .success(function (item) {
+                    g.item = item;
+                    g.data.variants = current.variants;
+                    _.each(g.data.variants, function (v) {
+                        v.isComplete = _.every(_.pluck(v.attr.common, 'status')) && (v.attr.extras.length ? _.every(_.pluck(v.attr.extras, 'status')) : true);
                     });
+                    g.isComplete = _.every(_.pluck(g.data.variants, 'isComplete'));
                     g.isNew = false;
                     $scope.editGame(g);
                 })
@@ -75,6 +77,9 @@
                 $scope.$emit('gameRemoved', $scope.consoleName);
                 $http.post('/api/user/remove', { item: current.item })
                     .success(function () {
+                        g.data.variants = current.variants;
+                        g.isComplete = false;
+                        g.isNew = true;
                         $scope.editGame(g);
                     })
                     .error(function() {
@@ -83,12 +88,12 @@
             } else {
                 $http.post('/api/user/update', { item: current.item, attr: attrs })
                     .success(function () {
-                        g.variants = current.variants;
-                        _.each(g.variants, function(v) {
+                        g.data.variants = current.variants;
+                        _.each(g.data.variants, function(v) {
                             v.isComplete = _.every(_.pluck(v.attr.common, 'status')) && (v.attr.extras.length ? _.every(_.pluck(v.attr.extras, 'status')) : true);
                         });
 
-                        g.isComplete = _.every(_.pluck(g.variants, 'isComplete'));
+                        g.isComplete = _.every(_.pluck(g.data.variants, 'isComplete'));
                         $scope.editGame(g);
                     })
                     .error(function() {
@@ -150,7 +155,7 @@
                 .success(function (res) {
                     latestResults = res.games;
                     $scope.games = _.filter(res.games, function(game) {
-                        return _.any(game.tags, function (tag) {
+                        return _.any(game.data.tags, function (tag) {
                             return _(tag).startsWith($scope.q.toLowerCase());
                         });
                     });

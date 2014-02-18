@@ -18,6 +18,18 @@ module.exports = function(app, passport) {
     //    res.header("Access-Control-Allow-Methods", "GET, POST");
     //});
 
+    app.post('/api/admin/update', function (req, res) {
+        request.put({
+            uri: couch.updatePath() + req.body.game.id,
+            body: JSON.stringify({ "/data": req.body.game.data })
+        }, function (error) {
+            if (error) {
+                res.send(500);
+            }
+            res.send(200);
+        });
+    });
+
     app.post('/api/register', function (req, res) {
         db.view('users/by_username', { key: req.body.username }, function (err, response) {
             if (response.length) {
@@ -188,10 +200,10 @@ module.exports = function(app, passport) {
         _u.each(response, function (game) {
             var current = {};
             current.id = game.doc._id;
-            current.name = game.doc.name;
-            current.console = game.doc.console;
+            current.name = game.doc.data.name;
+            current.console = game.doc.data.console;
             
-            current.variants = game.doc.variants;
+            current.variants = game.doc.data.variants;
             _u.each(current.variants, function (v, j) {
                 v.attr.common = _u.map(v.attr.common, function (attr, i) {
                     return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: game.value.game.attr[j].common[i] };
@@ -208,7 +220,7 @@ module.exports = function(app, passport) {
                 v.attr.isNew = false;
             });
             
-            current.regions = game.doc.regions;
+            current.regions = game.doc.data.regions;
             current.item = game.id;
             current.isComplete = _u.all(_u.pluck(current.variants, 'isComplete'));
             list.push(current);
@@ -232,6 +244,7 @@ module.exports = function(app, passport) {
             if (err) {
                 res.send(500);
             }
+
             res.send(200);
         });
         res.send(200);
@@ -252,7 +265,6 @@ module.exports = function(app, passport) {
     app.post('/api/user/remove', function(req, res) {
         db.remove(req.body.item, function(err, resp) {
             if (err) {
-                console.log(err);
                 res.send(500);
             }
 
@@ -281,17 +293,25 @@ module.exports = function(app, passport) {
     });
 
     app.get('/api/search/:consoleName', function (req, res) {
-        db.view('games/by_tags', {
-            startkey: [req.params.consoleName, req.query.q],
-            endkey: [req.params.consoleName, req.query.q + '\uffff']
-        }, function (err, response) {
+        var reqObj = {
+            startkey: [req.query.q, req.params.consoleName],
+            endkey: [req.query.q + '\uffff', req.params.consoleName]
+        };
+        
+        if (req.params.consoleName === 'null') {
+            reqObj = {
+                startkey: [req.query.q, {}],
+                endkey: [req.query.q + '\uffff', {}]
+            };
+        }
+        db.view('games/by_tags', reqObj, function (err, response) {
             if (err) {
                 res.send(500);
             }
 
             response = _u.uniq(response, function (g) { return g.id; });
             
-            if (req.user !== undefined) {
+            if (req.user !== undefined && req.params.consoleName !== 'null') {
                 db.view('games/by_user', {
                     startkey: [req.user.id, req.params.consoleName],
                     endkey: [req.user.id, req.params.consoleName, {}]
@@ -316,14 +336,13 @@ module.exports = function(app, passport) {
         var hasGames = resp.length > 0;
         var found = -1;
         _u.each(response, function (game) {
-
             if (hasGames) {
                 found = _u.indexOf(resp, function (comb) {
                     return game.value.id === comb.value.game.id;
                 });
             }
 
-            _u.each(game.value.variants, function (v, j) {
+            _u.each(game.value.data.variants, function (v, j) {
                 v.attr.common = _u.map(v.attr.common, function (attr, i) {
                     return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr[j].common[i] : false) };
                 });
@@ -363,9 +382,9 @@ module.exports = function(app, passport) {
     function mapAttributes(response) {
         var result = [];
         _u.each(response, function (game) {
-            _u.each(game.value.variants, function(v) {
+            _u.each(game.value.data.variants, function(v) {
                 v.attr.common = _u.map(v.attr.common, function (attr) {
-                    return { id: attr.id };
+                    return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong'};
                 });
                 v.attr.extras = _u.map(v.attr.extras, function (attr) {
                     return { id: attr.id };
@@ -380,9 +399,7 @@ module.exports = function(app, passport) {
     
     app.get('/api/:consoleName/:regionName/:subRegionName', function (req, res) {        
         var indexOfValue = _u.indexOf;
-
-        // using .mixin allows both wrapped and unwrapped calls:
-        // _(array).indexOf(...) and _.indexOf(array, ...)
+        
         _u.mixin({
 
             // return the index of the first array element passing a test

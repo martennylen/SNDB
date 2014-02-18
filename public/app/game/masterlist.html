@@ -7,19 +7,19 @@
                 <a ng-class="{complete: game.isComplete}" ui-sref="game({consoleName:game.console, regionName:game.regions.main, subRegionName:game.regions.sub[0], gameName:game.name.split(' ').join('-')})">
                     <div class="game-name">
                         <span>
-                            {{game.name}}
-                            <span>({{game.regions.sub[0].toUpperCase()}})</span>
+                            {{game.data.name}}
+                            <span>({{game.data.regions.sub[0].toUpperCase()}})</span>
                         </span>
                     </div></a><a href ng-click="editGame(game)" ng-class="{disabled: !$parent.loggedIn}"><div class="game-data"><div class="game-attr">
                         <div class="common">
-                            <span ng-if="game.variants.length === 1" ng-repeat="attr in game.variants[0].attr.common" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
-                            <div ng-if="game.variants.length > 1" ng-repeat="v in game.variants" style="display: inline-block;margin-right:5px">
+                            <span ng-if="game.data.variants.length === 1" ng-repeat="attr in game.data.variants[0].attr.common" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
+                            <div ng-if="game.data.variants.length > 1" ng-repeat="v in game.data.variants" style="display: inline-block;margin-right:5px">
                                 <span ng-repeat="attr in v.attr.common" ng-class="{exists: attr.status}" style="margin-right: 0">
                                     {{attr.id.toUpperCase()}}
                                 </span>
-                                <span ng-if="$index !== game.variants.length-1">/</span>
+                                <span ng-if="$index !== game.data.variants.length-1">/</span>
                             </div>
-                        </div><span ng-if="game.variants.length === 1 && game.variants[0].attr.extras.length" ng-class="{exists: game.attr.extrasComplete}">+</span>
+                        </div><span ng-if="game.data.variants.length === 1 && game.variants[0].attr.extras.length" ng-class="{exists: game.attr.extrasComplete}">+</span>
                     </div><div class="game-note">
                         <span>{{game.attr.note || '&nbsp;'}}</span></div></div></a>
             </div>

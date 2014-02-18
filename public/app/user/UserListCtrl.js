@@ -120,7 +120,6 @@
                     });
 
                     g.isComplete = _.every(_.pluck(g.variants, 'isComplete'));
-
                     $scope.editGame(g);
                 })
                 .error(function () {
@@ -180,7 +179,7 @@
                 .success(function (res) {
                     latestResults = res.games;
                     $scope.games = _.filter(res.games, function (game) {
-                        return _.any(game.tags, function (tag) {
+                        return _.any(game.data.tags, function (tag) {
                             return _(tag).startsWith($scope.q.toLowerCase());
                         });
                     });
