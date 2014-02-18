@@ -19,8 +19,6 @@
         <select style="width: 100%;padding: 10px;border:0" ng-model="game.data.console" ng-options="c.id as c.name for c in consoles" ng-init="game.data.console = consoles[0].id"></select>
         <span style="font-weight: bold">Namn:</span>
         <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Spelnamn" ng-model="game.data.name" required />
-        <span style="font-weight: bold">Kod:</span>
-        <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Spelkod" ng-model="game.data.code" required />
         <span style="font-weight: bold">Utgivare:</span>
         <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Spelutgivare" ng-model="game.data.publisher" required />
 

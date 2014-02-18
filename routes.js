@@ -206,14 +206,14 @@ module.exports = function(app, passport) {
             current.variants = game.doc.data.variants;
             _u.each(current.variants, function (v, j) {
                 v.attr.common = _u.map(v.attr.common, function (attr, i) {
-                    return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: game.value.game.attr[j].common[i] };
+                    return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: game.value.game.attr[j] ? game.value.game.attr[j].common[i] : false };
                 });
 
                 v.attr.extras = _u.map(v.attr.extras, function (attr, i) {
-                    return { id: i, 'longName': attr.name, status: game.value.game.attr[j].extras[i] };
+                    return { id: i, 'longName': attr.name, status: game.value.game.attr[j] ? game.value.game.attr[j].extras[i] : false};
                 });
 
-                v.attr.note = game.value.game.attr[j].note;
+                v.attr.note = game.value.game.attr[j] ? game.value.game.attr[j].note : '';
                 v.extrasComplete = v.attr.extras.length ? _u.all(_u.pluck(v.attr.extras, 'status')) : true;
                 v.isComplete = _u.all(_u.pluck(v.attr.common, 'status')) && v.extrasComplete;
 
@@ -273,17 +273,18 @@ module.exports = function(app, passport) {
     });
 
     app.post('/api/newgame', function (req, res) {
-        req.body.tags = [req.body.name.replace(/[^a-z0-9\s]/gi, '').toLowerCase()];
+        var game = req.body;
+        game.data.tags = [game.data.name.replace(/[^a-z0-9\s]/gi, '').toLowerCase()];
 
-        if (_u.indexOf(req.body.name, ' ') > -1) {
-            _u.each(req.body.name.split(' '), function(word) {
+        if (_u.indexOf(game.data.name, ' ') > -1) {
+            _u.each(game.data.name.split(' '), function(word) {
                 if (word.length > 2) {
-                    req.body.tags.push(word.replace(/[^a-z0-9\s]/gi, '').toLowerCase());
+                    game.data.tags.push(word.replace(/[^a-z0-9\s]/gi, '').toLowerCase());
                 }
             });
         }
 
-        db.save(req.body, function (err, resp) {
+        db.save(game, function (err, resp) {
             if (err) {
                 res.send(500);
             }
@@ -343,15 +344,16 @@ module.exports = function(app, passport) {
             }
 
             _u.each(game.value.data.variants, function (v, j) {
+                
                 v.attr.common = _u.map(v.attr.common, function (attr, i) {
-                    return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr[j].common[i] : false) };
+                    return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr[j] ? resp[found].value.game.attr[j].common[i] : false : false) };
                 });
 
                 v.attr.extras = _u.map(v.attr.extras, function (attr, i) {
-                    return { id: i, 'longName': attr.name, status: ((found > -1) ? resp[found].value.game.attr[j].extras[i] : false) };
+                    return { id: i, 'longName': attr.name, status: ((found > -1) ? resp[found].value.game.attr[j] ? resp[found].value.game.attr[j].extras[i] : false : false) };
                 });
 
-                v.attr.note = (found > -1) ? resp[found].value.game.attr[j].note : '';
+                v.attr.note = (found > -1) ? resp[found].value.game.attr[j] ? resp[found].value.game.attr[j].note : '' : '';
                 v.extrasComplete = (found > -1) ? v.attr.extras.length ? _u.all(_u.pluck(v.attr.extras, 'status')) : true : false;
                 v.isComplete = (found > -1) ? _u.all(_u.pluck(v.attr.common, 'status')) && v.extrasComplete : false;
 
@@ -361,7 +363,7 @@ module.exports = function(app, passport) {
             if (found > -1) {
                 game.value.item = resp[found].id;
                 game.value.isNew = false;
-                game.value.isComplete = _u.all(_u.pluck(game.value.variants, 'isComplete'));
+                game.value.isComplete = _u.all(_u.pluck(game.value.data.variants, 'isComplete'));
                 resp.splice(found, 1);
             } else {
                 game.value.isNew = true;

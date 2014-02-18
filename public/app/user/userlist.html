@@ -20,8 +20,7 @@
                                 <span ng-if="$index !== game.variants.length-1">/ </span>
                             </div>
                         </div><span ng-if="game.variants.length === 1 && game.variants[0].attr.extras.length" ng-class="{exists: game.attr.extrasComplete}">+</span>
-                    </div><div class="game-note">
-                        <span>{{game.attr.note || '&nbsp;'}}</span></div></div></a>
+                    </div></div></a>
             </div>
             <div class="game-content" ng-if="game.id === selected.id">
                 <div style="display: inline-block">

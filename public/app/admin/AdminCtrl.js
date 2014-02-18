@@ -78,13 +78,18 @@
         if ($scope.isEditing) {
             console.log('vill uppdatera');
             console.log(angular.toJson($scope.game));
-            //$http.post('/api/admin/update', { game: $scope.game })
-            //    .success(function () {
-            //        $scope.postMessage = 'Spel uppdaterat';
-            //    })
-            //    .error(function () {
-            //        console.log('HIELP');
-            //    });
+            $http.post('/api/admin/update', { game: $scope.game })
+                .success(function () {
+                    $scope.postMessage = 'Spel uppdaterat';
+                    $scope.game = { type: 'game', data: { console: consoles[0].id, regions: {}, variants: [] } };
+                    $scope.currentRegions = {
+                        main: baseRegions[0],
+                        sub: baseRegions[0].regions[0]
+                    };
+                })
+                .error(function () {
+                    console.log('HIELP');
+                });
             $scope.isEditing = false;
         } else {
             $http.post('/api/newgame', angular.toJson($scope.game)).
