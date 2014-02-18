@@ -26,11 +26,16 @@
             return;
         }
         $scope.isEditing = !$scope.isEditing;
+        var attrs = _.map(g.data.variants, function (v) {
+            return _.pluck(v.attr.common, 'status');
+        });
+        console.log(attrs);
         if ($scope.isEditing) {
-            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, attr: g.attr }));
+            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.data.variants, attrs: attrs, isNew: g.isNew }));
+            console.log($scope.selected);
         } else {
             if ($scope.selected.id !== g.id) {
-                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, attr: g.attr }));
+                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.data.variants, attrs: attrs, isNew: g.isNew }));
                 $scope.isEditing = true;
             } else {
                 $scope.selected = {};
@@ -38,36 +43,43 @@
         }
     };
 
-    $scope.attrChanged = function (attrs) {
-        $scope.willRemove = (_.every(_.pluck(attrs, 'status'), function(a) { return !a; }) && !$scope.selected.attr.isNew) ? true : false; 
+    $scope.attrChanged = function (variant, attr, status) {
+        $scope.selected.attrs[variant][attr] = status;
+        $scope.willRemove = !$scope.selected.isNew && mapCheckboxAttributes($scope.selected.attrs);
     };
 
     $scope.updateGame = function (g) {
         var current = $scope.selected;
+        var attrs = _.map(current.variants, function(v, i) {
+            return { common: current.attrs[i], extras: v.attr.extras, note: v.attr.note };
+        });
+        var combObj = { id: current.id, console: g.data.console, regions: g.data.regions, attr: attrs };
 
-        var attrs = {
-            common: _.pluck(current.attr.common, 'status'),
-            extras: _.pluck(current.attr.extras, 'status'),
-            note: current.attr.note
-        };
-        var combObj = { id: current.id, console: g.console, regions: g.regions, attr: attrs };
-        
-        if (current.attr.isNew) {
+        if (current.isNew) {
+            console.log('lägger till!');
             $http.post('/api/user/add', combObj)
-                .success(function () {
-                    g.attr = current.attr;
-                    g.attr.isNew = false;
+                .success(function (item) {
+                    g.item = item;
+                    g.data.variants = current.variants;
+                    _.each(g.data.variants, function (v) {
+                        v.isComplete = _.every(_.pluck(v.attr.common, 'status')) && (v.attr.extras.length ? _.every(_.pluck(v.attr.extras, 'status')) : true);
+                    });
+                    g.isComplete = _.every(_.pluck(g.data.variants, 'isComplete'));
+                    g.isNew = false;
                     $scope.editGame(g);
                 })
                 .error(function () {
                     console.log('HIELP');
                 });
         } else {
-            if ((_.every(attrs.common, function (a) { return !a; }) && !$scope.selected.attr.isNew)) {
+            if (mapCheckboxAttributes(current.attrs)) {
                 console.log('vill ta bort ' + current.item);
                 $scope.$emit('gameRemoved', $scope.consoleName);
                 $http.post('/api/user/remove', { item: current.item })
                     .success(function () {
+                        g.data.variants = current.variants;
+                        g.isComplete = false;
+                        g.isNew = true;
                         $scope.editGame(g);
                     })
                     .error(function() {
@@ -75,10 +87,13 @@
                     });
             } else {
                 $http.post('/api/user/update', { item: current.item, attr: attrs })
-                    .success(function() {
-                        g.attr = current.attr;
-                        g.attr.isComplete = _.every(_.pluck(g.attr.common, 'status')) && (g.attr.extras.length ? _.every(_.pluck(g.attr.extras, 'status')) : true);
-                        console.log(g.attr.isComplete);
+                    .success(function () {
+                        g.data.variants = current.variants;
+                        _.each(g.data.variants, function(v) {
+                            v.isComplete = _.every(_.pluck(v.attr.common, 'status')) && (v.attr.extras.length ? _.every(_.pluck(v.attr.extras, 'status')) : true);
+                        });
+
+                        g.isComplete = _.every(_.pluck(g.data.variants, 'isComplete'));
                         $scope.editGame(g);
                     })
                     .error(function() {
@@ -89,8 +104,13 @@
     };
 
     $scope.isDirty = function (attrs) {
-        return (angular.toJson(attrs) !== angular.toJson($scope.selected.attr));
+        return (angular.toJson(attrs) !== angular.toJson($scope.selected.variants));
     };
+
+    function mapCheckboxAttributes(attrs) {
+        var flat = _.reduceRight(attrs, function (a, b) { return a.concat(b); }, []);
+        return _.every(flat, function (a) { return !a; });
+    }
 
     var latestResults = [];
     $scope.search = function () {
@@ -135,7 +155,7 @@
                 .success(function (res) {
                     latestResults = res.games;
                     $scope.games = _.filter(res.games, function(game) {
-                        return _.any(game.tags, function (tag) {
+                        return _.any(game.data.tags, function (tag) {
                             return _(tag).startsWith($scope.q.toLowerCase());
                         });
                     });

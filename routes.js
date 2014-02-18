@@ -18,6 +18,18 @@ module.exports = function(app, passport) {
     //    res.header("Access-Control-Allow-Methods", "GET, POST");
     //});
 
+    app.post('/api/admin/update', function (req, res) {
+        request.put({
+            uri: couch.updatePath() + req.body.game.id,
+            body: JSON.stringify({ "/data": req.body.game.data })
+        }, function (error) {
+            if (error) {
+                res.send(500);
+            }
+            res.send(200);
+        });
+    });
+
     app.post('/api/register', function (req, res) {
         db.view('users/by_username', { key: req.body.username }, function (err, response) {
             if (response.length) {
@@ -188,23 +200,29 @@ module.exports = function(app, passport) {
         _u.each(response, function (game) {
             var current = {};
             current.id = game.doc._id;
-            current.name = game.doc.name;
-            current.console = game.doc.console;
-            current.attr = {};
-            var currentAttr = {};
-            current.attr.common = _u.map(game.value.game.attr.common, function (attr, iter) {
-                currentAttr = game.doc.attr.common[iter];
-                return { 'id': currentAttr, 'longName': currentAttr === 'c' ? 'Kassett' : currentAttr === 'i' ? 'Manual' : 'Kartong', 'status': game.value.game.attr.common[iter] };
+            current.name = game.doc.data.name;
+            current.console = game.doc.data.console;
+            
+            current.variants = game.doc.data.variants;
+            _u.each(current.variants, function (v, j) {
+                v.attr.common = _u.map(v.attr.common, function (attr, i) {
+                    return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: game.value.game.attr[j] ? game.value.game.attr[j].common[i] : false };
+                });
+
+                v.attr.extras = _u.map(v.attr.extras, function (attr, i) {
+                    return { id: i, 'longName': attr.name, status: game.value.game.attr[j] ? game.value.game.attr[j].extras[i] : false};
+                });
+
+                v.attr.note = game.value.game.attr[j] ? game.value.game.attr[j].note : '';
+                v.extrasComplete = v.attr.extras.length ? _u.all(_u.pluck(v.attr.extras, 'status')) : true;
+                v.isComplete = _u.all(_u.pluck(v.attr.common, 'status')) && v.extrasComplete;
+
+                v.attr.isNew = false;
             });
-            current.attr.extras = _u.map(game.value.game.attr.extras, function (attr, iter) {
-                currentAttr = game.doc.attr.extras[iter];
-                return { 'id': iter, 'longName': currentAttr.name, 'status': game.value.game.attr.extras[iter] };
-            });
-            current.attr.note = game.value.game.attr.note;
-            current.attr.extrasComplete = current.attr.extras.length ? _u.all(_u.pluck(current.attr.extras, 'status')) : true;
-            current.attr.isComplete = _u.every(_u.pluck(current.attr.common, 'status')) && current.attr.extrasComplete;
-            current.regions = game.doc.regions;
+            
+            current.regions = game.doc.data.regions;
             current.item = game.id;
+            current.isComplete = _u.all(_u.pluck(current.variants, 'isComplete'));
             list.push(current);
         });
 
@@ -226,8 +244,10 @@ module.exports = function(app, passport) {
             if (err) {
                 res.send(500);
             }
+
             res.send(200);
         });
+        res.send(200);
     });
 
     app.post('/api/user/update', function(req, res) {
@@ -253,15 +273,18 @@ module.exports = function(app, passport) {
     });
 
     app.post('/api/newgame', function (req, res) {
-        req.body.tags = [req.body.name.replace(/[^a-z0-9\s]/gi, '').toLowerCase()];
-        
-        _u.each(req.body.name.split(' '), function (word) {
-            if (word.length > 2) {
-                req.body.tags.push(word.replace(/[^a-z0-9\s]/gi, '').toLowerCase());
-            }
-        });
+        var game = req.body;
+        game.data.tags = [game.data.name.replace(/[^a-z0-9\s]/gi, '').toLowerCase()];
 
-        db.save(req.body, function (err, resp) {
+        if (_u.indexOf(game.data.name, ' ') > -1) {
+            _u.each(game.data.name.split(' '), function(word) {
+                if (word.length > 2) {
+                    game.data.tags.push(word.replace(/[^a-z0-9\s]/gi, '').toLowerCase());
+                }
+            });
+        }
+
+        db.save(game, function (err, resp) {
             if (err) {
                 res.send(500);
             }
@@ -271,17 +294,25 @@ module.exports = function(app, passport) {
     });
 
     app.get('/api/search/:consoleName', function (req, res) {
-        db.view('games/by_tags', {
-            startkey: [req.params.consoleName, req.query.q],
-            endkey: [req.params.consoleName, req.query.q + '\uffff']
-        }, function (err, response) {
+        var reqObj = {
+            startkey: [req.query.q, req.params.consoleName],
+            endkey: [req.query.q + '\uffff', req.params.consoleName]
+        };
+        
+        if (req.params.consoleName === 'null') {
+            reqObj = {
+                startkey: [req.query.q, {}],
+                endkey: [req.query.q + '\uffff', {}]
+            };
+        }
+        db.view('games/by_tags', reqObj, function (err, response) {
             if (err) {
                 res.send(500);
             }
 
             response = _u.uniq(response, function (g) { return g.id; });
             
-            if (req.user !== undefined) {
+            if (req.user !== undefined && req.params.consoleName !== 'null') {
                 db.view('games/by_user', {
                     startkey: [req.user.id, req.params.consoleName],
                     endkey: [req.user.id, req.params.consoleName, {}]
@@ -306,29 +337,36 @@ module.exports = function(app, passport) {
         var hasGames = resp.length > 0;
         var found = -1;
         _u.each(response, function (game) {
-
             if (hasGames) {
                 found = _u.indexOf(resp, function (comb) {
                     return game.value.id === comb.value.game.id;
                 });
             }
 
-            game.value.attr.common = _u.map(game.value.attr.common, function (attr, i) {
-                return { id: attr, 'longName': attr === 'c' ? 'Kassett' : attr === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr.common[i] : false) };
+            _u.each(game.value.data.variants, function (v, j) {
+                
+                v.attr.common = _u.map(v.attr.common, function (attr, i) {
+                    return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr[j] ? resp[found].value.game.attr[j].common[i] : false : false) };
+                });
+
+                v.attr.extras = _u.map(v.attr.extras, function (attr, i) {
+                    return { id: i, 'longName': attr.name, status: ((found > -1) ? resp[found].value.game.attr[j] ? resp[found].value.game.attr[j].extras[i] : false : false) };
+                });
+
+                v.attr.note = (found > -1) ? resp[found].value.game.attr[j] ? resp[found].value.game.attr[j].note : '' : '';
+                v.extrasComplete = (found > -1) ? v.attr.extras.length ? _u.all(_u.pluck(v.attr.extras, 'status')) : true : false;
+                v.isComplete = (found > -1) ? _u.all(_u.pluck(v.attr.common, 'status')) && v.extrasComplete : false;
+
+                v.isNew = (found > 1) ? false : true;
             });
-            game.value.attr.extras = _u.map(game.value.attr.extras, function (attr, i) {
-                return { id: i, 'longName': attr.name, status: ((found > -1) ? resp[found].value.game.attr.extras[i] : false) };
-            });
-            game.value.attr.note = (found > -1) ? resp[found].value.game.attr.note : '';
-            game.value.attr.extrasComplete = (found > -1) ? game.value.attr.extras.length ? _u.all(_u.pluck(game.value.attr.extras, 'status')) : true : false;
-            game.value.attr.isComplete = (found > -1) ? _u.all(_u.pluck(game.value.attr.common, 'status')) && game.value.attr.extrasComplete : false;
 
             if (found > -1) {
-                game.value.attr.isNew = false;
                 game.value.item = resp[found].id;
+                game.value.isNew = false;
+                game.value.isComplete = _u.all(_u.pluck(game.value.data.variants, 'isComplete'));
                 resp.splice(found, 1);
             } else {
-                game.value.attr.isNew = true;
+                game.value.isNew = true;
             }
 
             if (!isUserScope) {
@@ -344,22 +382,26 @@ module.exports = function(app, passport) {
     }
     
     function mapAttributes(response) {
-        return _u.map(response, function(game) {
-            game.value.attr.common = _u.map(game.value.attr.common, function(attr) {
-                return { id: attr };
+        var result = [];
+        _u.each(response, function (game) {
+            _u.each(game.value.data.variants, function(v) {
+                v.attr.common = _u.map(v.attr.common, function (attr) {
+                    return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong'};
+                });
+                v.attr.extras = _u.map(v.attr.extras, function (attr) {
+                    return { id: attr.id };
+                });
             });
-            game.value.attr.extras = _u.map(game.value.attr.extras, function(attr) {
-                return { id: attr };
-            });
-            return game.value;
+
+            result.push(game.value);
         });
+
+        return result;
     }
     
     app.get('/api/:consoleName/:regionName/:subRegionName', function (req, res) {        
         var indexOfValue = _u.indexOf;
-
-        // using .mixin allows both wrapped and unwrapped calls:
-        // _(array).indexOf(...) and _.indexOf(array, ...)
+        
         _u.mixin({
 
             // return the index of the first array element passing a test
@@ -392,7 +434,6 @@ module.exports = function(app, passport) {
                         res.send(500);
                     }
                     
-                    //var list = _u.pluck(response, 'value');
                     var list = mapGameInformation(resp, response, false);  
                     res.send({ games: list, loggedIn: true });
                 });

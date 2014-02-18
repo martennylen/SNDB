@@ -8,6 +8,11 @@
         if (toState.name === 'user') {
             event.preventDefault();
         }
+        else if (toState.name === 'user.region' && fromState.name === 'user.subRegion') {
+            if (toParams.regionName === fromParams.regionName) {
+                event.preventDefault();
+            }
+        }
         else if (toState.name === 'user.list') {
             $scope.selectedConsole = {};
             $scope.regionStats = [];
@@ -76,7 +81,7 @@
         if (obj.count === 1) {
             $scope.stats.splice(_.indexOf($scope.stats, obj), 1);
         } else {
-            count--;
+            obj.count--;
         }
     });
         
