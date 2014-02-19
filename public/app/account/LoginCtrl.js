@@ -79,7 +79,7 @@ app.controller('LogoutCtrl', function ($scope, $location, $http, $rootScope) {
         $http.post('/api/logout').
             success(function () {
                 $scope.$emit('userLog', {});
-                $location.path('/nes');
+                $location.path('/login');
             });
     };
 });

@@ -307,7 +307,7 @@ module.exports = function(app, passport) {
         }
         db.view('games/by_tags', reqObj, function (err, response) {
             if (err) {
-                res.send(500);
+                res.send(err);
             }
 
             response = _u.uniq(response, function (g) { return g.id; });
