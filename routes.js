@@ -296,18 +296,18 @@ module.exports = function(app, passport) {
     app.get('/api/search/:consoleName', function (req, res) {
         var reqObj = {
             startkey: [req.query.q, req.params.consoleName],
-            endkey: [req.query.q + '\uffff', req.params.consoleName]
+            endkey: [req.query.q + '\u9999', req.params.consoleName]
         };
         
         if (req.params.consoleName === 'null') {
             reqObj = {
                 startkey: [req.query.q, {}],
-                endkey: [req.query.q + '\uffff', {}]
+                endkey: [req.query.q + '\u9999', {}]
             };
         }
         db.view('games/by_tags', reqObj, function (err, response) {
             if (err) {
-                res.send(err);
+                res.send(500);
             }
 
             response = _u.uniq(response, function (g) { return g.id; });
@@ -420,12 +420,9 @@ module.exports = function(app, passport) {
 
         db.view('games/by_console', { 
                 startkey: [req.params.consoleName, req.params.regionName, req.params.subRegionName],
-                endkey: [req.params.consoleName, req.params.regionName, req.params.subRegionName, '\uffff']
+                endkey: [req.params.consoleName, req.params.regionName, req.params.subRegionName, '\u9999']
         }, function (err, response) {
-
             if (req.user !== undefined) {
-                //var result = [];
-
                 db.view('games/by_user', {
                     startkey: [req.user.id, req.params.consoleName],
                     endkey: [req.user.id, req.params.consoleName, {}]
