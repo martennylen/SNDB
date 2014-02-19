@@ -4,6 +4,23 @@
     couch = require('./couch'),
     db = couch.db();
 
+var indexOfValue = _u.indexOf;
+_u.mixin({
+
+    // return the index of the first array element passing a test
+    indexOf: function (array, test) {
+        // delegate to standard indexOf if the test isn't a function
+        if (!_u.isFunction(test)) return indexOfValue(array, test);
+        // otherwise, look for the index
+        for (var x = 0; x < array.length; x++) {
+            if (test(array[x])) return x;
+        }
+        // not found, return fail value
+        return -1;
+    }
+
+});
+
 module.exports = function(app, passport) {
     var auth = function(req, res, next) {
         if (!req.isAuthenticated()) {
@@ -200,11 +217,10 @@ module.exports = function(app, passport) {
         _u.each(response, function (game) {
             var current = {};
             current.id = game.doc._id;
-            current.name = game.doc.data.name;
-            current.console = game.doc.data.console;
+            current.data = game.doc.data;
             
-            current.variants = game.doc.data.variants;
-            _u.each(current.variants, function (v, j) {
+            current.data.variants = game.doc.data.variants;
+            _u.each(current.data.variants, function (v, j) {
                 v.attr.common = _u.map(v.attr.common, function (attr, i) {
                     return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: game.value.game.attr[j] ? game.value.game.attr[j].common[i] : false };
                 });
@@ -220,9 +236,8 @@ module.exports = function(app, passport) {
                 v.attr.isNew = false;
             });
             
-            current.regions = game.doc.data.regions;
             current.item = game.id;
-            current.isComplete = _u.all(_u.pluck(current.variants, 'isComplete'));
+            current.isComplete = _u.all(_u.pluck(current.data.variants, 'isComplete'));
             list.push(current);
         });
 
@@ -315,7 +330,7 @@ module.exports = function(app, passport) {
             if (req.user !== undefined && req.params.consoleName !== 'null') {
                 db.view('games/by_user', {
                     startkey: [req.user.id, req.params.consoleName],
-                    endkey: [req.user.id, req.params.consoleName, {}]
+                    endkey: [req.user.id, req.params.consoleName, '\u9999']
                 }, function (e, resp) {
                     if (e) {
                         res.send(500);
@@ -336,15 +351,16 @@ module.exports = function(app, passport) {
         var result = [];
         var hasGames = resp.length > 0;
         var found = -1;
+        
         _u.each(response, function (game) {
             if (hasGames) {
+
                 found = _u.indexOf(resp, function (comb) {
                     return game.value.id === comb.value.game.id;
                 });
             }
 
             _u.each(game.value.data.variants, function (v, j) {
-                
                 v.attr.common = _u.map(v.attr.common, function (attr, i) {
                     return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr[j] ? resp[found].value.game.attr[j].common[i] : false : false) };
                 });
@@ -373,6 +389,7 @@ module.exports = function(app, passport) {
                 result.push(game.value);
             } else {
                 if (found > -1) {
+                    console.log(game.value);
                     result.push(game.value);
                 }
             }
@@ -392,7 +409,7 @@ module.exports = function(app, passport) {
                     return { id: attr.id };
                 });
             });
-
+            console.log(game.value);
             result.push(game.value);
         });
 
@@ -400,24 +417,6 @@ module.exports = function(app, passport) {
     }
     
     app.get('/api/:consoleName/:regionName/:subRegionName', function (req, res) {        
-        var indexOfValue = _u.indexOf;
-        
-        _u.mixin({
-
-            // return the index of the first array element passing a test
-            indexOf: function(array, test) {
-                // delegate to standard indexOf if the test isn't a function
-                if (!_u.isFunction(test)) return indexOfValue(array, test);
-                // otherwise, look for the index
-                for (var x = 0; x < array.length; x++) { 
-                    if (test(array[x])) return x;
-                }
-                // not found, return fail value
-                return -1;
-            }
-
-        });
-
         db.view('games/by_console', { 
                 startkey: [req.params.consoleName, req.params.regionName, req.params.subRegionName],
                 endkey: [req.params.consoleName, req.params.regionName, req.params.subRegionName, '\u9999']

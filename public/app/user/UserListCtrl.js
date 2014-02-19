@@ -74,14 +74,14 @@
             return;
         }
         $scope.isEditing = !$scope.isEditing;
-        var attrs = _.map(g.variants, function (v) {
+        var attrs = _.map(g.data.variants, function (v) {
             return _.pluck(v.attr.common, 'status');
         });
         if ($scope.isEditing) {
-            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants, attrs: attrs }));
+            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.data.variants, attrs: attrs }));
         } else {
             if ($scope.selected.id !== g.id) {
-                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.variants, attrs: attrs }));
+                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.data.variants, attrs: attrs }));
                 $scope.isEditing = true;
             } else {
                 $scope.selected = {};
@@ -114,12 +114,12 @@
         } else {
             $http.post('/api/user/update', { item: current.item, attr: attrs })
                 .success(function () {
-                    g.variants = current.variants;
-                    _.each(g.variants, function (v) {
+                    g.data.variants = current.variants;
+                    _.each(g.data.variants, function (v) {
                         v.isComplete = _.every(_.pluck(v.attr.common, 'status')) && (v.attr.extras.length ? _.every(_.pluck(v.attr.extras, 'status')) : true);
                     });
 
-                    g.isComplete = _.every(_.pluck(g.variants, 'isComplete'));
+                    g.isComplete = _.every(_.pluck(g.data.variants, 'isComplete'));
                     $scope.editGame(g);
                 })
                 .error(function () {
