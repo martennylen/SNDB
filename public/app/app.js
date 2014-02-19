@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('trackr', ['ngResource', 'ngRoute', 'ui.router', 'ngCookies']);
+var app = angular.module('trackr', ['ngResource', 'ngRoute', 'ui.router', 'ngCookies', 'infinite-scroll']);
 
 app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterProvider', '$stateProvider',
     function ($httpProvider, $routeProvider, $locationProvider, $urlRouterProvider, $stateProvider) {

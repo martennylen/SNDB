@@ -7,12 +7,40 @@
 
     $scope.selected = {};
     $scope.initialResult = [];
+
+    var docid = '';
+    var skip = 0;
+    var lastResult = {};
+    var lastGameName = '';
+    $scope.isFetching = false;
+    $scope.reachedEnd = false;
     
-    GamesService.get({ consoleName: $stateParams.consoleName, regionName: $stateParams.regionName, subRegionName: $scope.currentRegion.subregion.id }).$promise.then(function (data) {
-        $scope.initialResult = data.games;
-        $scope.games = data.games;
-        $scope.loggedIn = data.loggedIn;
-    });
+    $scope.getGames = function () {
+        console.log($scope.isFetching);
+        if ($scope.isFetching || $scope.reachedEnd) {
+            return;
+        }
+        $scope.isFetching = true;
+        GamesService.get({ consoleName: $stateParams.consoleName, regionName: $stateParams.regionName, subRegionName: $scope.currentRegion.subregion.id, gameName:lastGameName, docid: docid, skip: skip }).$promise.then(function (data) {
+            if (!_.isEmpty(lastResult)) {
+                $scope.initialResult.push(lastResult);
+            }
+
+            if (data.games.length < 11) {
+                $scope.initialResult = $scope.initialResult.concat(data.games);
+                $scope.reachedEnd = true;
+            } else {
+                $scope.initialResult = $scope.initialResult.concat(_.initial(data.games));
+                lastResult = _.last(data.games);
+                lastGameName = lastResult.data.name;
+                docid = lastResult.id;
+                skip = 1;
+            }
+            $scope.games = $scope.initialResult;
+            $scope.loggedIn = data.loggedIn;
+            $scope.isFetching = false;
+        });
+    };
 
     $scope.$watch('consoleName', function (newValue) {
         if (newValue.length) {
