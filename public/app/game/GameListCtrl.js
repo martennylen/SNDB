@@ -16,7 +16,6 @@
     $scope.reachedEnd = false;
     
     $scope.getGames = function () {
-        console.log($scope.isFetching);
         if ($scope.isFetching || $scope.reachedEnd) {
             return;
         }

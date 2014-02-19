@@ -1,7 +1,6 @@
 <div class="view-wrapper">
     <input type="text" id="game-search" placeholder="Sök i alla regioner" ng-model="q" ng-change="search()" ng-minlength="3" />
     <h3 style="margin: 0 5px" ng-if="showQ">{{games.length}} spel hittades</h3>
-    <a href ng-click="getGames()">GIMME GEMZ</a>
     <ul id="games" infinite-scroll="getGames()" infinite-scroll-disabled="isFetching" infinite-scroll-distance="3">
             <li ng-repeat="game in games" ng-if="!game.isRemoved" ng-class-odd="'odd'" ng-class-even="'even'">
                 <div class="master-wrapper">
@@ -52,4 +51,5 @@
                 </div>
             </li>
     </ul>
+    <div ng-show="isFetching">Hämtar lir du!</div>
 </div>
