@@ -1,10 +1,10 @@
 ﻿<div class="view-wrapper">
-    <form name="regForm">
-        <input style="width:70%;padding:10px;border:0" type="email" placeholder="Mejladress" ng-model="credentials.email" required />
-        <input style="width:70%;padding:10px;border:0" type="text" placeholder="Användarnamn" ng-model="credentials.username" ng-minlength="3" ng-maxlength="20" required />
-        <span>Minst 3, max 20 tecken</span>
-        <input style="width:70%;padding:10px;border:0" type="password" placeholder="Lösenord" ng-model="credentials.password" ng-minlength="3" ng-maxlength="20" required />
-        <span>Minst 3, max 20 tecken</span>
+    <form id="registration-form" name="regForm">
+        <input type="email" placeholder="Mejladress" ng-model="credentials.email" required />
+        <input type="text" placeholder="Användarnamn, 3-20 tecken" ng-model="credentials.username" ng-minlength="3" ng-maxlength="20" required />
+        <span class="desktop-only">Minst 3, max 20 tecken</span>
+        <input type="password" placeholder="Lösenord, 3-20 tecken" ng-model="credentials.password" ng-minlength="3" ng-maxlength="20" required />
+        <span class="desktop-only">Minst 3, max 20 tecken</span>
         <div>
             <button ng-disabled="!validateFields()" ng-click="registerCredentials()">Registrera</button>
             <span style="color: rgb(162, 26, 58)">{{errorMessage}}</span>

@@ -1,7 +1,7 @@
 ﻿<div class="view-wrapper">
-    <form name="loginForm">
-        <input style="width: 60%;padding: 10px;border: 0" type="text" placeholder="Användarnamn" ng-model="credentials.username" ng-minlength="3" ng-maxlength="20" required />
-        <input style="width: 60%;padding: 10px;border: 0" type="password" placeholder="Lösenord" ng-model="credentials.password" ng-minlength="3" ng-maxlength="20" required />
+    <form id="login-form" name="loginForm">
+        <input type="text" placeholder="Användarnamn" ng-model="credentials.username" ng-minlength="3" ng-maxlength="20" required />
+        <input type="password" placeholder="Lösenord" ng-model="credentials.password" ng-minlength="3" ng-maxlength="20" required />
         <div>
             <button ng-disabled="!validateFields()" ng-click="validateCredentials(credentials)">Logga in</button>
             <span>{{errorMessage}}</span>

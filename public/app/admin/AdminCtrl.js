@@ -33,6 +33,7 @@
         
         $scope.game = game;
         $scope.games = [];
+        $scope.currentVariant = $scope.currentVariant = { desc: '', attr: { common: [{ id: 'c', desc: '', longName: 'Kassett', selected: true }, { id: 'i', desc: '', longName: 'Manual', selected: true }, { id: 'b', desc: '', longName: 'Kartong', selected: true }], extras: [] } };
         $scope.q = '';
         $scope.isEditing = true;
     };
