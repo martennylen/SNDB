@@ -25,7 +25,7 @@
                 $scope.initialResult.push(lastResult);
             }
 
-            if (data.games.length < 11) {
+            if (data.games.length < 21) {
                 $scope.initialResult = $scope.initialResult.concat(data.games);
                 $scope.reachedEnd = true;
             } else {
@@ -172,7 +172,7 @@
     var searchThrottled = _.debounce(searchDelayed, 1000);
 
     var searchAction = function ($scope) {
-        if ($scope.q !== undefined) {
+        if ($scope.q !== undefined && $scope.q.length) {
             console.log('eller så söker vi lite...');
 
             $timeout(function () {

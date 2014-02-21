@@ -237,7 +237,7 @@ module.exports = function(app, passport) {
             });
             
             current.item = game.id;
-            current.isComplete = _u.all(_u.pluck(current.data.variants, 'isComplete'));
+            current.isComplete = _u.some(_u.pluck(current.data.variants, 'isComplete'));
             list.push(current);
         });
 
@@ -293,7 +293,7 @@ module.exports = function(app, passport) {
 
         if (_u.indexOf(game.data.name, ' ') > -1) {
             _u.each(game.data.name.split(' '), function(word) {
-                if (word.length > 2) {
+                if (word.length > 2 && word !== 'the') {
                     game.data.tags.push(word.replace(/[^a-z0-9\s]/gi, '').toLowerCase());
                 }
             });
@@ -379,7 +379,7 @@ module.exports = function(app, passport) {
             if (found > -1) {
                 game.value.item = resp[found].id;
                 game.value.isNew = false;
-                game.value.isComplete = _u.all(_u.pluck(game.value.data.variants, 'isComplete'));
+                game.value.isComplete = _u.some(_u.pluck(game.value.data.variants, 'isComplete'));
                 resp.splice(found, 1);
             } else {
                 game.value.isNew = true;
@@ -426,7 +426,7 @@ module.exports = function(app, passport) {
             startkey: startkey,
             endkey: [req.params.consoleName, req.params.regionName, req.params.subRegionName, {}],
             startkey_docid: req.query.docid,
-                limit: 11,
+                limit: 21,
                 skip: req.query.skip
         }, function (err, response) {
             console.log(response.length);
@@ -436,7 +436,7 @@ module.exports = function(app, passport) {
                     endkey: [req.user.id, req.params.consoleName, {}]
                 }, function(e, resp) {
                     if (e) {
-                        res.send(500);
+                        res.send(500);i
                     }
                     
                     var list = mapGameInformation(resp, response, false);  
