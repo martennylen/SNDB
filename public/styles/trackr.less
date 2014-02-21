@@ -20,8 +20,9 @@ html {
 
     body {
         //background-color: #efefef;
-        background-color: #74AFAD;
-        color: #233f3e;
+        //background-color: #74AFAD;
+        background-color: #460000;
+        color: #fff;
         font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
 
         h1 {
@@ -30,7 +31,8 @@ html {
         }
 
         a {
-            color: #ECECEA;
+            //color: #ECECEA;
+            color: #FFEABE;
             text-decoration: underline;
         }
 
@@ -61,9 +63,10 @@ html {
 
             #header-console-list {
                 //background-color: #F39D52;
-                background-color: #EA974F;
                 //background-color: #E58838;
                 //background-color: #ECA76C;
+                //background-color: #EA974F;
+                background-color: #B53121;
                 //padding: 10px;
                 border-radius: 6px;
 
@@ -74,6 +77,7 @@ html {
                     a {
                         font-weight: bold;
                         text-decoration: none;
+                        color: #fff;
                     }
 
                         a:hover {
@@ -84,11 +88,12 @@ html {
         }
 
         span.exists {
-            color: #A8CD1B;
+            //color: #A8CD1B;
+            color: #7E9C0A;
         }
 
         #game-search {
-            border: 0;
+            border: 1px solid #FFEABE;
             outline-color: #EA974F;
             padding: 8px;
         }
@@ -97,7 +102,9 @@ html {
             > li {
                 .column-no-float(12, 0);
                 color: #eee;
+                //border-radius: 6px;
                 //padding: 20px;
+                border-bottom: 1px solid #460000;
                 a.disabled {
                     cursor: default;
                 }
@@ -132,14 +139,20 @@ html {
 
             li.odd {
                 //background-color: #bbb;
-                background-color: #558C89;
+                //background-color: #558C89;
+                background-color: #cfcfcf;
                 //color: #eee;
             }
 
             li.even {
                 //background-color: #eee;
                 //background-color: #ECECEA;
-                background-color: #233f3e;
+                //background-color: #233f3e;b
+                background-color: #fff;
+
+                .game-content {
+                    background-color: #cfcfcf;
+                }
                 //color: #bbb;
             }
 
@@ -217,6 +230,17 @@ html {
                     }
                 }
 
+                .filter-holder {
+                    .column-no-float-zwei(6,0);
+                }
+
+                .search-engine-holder {
+                    .column-no-float-zwei(6,0);
+                    input {
+                        width: 100%;
+                    }
+                }
+
                 .view-wrapper {
                     #game-search {
                         height: 30px;
@@ -224,8 +248,14 @@ html {
                     }
 
                     ul#games {
+                        font-size: 18px;
+                        a {
+                            color: #5a5a5a;
+                        }
+
                         a.complete {
-                            color: #A8CD1B;
+                            //color: #A8CD1B;
+                            color: #7FA000;
                         }
 
                         .game-wrapper {
@@ -247,6 +277,7 @@ html {
                         }
 
                         .master-wrapper {
+
                             a:hover {
                                 text-decoration: none;
                             }
@@ -257,9 +288,14 @@ html {
                                 padding: 20px;
                             }
 
+                            .game-data-link {
+                                color: #B53121;
+                            }
+
                             .game-data {
                                 .column-no-float(5, 0);
-                                border-left: 2px solid #74afad;
+                                //border-left: 2px solid #74afad;
+                                border-left: 1px solid #460000;
                                 padding: 20px;
 
                                 .game-attr {
@@ -398,14 +434,19 @@ html {
                     }
 
                     ul#games {
-                        font-size: 18px;
+                        font-size: 14px;
 
                         > li {
                             padding: 20px 10px;
                         }
 
+                        a {
+                            color: #5a5a5a;
+                        }
+
                         a.complete {
-                            color: #A8CD1B;
+                            //color: #A8CD1B;
+                            color: #7FA000;
                         }
 
                         .game-wrapper {
@@ -423,9 +464,9 @@ html {
                         }
 
                         .master-wrapper {
-                            a.complete {
+                            /*a.complete {
                                 color: #A8CD1B;
-                            }
+                            }*/
 
                             .game-name {
                                 .column-no-float(9, 0);
@@ -433,6 +474,10 @@ html {
 
                             .game-data {
                                 .column-no-float(3,0);
+
+                                a {
+                                    color:#B53121;
+                                }
 
                                 .game-attr {
                                     //.column-no-float(12, 0);

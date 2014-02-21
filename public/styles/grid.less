@@ -20,6 +20,13 @@
     margin-right: @gut;
 }
 
+.column-no-float-zwei(@num, @gut){
+    @apa: (100% / @cols);
+	width: (@apa * @num) + (@gut * (@num - 1));
+    display: inline-block;
+    margin-right: @gut;
+}
+
 .column(@num, @gut) {
     @col: (100% - (@gut * (@cols - 1))) / @cols;
     float: left;

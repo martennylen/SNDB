@@ -64,7 +64,6 @@ module.exports = function(app, passport) {
             };
 
             db.save(newUser, function (err2, res2) {
-                console.log(res2);
                 if (err2) {
                     res.send(500);
                 }
@@ -389,7 +388,6 @@ module.exports = function(app, passport) {
                 result.push(game.value);
             } else {
                 if (found > -1) {
-                    console.log(game.value);
                     result.push(game.value);
                 }
             }
@@ -409,7 +407,6 @@ module.exports = function(app, passport) {
                     return { id: attr.id };
                 });
             });
-            console.log(game.value);
             result.push(game.value);
         });
 
@@ -429,7 +426,6 @@ module.exports = function(app, passport) {
                 limit: 21,
                 skip: req.query.skip
         }, function (err, response) {
-            console.log(response.length);
             if (req.user !== undefined) {
                 db.view('games/by_user', {
                     startkey: [req.user.id, req.params.consoleName],
