@@ -1,7 +1,7 @@
 ﻿<ul id="filters" style="margin-bottom: 0">
     <li ng-repeat="r in regions" style="display: inline"><label ng-class="{'selected': currentRegion.region.id === r.id}" for="{{r.id}}">{{r.name}}</label><input type="radio" id="{{r.id}}" ng-model="currentRegion.region" ng-value="r" ng-change="regionChanged(r)"></li>
 </ul>
-<ul style="margin-left: 50px;margin-top: 0">
+<ul style="margin-left: 50px;margin-top: 0;margin-bottom:0">
     <li ng-repeat="sr in currentRegion.region.regions" style="display: inline"><label ng-class="{'selected': currentRegion.subregion.id === sr.id}" for="{{sr.id}}">{{sr.name}}</label><input type="radio" id="{{sr.id}}" ng-model="currentRegion.subregion" ng-value="sr" ng-change="subRegionChanged(sr)"></li>
 </ul>
 <ui-view/>
