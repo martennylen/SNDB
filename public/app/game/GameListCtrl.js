@@ -6,7 +6,7 @@
     }) : baseRegions[0].regions[0];
 
     $scope.selected = {};
-    $scope.initialResult = [];
+    var initialResult = [];
 
     var docid = '';
     var skip = 0;
@@ -14,6 +14,15 @@
     var lastGameName = '';
     $scope.isFetching = false;
     $scope.reachedEnd = false;
+
+    $scope.$on('searchResult', function (event, games, success) {
+        if (success) {
+            $scope.games = games;
+        } else {
+            console.log(initialResult);
+            $scope.games = initialResult;
+        }
+    });
     
     $scope.getGames = function () {
         if ($scope.isFetching || $scope.reachedEnd) {
@@ -22,20 +31,20 @@
         $scope.isFetching = true;
         GamesService.get({ consoleName: $stateParams.consoleName, regionName: $stateParams.regionName, subRegionName: $scope.currentRegion.subregion.id, gameName:lastGameName, docid: docid, skip: skip }).$promise.then(function (data) {
             if (!_.isEmpty(lastResult)) {
-                $scope.initialResult.push(lastResult);
+                initialResult.push(lastResult);
             }
 
             if (data.games.length < 21) {
-                $scope.initialResult = $scope.initialResult.concat(data.games);
+                initialResult = initialResult.concat(data.games);
                 $scope.reachedEnd = true;
             } else {
-                $scope.initialResult = $scope.initialResult.concat(_.initial(data.games));
+                initialResult = initialResult.concat(_.initial(data.games));
                 lastResult = _.last(data.games);
                 lastGameName = lastResult.data.name;
                 docid = lastResult.id;
                 skip = 1;
             }
-            $scope.games = $scope.initialResult;
+            $scope.games = initialResult;
             $scope.loggedIn = data.loggedIn;
             $scope.isFetching = false;
         });
@@ -138,58 +147,4 @@
         var flat = _.reduceRight(attrs, function (a, b) { return a.concat(b); }, []);
         return _.every(flat, function (a) { return !a; });
     }
-
-    var latestResults = [];
-    $scope.search = function () {
-        if ($scope.q === undefined) {
-            return;
-        }
-        
-        if ($scope.q.length === 0) {
-            //$scope.games = gameResponse.games;
-            $scope.games = $scope.initialResult;
-            $scope.showQ = false;
-            return;
-        }
-
-        var oldies = _.filter(latestResults, function(game) {
-            return _.any(game.tags, function(tag) {
-                return _(tag).startsWith($scope.q);
-            });
-        });
-
-        if (oldies.length === 0) {
-            searchThrottled($scope);
-        } else {
-            $scope.games = oldies;
-        }
-    };
-
-    var searchDelayed = function ($scope) {
-        $scope.$apply(function () { searchAction($scope); });
-    };
-    
-    var searchThrottled = _.debounce(searchDelayed, 1000);
-
-    var searchAction = function ($scope) {
-        if ($scope.q !== undefined && $scope.q.length) {
-            console.log('eller så söker vi lite...');
-
-            $timeout(function () {
-                if ($scope.pendingPromise) { $timeout.cancel($scope.pendingPromise); }
-                $scope.pendingPromise = $http.get('/api/search/' + $stateParams.consoleName + '?q=' + $scope.q.substring(0,3).toLowerCase());
-                $scope.pendingPromise
-                .success(function (res) {
-                    latestResults = res.games;
-                    $scope.games = _.filter(res.games, function(game) {
-                        return _.any(game.data.tags, function (tag) {
-                            return _(tag).startsWith($scope.q.toLowerCase());
-                        });
-                    });
-                    $scope.showQ = true;
-                    console.log('och nu kom resultatet');
-                });
-            }, 0);
-        }
-    };
 }]);
