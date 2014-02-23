@@ -6,11 +6,12 @@
     $scope.regionName = $stateParams.regionName;
     $scope.consoleName = $stateParams.consoleName;
         
-    $scope.$watch('consoleName', function (newValue, oldValue) {
+    $scope.$watch('subRegionName', function (newValue, oldValue) {
         console.log(newValue + ' ' + oldValue);
         if (newValue !== undefined) {
-            console.log('userlistctrl triggar consoleChanged med ' + newValue);
-            $scope.$emit('consoleChanged', newValue);
+            console.log('userlistctrl triggar subRegionChanged med ' + newValue);
+            console.log($scope.consoleName + ' ' + $scope.regionName + ' ' + newValue);
+            $scope.$emit('subRegionChanged', { consoleName: $scope.consoleName, regionName: $scope.regionName, subRegionName: newValue });
         }
     });
         
@@ -22,11 +23,11 @@
         }
     });
         
-    $scope.$watch('subRegionName', function (newValue, oldValue) {
+    $scope.$watch('consoleName', function (newValue, oldValue) {
         console.log(newValue + ' ' + oldValue);
         if (newValue !== undefined) {
-            console.log('userlistctrl triggar subRegionChanged med ' + newValue);
-            $scope.$emit('subRegionChanged', { consoleName: $scope.consoleName, regionName: $scope.regionName, subRegionName: newValue });
+            console.log('userlistctrl triggar consoleChanged med ' + newValue);
+            $scope.$emit('consoleChanged', newValue);
         }
     });
 

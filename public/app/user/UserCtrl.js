@@ -2,6 +2,61 @@
     function ($scope, $location, $state, $stateParams, stats, UserGamesStatsService) {
     $scope.userName = $stateParams.userName;
     $scope.stats = stats;
+        
+    var initialResult = [];
+
+    var lastResult = {};
+    $scope.isFetching = false;
+    $scope.reachedEnd = false;
+    var currentLevel = '';
+    var currentQuery = { gameName: '', docid: '', skip: 0};
+
+    $scope.getGames = function () {
+        console.log('isFetching: ' + $scope.isFetching);
+        if ($scope.isFetching || $scope.reachedEnd) {
+            return;
+        }
+        $scope.isFetching = true;
+        console.log('HÄMTAR FLER SPEL med ' + JSON.stringify(currentQuery));
+        UserGamesStatsService.get(currentQuery).$promise.then(function (data) {
+            if (!_.isEmpty(lastResult)) {
+                initialResult.push(lastResult);
+            }
+
+            if (data.games.length < 21) {
+                initialResult = initialResult.concat(data.games);
+                $scope.reachedEnd = true;
+            } else {
+                initialResult = initialResult.concat(_.initial(data.games));
+                lastResult = _.last(data.games);
+                currentQuery.consoleName = lastResult.data.console;
+                currentQuery.regionName = lastResult.data.regions.main;
+                currentQuery.subRegionName = lastResult.data.regions.sub[0];
+                currentQuery.gameName = lastResult.id;
+                currentQuery.skip = 1;
+            }
+            if (currentLevel === 'console') {
+                $scope.regionStats = data.regions;
+            }
+            else if (currentLevel === 'region') {
+                UserGamesStatsService.get({ userName: $stateParams.userName, consoleName: currentQuery.consoleName, statsOnly: true }).$promise.then(function (stats) {
+                    $scope.regionStats = stats.regions;
+                });
+                $scope.subRegionStats = data.regions;
+            } else {
+                UserGamesStatsService.get({ userName: $stateParams.userName, consoleName: currentQuery.consoleName, statsOnly: true }).$promise.then(function(stats) {
+                    $scope.regionStats = stats.regions;
+                });
+                
+                UserGamesStatsService.get({ userName: $stateParams.userName, consoleName: currentQuery.consoleName, regionName: currentQuery.regionName, statsOnly: true }).$promise.then(function (stats) {
+                    $scope.subRegionStats = stats.regions;
+                });
+            }
+
+            $scope.$broadcast('gamesReceived', { level: currentLevel, games: initialResult, loggedIn: data.loggedIn });
+            $scope.isFetching = false;
+        });
+    };
 
     $scope.$on('$stateChangeStart',
     function (event, toState, toParams, fromState, fromParams) {
@@ -32,14 +87,18 @@
         if ($scope.selectedConsole !== consoleName) {
             $scope.regionStats = [];
             $scope.subRegionStats = [];
-            $scope.selectedRegion = {};
-            $scope.selectedSubRegion = {};
+            //$scope.selectedRegion = {};
+            //$scope.selectedSubRegion = {};
             $scope.selectedConsole = consoleName;
-            UserGamesStatsService.get({ userName: $stateParams.userName, consoleName: consoleName }).$promise.then(function(gameResponse) {
-                $scope.regionStats = gameResponse.regions;
-                console.log('triggar gamesReceived med: ' + consoleName);
-                $scope.$broadcast('gamesReceived', { level: 'console', games: gameResponse.games, loggedIn: gameResponse.loggedIn });
-            });
+            $scope.reachedEnd = false;
+            initialResult = [];
+            lastResult = {};
+            if (!$scope.isFetching) {
+                currentQuery = {};
+                currentQuery = { userName: $stateParams.userName, consoleName: consoleName, skip: 0 };
+                currentLevel = 'console';
+                $scope.getGames();
+            }
         }
     });
 
@@ -51,12 +110,16 @@
         console.log('ny region: ' + data.regionName);
         if ($scope.selectedConsole !== data.consoleName || $scope.selectedRegion !== data.regionName) {
             $scope.selectedRegion = data.regionName;
-            UserGamesStatsService.get({ userName: $stateParams.userName, consoleName: $scope.selectedConsole, regionName: data.regionName }).$promise.then(function (gameResponse) {
-                $scope.subRegionStats = gameResponse.regions;
-                console.log('triggar gamesReceived med: ' + data.regionName);
-                console.log('fastän vi redan har subregion: ' + $scope.selectedSubRegion);
-                $scope.$broadcast('gamesReceived', { level: 'region', games: gameResponse.games, loggedIn: gameResponse.loggedIn });
-            });
+            $scope.reachedEnd = false;
+            initialResult = [];
+            lastResult = {};
+            if (!$scope.isFetching) {
+                currentQuery = {};
+                currentQuery = { userName: $stateParams.userName, consoleName: data.consoleName, regionName: data.regionName, skip: 0 };
+                console.log(currentQuery);
+                currentLevel = 'region';
+                $scope.getGames();
+            }
         }
     });
     
@@ -68,9 +131,13 @@
         console.log('ny subregion: ' + data.subRegionName);
         if ($scope.selectedConsole !== data.consoleName || $scope.selectedRegion !== data.regionName || $scope.selectedSubRegion !== data.subRegionName) {
             $scope.selectedSubRegion = data.subRegionName;
-            UserGamesStatsService.get({ userName: $stateParams.userName, consoleName: $scope.selectedConsole, regionName: $scope.selectedRegion, subRegionName: data.subRegionName }).$promise.then(function(gameResponse) {
-                $scope.$broadcast('gamesReceived', { level: 'subregion', games: gameResponse.games, loggedIn: gameResponse.loggedIn });
-            });
+            $scope.reachedEnd = false;
+            initialResult = [];
+            lastResult = {};
+            currentQuery = {};
+            currentQuery = { userName: $stateParams.userName, consoleName: data.consoleName, regionName: data.regionName, subRegionName: data.subRegionName, skip: 0 };
+            currentLevel = 'subregion';
+            $scope.getGames();
         }
     });
         

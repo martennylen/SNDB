@@ -1,7 +1,7 @@
 ﻿<div class="view-wrapper">
     <input type="text" id="game-search" placeholder="Sök i alla regioner" ng-model="q" ng-change="search()" ng-minlength="3" />
     <h3 style="margin: 0 5px" ng-if="showQ">{{games.length}} spel hittades</h3>
-    <ul id="games">
+    <ul id="games" infinite-scroll="getGames()" infinite-scroll-disabled="isFetching" infinite-scroll-distance="1" infinite-scroll-immediate-check="false">
         <li ng-repeat="game in games" ng-if="!game.isRemoved" ng-class-odd="'odd'" ng-class-even="'even'">
             <div class="master-wrapper">
                 <a ng-class="{complete: game.isComplete}" ui-sref="game({consoleName:game.data.console, regionName:game.data.regions.main, subRegionName:game.data.regions.sub[0], gameName:game.data.name.split(' ').join('-')})">

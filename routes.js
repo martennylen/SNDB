@@ -155,12 +155,15 @@ module.exports = function(app, passport) {
                     if (err) {
                         res.send(409);
                     }
-
+                    console.log(requestObj.startkey);
                     db.view('games/by_user', {
-                            startkey: requestObj.startkey,
-                            endkey: requestObj.endkey,
+                        startkey: requestObj.startkey,
+                        endkey: requestObj.endkey,
+                            limit: 21,
+                            skip: req.query.skip,
                             include_docs: true
-                        }, function(err, response) {
+                    }, function (err, response) {
+                        console.log(response.length);
                             var managed = mapUserGameResponse(response, req.user);
                             res.send({
                                 regions: _u.map(stats, function(s) {
@@ -174,11 +177,43 @@ module.exports = function(app, passport) {
         });
     }
 
-    app.get('/api/user/:userName/:consoleName', function(req, res) {
+    function getStatsByLevel(req, res, requestObj, level) {
+        db.view('users/by_user', { key: req.params.userName }, function(err, response) {
+            if (err) {
+                console.log("Ingen användare hittades");
+                res.send(404);
+            }
+            var userId = response[0].id;
+            requestObj.startkey[0] = userId;
+            requestObj.endkey[0] = userId;
+            db.view('games/stats_by_user', {
+                    startkey: requestObj.startkey,
+                    endkey: requestObj.endkey,
+                    group_level: level + 1
+                }, function(err, stats) {
+                    if (err) {
+                        res.send(409);
+                    }
+
+                    res.send({
+                        regions: _u.map(stats, function(s) {
+                            return { region: s.key[level], count: s.value };
+                        })
+                    });
+                });
+        });
+    }
+
+    app.get('/api/user/:userName/:consoleName', function (req, res) {        
         var requestObj = {
             startkey: [0, req.params.consoleName],
             endkey: [0, req.params.consoleName, {}]
         };
+
+        if (req.query.statsOnly) {
+            return getStatsByLevel(req, res, requestObj, 2);
+        }
+        
         return getUserGamesByLevel(req, res, requestObj, 2);
     });
 
@@ -187,6 +222,11 @@ module.exports = function(app, passport) {
             startkey: [0, req.params.consoleName, req.params.regionName],
             endkey: [0, req.params.consoleName, req.params.regionName, {}]
         };
+
+        if (req.query.statsOnly) {
+            return getStatsByLevel(req, res, requestObj, 3);
+        }
+        
         return getUserGamesByLevel(req, res, requestObj, 3);
     });
 
@@ -197,12 +237,23 @@ module.exports = function(app, passport) {
                 res.send(404);
             }
             var userId = response[0].id;
+            var startkey = [userId, req.params.consoleName, req.params.regionName, req.params.subRegionName];
 
+            if (req.query.gameName) {
+                var gameName = req.query.gameName.length ? req.query.gameName.replace('+', '%20') : {};
+                if (gameName.length) {
+                    startkey = [userId, req.params.consoleName, req.params.regionName, req.params.subRegionName, gameName];
+                }
+            }
+            console.log(startkey);
             db.view('games/by_user', {
-                startkey: [userId, req.params.consoleName, req.params.regionName, req.params.subRegionName],
+                startkey: startkey,
                 endkey: [userId, req.params.consoleName, req.params.regionName, req.params.subRegionName, {}],
+                limit: 21,
+                skip: req.query.skip,
                 include_docs: true
             }, function (err, response) {
+                console.log(response.length);
                 var managed = mapUserGameResponse(response, req.user);
                 res.send({
                     games: managed.list, loggedIn: userId === managed.userId
@@ -432,7 +483,7 @@ module.exports = function(app, passport) {
                     endkey: [req.user.id, req.params.consoleName, {}]
                 }, function(e, resp) {
                     if (e) {
-                        res.send(500);i
+                        res.send(500);
                     }
                     
                     var list = mapGameInformation(resp, response, false);  

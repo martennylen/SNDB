@@ -1,5 +1,5 @@
 <div class="view-wrapper">
-    <h3 style="margin: 0 5px" ng-if="showQ">{{games.length}} spel hittades</h3>
+    <!--<h3 style="margin: 0 5px" ng-if="showQ">{{games.length}} spel hittades</h3>-->
     <ul id="games" infinite-scroll="getGames()" infinite-scroll-disabled="isFetching" infinite-scroll-distance="1">
             <li ng-repeat="game in games" ng-if="!game.isRemoved" ng-class-odd="'odd'" ng-class-even="'even'">
                 <div class="master-wrapper">

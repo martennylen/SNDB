@@ -19,13 +19,12 @@
         if (success) {
             $scope.games = games;
         } else {
-            console.log(initialResult);
             $scope.games = initialResult;
         }
     });
     
     $scope.getGames = function () {
-        if ($scope.isFetching || $scope.reachedEnd) {
+        if ($scope.isFetching || $scope.reachedEnd || $scope.showQ) {
             return;
         }
         $scope.isFetching = true;
