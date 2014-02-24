@@ -1,10 +1,10 @@
 ﻿<div>
     <div class="filter-holder">
         <ul id="filters" style="margin-bottom: 0">
-            <li ng-repeat="r in regions" style="display: inline-block"><label ng-class="{'selected': currentRegion.region.id === r.id}" for="{{r.id}}">{{r.id.toUpperCase()}}</label><input type="radio" id="{{r.id}}" ng-model="currentRegion.region" ng-value="r" ng-change="regionChanged(r)"></li>
+            <li ng-repeat="r in regions" style="display: inline-block"><label ng-class="{'selected': currentRegion.region.id === r.id}" for="{{r.id}}">{{r.id.toUpperCase()}} ({{r.count}})</label><input type="radio" id="{{r.id}}" ng-model="currentRegion.region" ng-value="r" ng-change="regionChanged(r)"></li>
         </ul>
         <ul style="margin-left: 50px;margin-top: 0;margin-bottom:0">
-            <li ng-repeat="sr in subRegions" style="display: inline-block"><label ng-class="{'selected': currentRegion.subRegion.id === sr.id}" for="{{sr.id}}">{{sr.id.toUpperCase()}}</label><input type="radio" id="{{sr.id}}" ng-model="currentRegion.subRegion" ng-value="sr" ng-change="subRegionChanged(sr)"></li>
+            <li ng-repeat="sr in subRegions" style="display: inline-block"><label ng-class="{'selected': currentRegion.subRegion.id === sr.id}" for="{{sr.id}}">{{sr.id.toUpperCase()}} ({{sr.count}})</label><input type="radio" id="{{sr.id}}" ng-model="currentRegion.subRegion" ng-value="sr" ng-change="subRegionChanged(sr)"></li>
         </ul>
     </div><div class="search-engine-holder">
         <input type="text" id="game-search" placeholder="Sök i alla regioner" ng-model="q" ng-change="search()" ng-minlength="2" />
