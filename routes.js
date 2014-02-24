@@ -245,7 +245,7 @@ module.exports = function(app, passport) {
                     startkey = [userId, req.params.consoleName, req.params.regionName, req.params.subRegionName, gameName];
                 }
             }
-            console.log(startkey);
+
             db.view('games/by_user', {
                 startkey: startkey,
                 endkey: [userId, req.params.consoleName, req.params.regionName, req.params.subRegionName, {}],
@@ -253,7 +253,6 @@ module.exports = function(app, passport) {
                 skip: req.query.skip,
                 include_docs: true
             }, function (err, response) {
-                console.log(response.length);
                 var managed = mapUserGameResponse(response, req.user);
                 res.send({
                     games: managed.list, loggedIn: userId === managed.userId
