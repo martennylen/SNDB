@@ -55,9 +55,8 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
         .state('console.region', {
             url: '/:regionName', templateUrl: 'app/game/regionlist.html', controller: 'GameRegionCtrl'
             //resolve: {
-            //    gameResponse: function (GamesService, $stateParams) {
-            //        console.log('wei');
-            //        var games = GamesService.get({ consoleName: $stateParams.consoleName });
+            //    stats: function (GamesStatsService) {
+            //        var games = GamesStatsService.get({ level: 1 });
             //        return games.$promise;
             //    }
             //}
@@ -87,6 +86,10 @@ var validateUser = ['$q', '$http', '$location', '$timeout', function($q, $http, 
 
     return deferred.promise;
 }];
+
+app.factory('GamesStatsService', ['$resource', function ($resource) {
+    return $resource('/api/stats');
+}]);
 
 app.factory('UserGamesStatsService', ['$resource', function ($resource) {
     return $resource('/api/user/:userName/:consoleName/:regionName/:subRegionName');

@@ -38,7 +38,7 @@
                     <a href ui-sref="user({userName: loggedInUser.username})"><span class="glyphicon glyphicon-home mobile-only"></span><span style="margin-left:6px" class="desktop-only">Min sida</span></a>
                     <a ng-if="showAdminLink()" href ng-href="#/admin"><span class="glyphicon glyphicon-lock mobile-only"></span><span style="margin-left:6px" class="desktop-only">Admin</span></a>
                     <span class="blockify">
-                        <span class="desktop-only">{{loggedInUser.username}} </span>
+                        <span class="desktop-only" style="color: #5a5a5a;font-weight:bold">{{loggedInUser.username}} </span>
                         <a href ng-controller="LogoutCtrl" ng-click="logout()"><span class="glyphicon glyphicon-log-out mobile-only"></span><span style="margin-left:6px" class="desktop-only">(Logga ut)</span></a>
                     </span>
                 </div>
@@ -51,7 +51,7 @@
         <div class="clearfix"></div>
         <ul id="header-console-list">
             <li ng-repeat="c in consoles">
-                <a ng-href="#/{{c.id}}/">{{c.name}}</a>
+                <a ng-href="#/{{c.id}}/">{{c.id.toUpperCase()}} ({{c.count}})</a>
             </li>
         </ul>
         <div ui-view>

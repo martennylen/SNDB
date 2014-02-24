@@ -155,7 +155,7 @@ module.exports = function(app, passport) {
                     if (err) {
                         res.send(409);
                     }
-                    console.log(requestObj.startkey);
+
                     db.view('games/by_user', {
                         startkey: requestObj.startkey,
                         endkey: requestObj.endkey,
@@ -163,7 +163,7 @@ module.exports = function(app, passport) {
                             skip: req.query.skip,
                             include_docs: true
                     }, function (err, response) {
-                        console.log(response.length);
+
                             var managed = mapUserGameResponse(response, req.user);
                             res.send({
                                 regions: _u.map(stats, function(s) {
@@ -504,6 +504,34 @@ module.exports = function(app, passport) {
                 res.send(404);
             }
             res.send(response[0].value);
+        });
+    });
+
+    app.get('/api/stats', function (req, res) {
+        var level = req.query.level;
+
+        var reqObj = { group_level: level };
+        if (req.query.regionName) {
+            reqObj.startkey = [req.query.consoleName, req.query.regionName];
+            reqObj.endkey = [req.query.consoleName, req.query.regionName, {}];
+            reqObj.group_level = level;
+        }
+        else if (req.query.consoleName) {
+            reqObj.startkey = [req.query.consoleName];
+            reqObj.endkey = [req.query.consoleName, {}];
+            reqObj.group_level = level;
+        }
+        
+        db.view('games/stats_by_console', reqObj, function(err, resp) {            
+            if (err) {
+                res.send(500);
+            }
+            var stats = _u.map(resp, function(c) {
+                return { id: c.key[level-1], count: c.value };
+            });
+
+            stats = _u.sortBy(stats, function (s) { return s.count; });
+            res.send(stats.reverse());
         });
     });
 }

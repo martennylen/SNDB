@@ -1,9 +1,6 @@
-﻿app.controller('GameListCtrl', ['$scope', '$location', '$stateParams', '$http', '$timeout', 'GamesService', 'baseRegions', function ($scope, $location, $stateParams, $http, $timeout, GamesService, baseRegions) {
+﻿app.controller('GameListCtrl', ['$scope', '$location', '$stateParams', '$http', '$timeout', 'GamesService',
+    function ($scope, $location, $stateParams, $http, $timeout, GamesService) {
     console.log('gamelistctrl');
-
-    $scope.currentRegion.subregion = $stateParams.subRegionName.length > 0 ? _.find($scope.currentRegion.region.regions, function (sr) {
-        return sr.id === $stateParams.subRegionName;
-    }) : baseRegions[0].regions[0];
 
     $scope.selected = {};
     var initialResult = [];
@@ -28,7 +25,7 @@
             return;
         }
         $scope.isFetching = true;
-        GamesService.get({ consoleName: $stateParams.consoleName, regionName: $stateParams.regionName, subRegionName: $scope.currentRegion.subregion.id, gameName:lastGameName, docid: docid, skip: skip }).$promise.then(function (data) {
+        GamesService.get({ consoleName: $stateParams.consoleName, regionName: $stateParams.regionName, subRegionName: $stateParams.subRegionName, gameName:lastGameName, docid: docid, skip: skip }).$promise.then(function (data) {
             if (!_.isEmpty(lastResult)) {
                 initialResult.push(lastResult);
             }

@@ -1,5 +1,9 @@
-﻿app.controller('IndexCtrl', ['$scope', '$http', 'consoles', function ($scope, $http, consoles) {
-    $scope.consoles = consoles;
+﻿app.controller('IndexCtrl', ['$scope', '$http', 'consoles', '$rootScope', 'GamesStatsService', function ($scope, $http, consoles, $rootScope, GamesStatsService) {
+    GamesStatsService.query({ level: 1 }).$promise.then(function (data) {
+        console.log(data);
+        $scope.consoles = data;
+    });
+    //$scope.consoles = consoles;
     console.log('index');
     $scope.loggedInUser = {};
     $scope.isLoggedIn = function () {
