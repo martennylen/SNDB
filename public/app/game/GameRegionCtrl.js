@@ -1,5 +1,5 @@
-﻿app.controller('GameRegionCtrl', ['$scope', '$location', '$stateParams', '$rootScope',
-    function ($scope, $location, $stateParams, $rootScope) {
+﻿app.controller('GameRegionCtrl', ['$scope', '$location', '$stateParams', '$rootScope', '$timeout', '$http',
+    function ($scope, $location, $stateParams, $rootScope, $timeout, $http) {
         console.log('gameregion');
         $scope.apa = $rootScope.consoles;
         console.log($scope.apa);
