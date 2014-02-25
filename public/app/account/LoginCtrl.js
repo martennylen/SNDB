@@ -1,10 +1,6 @@
-﻿app.controller('IndexCtrl', ['$scope', '$http', 'consoles', '$rootScope', 'GamesStatsService', function ($scope, $http, consoles, $rootScope, GamesStatsService) {
-    GamesStatsService.query({ level: 1 }).$promise.then(function (data) {
-        console.log(data);
-        $scope.consoles = data;
-    });
-    //$scope.consoles = consoles;
-    console.log('index');
+﻿app.controller('IndexCtrl', ['$scope', '$http', function ($scope, $http) {
+        console.log('indexCtrl');
+
     $scope.loggedInUser = {};
     $scope.isLoggedIn = function () {
         return !_.isEmpty($scope.loggedInUser);

@@ -1,6 +1,8 @@
 ﻿app.controller('GameListCtrl', ['$scope', '$location', '$stateParams', '$http', '$timeout', 'GamesService',
     function ($scope, $location, $stateParams, $http, $timeout, GamesService) {
-    console.log('gamelistctrl');
+        console.log('gamelistctrl');
+
+        $scope.$emit('PUNG', $stateParams.subRegionName);
 
     $scope.selected = {};
     var initialResult = [];
@@ -47,7 +49,7 @@
     };
 
     $scope.$watch('consoleName', function (newValue) {
-        if (newValue.length) {
+        if (newValue) {
             $scope.$emit('consoleChanged', newValue);
         }
     });

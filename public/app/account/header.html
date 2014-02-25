@@ -1,0 +1,7 @@
+﻿<ul id="header-console-list" style="margin-bottom: 0">
+    <li ng-repeat="c in KUKEN">
+        <a ng-href="#/{{c.id}}/">{{c.id.toUpperCase()}} ({{c.count}})</a>
+    </li>
+</ul>
+<div ui-view>
+</div>

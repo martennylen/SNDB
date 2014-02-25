@@ -24,6 +24,7 @@
     <script src="/app/game/GameRegionCtrl.js"></script>
     <script src="/app/game/GameDetailsCtrl.js"></script>
     <script src="/app/account/LoginCtrl.js"></script>
+    <script src="/app/account/HeaderCtrl.js"></script>
     <script src="/app/admin/AdminCtrl.js"></script>
     <!--<script src="min/bundle/9338c8f_lib.js"></script>
     <script src="min/bundle/4162d0b_app.js"></script>-->
@@ -49,13 +50,7 @@
             </div>
         </div>
         <div class="clearfix"></div>
-        <ul id="header-console-list">
-            <li ng-repeat="c in consoles">
-                <a ng-href="#/{{c.id}}/">{{c.id.toUpperCase()}} ({{c.count}})</a>
-            </li>
-        </ul>
-        <div ui-view>
-        </div>
+        <ui-view />
     </div>
 </body>
 </html>

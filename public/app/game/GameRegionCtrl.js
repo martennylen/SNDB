@@ -1,40 +1,41 @@
-﻿app.controller('GameRegionCtrl', ['$scope', '$location', '$stateParams', '$timeout', '$http', 'baseRegions', 'GamesStatsService',
-    function ($scope, $location, $stateParams, $timeout, $http, baseRegions, GamesStatsService) {
-    $scope.consoleName = $stateParams.consoleName;
+﻿app.controller('GameRegionCtrl', ['$scope', '$location', '$stateParams', '$rootScope',
+    function ($scope, $location, $stateParams, $rootScope) {
+        console.log('gameregion');
+        $scope.apa = $rootScope.consoles;
+        console.log($scope.apa);
 
-    if ($stateParams.regionName.length === 0) {
-        GamesStatsService.query({ consoleName: $stateParams.consoleName, level: 2 }).$promise.then(function (data) {
-            $scope.regions = data;
+        $scope.consoleName = $stateParams.consoleName;
+        $scope.regionName = $stateParams.regionName;
 
-            GamesStatsService.query({ consoleName: $stateParams.consoleName, regionName: $scope.regions[0].id, level: 3 }).$promise.then(function (data) {
-                $scope.subRegions = data;
-                $location.path('/' + $stateParams.consoleName + '/' + $scope.regions[0].id + '/' + $scope.subRegions[0].id).replace();
-            });
-        });
-        return;
-    }
-
-    GamesStatsService.query({ consoleName: $stateParams.consoleName, level: 2 }).$promise.then(function (data) {
-        $scope.regions = data;
-        $scope.currentRegion = {
-            region: _.find($scope.regions, function (r) {
-                return r.id === $stateParams.regionName;
-            })
-        };
+        $scope.currentRegion = {};
         
-        GamesStatsService.query({ consoleName: $stateParams.consoleName, regionName: $scope.currentRegion.region.id, level: 3 }).$promise.then(function (data) {
-            $scope.subRegions = data;
-            $scope.currentRegion.subRegion = _.first($scope.subRegions);
-        });
-    });
+        if ($scope.regionName.length === 0) {
+            $location.path('/' + $stateParams.consoleName + '/' + $scope.apa[0].regions[0].id + '/' + $scope.apa[0].regions[0].subRegions[0].id).replace();
+            return;
+        }
+        
+        if ($location.$$path.split('/').length === 4) {
+            $scope.subRegionName = $location.$$path.split('/')[3];
+            console.log('APA ' + $scope.subRegionName);
+        }
 
+        $scope.regions = _.find($scope.apa, function (c) {
+                return c.id === $scope.consoleName;
+            }).regions;
+
+            $scope.currentRegion.region =
+                _.find($scope.regions, function (r) {
+                    return r.id === $scope.regionName;
+                });
+
+            $scope.subRegions = $scope.currentRegion.region.subRegions;
+            
+            $scope.currentRegion.subRegion = _.find($scope.subRegions, function (sr) {
+                return sr.id === $scope.subRegionName;
+            });
+       
     $scope.regionChanged = function (r) {
-        GamesStatsService.query({ consoleName: $stateParams.consoleName, regionName: r.id, level: 3 }).$promise.then(function (data) {
-            $scope.subRegions = data;
-            $scope.currentRegion.subRegion = _.first($scope.subRegions);
-
-            $location.path('/' + $stateParams.consoleName + '/' + $scope.currentRegion.region.id + '/' + $scope.subRegions[0].id).replace();
-        });
+        $location.path('/' + $stateParams.consoleName + '/' + $scope.currentRegion.region.id + '/' + $scope.currentRegion.region.subRegions[0].id).replace();
     };
 
     $scope.subRegionChanged = function (sr) {
@@ -97,4 +98,12 @@
             }, 0);
         }
     };
+        
+    //$scope.$on('PUNG', function (event, data) {
+    //    console.log('jldfejpfpwefoeå');
+    //    console.log(data);
+    //    $scope.currentRegion.subRegion = _.find($scope.subRegions, function (sr) {
+    //        return sr.id === data;
+    //    });
+    //});
 }]);

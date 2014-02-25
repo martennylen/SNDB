@@ -5,61 +5,68 @@ var app = angular.module('trackr', ['ngResource', 'ngRoute', 'ui.router', 'ngCoo
 app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterProvider', '$stateProvider',
     function ($httpProvider, $routeProvider, $locationProvider, $urlRouterProvider, $stateProvider) {
     $urlRouterProvider
-        .when('', '/nes');
+        .when('', '/nes/');
 
-    $stateProvider
-        .state('login', { url: '/login', templateUrl: 'app/account/login.html', controller: 'LoginCtrl' })
-        .state('register', { url: '/register', templateUrl: 'app/account/register.html', controller: 'RegisterCtrl' })
-        .state('admin', {
-            url: '/admin',
-            templateUrl: 'app/admin/index.html',
-            controller: 'AdminCtrl',
-            resolve: { user: validateUser }
-        })
-        .state('user', {
-            //abstract: true,
-            url: '/user/:userName',
-            templateUrl: 'app/user/user.html',
-            controller: 'UserCtrl',
-            resolve: {
-                stats: ['UserGamesStatsService', '$stateParams', function (UserGamesStatsService, $stateParams) {
-                    var stats = UserGamesStatsService.query({ userName: $stateParams.userName });
-                    return stats.$promise;
-                }]
-            }
-        })
-        .state('user.list', {
-            url: '/:consoleName', templateUrl: 'app/user/userlist.html', controller: 'UserListCtrl'
-            //resolve: {
+        $stateProvider
+            .state('login', { url: '/login', templateUrl: 'app/account/login.html', controller: 'LoginCtrl' })
+            .state('register', { url: '/register', templateUrl: 'app/account/register.html', controller: 'RegisterCtrl' })
+            .state('admin', {
+                url: '/admin',
+                templateUrl: 'app/admin/index.html',
+                controller: 'AdminCtrl',
+                resolve: { user: validateUser }
+            })
+            .state('user', {
+                //abstract: true,
+                url: '/user/:userName',
+                templateUrl: 'app/user/user.html',
+                controller: 'UserCtrl',
+                resolve: {
+                    stats: ['UserGamesStatsService', '$stateParams', function(UserGamesStatsService, $stateParams) {
+                        var stats = UserGamesStatsService.query({ userName: $stateParams.userName });
+                        return stats.$promise;
+                    }]
+                }
+            })
+            .state('user.list', {
+                url: '/:consoleName',
+                templateUrl: 'app/user/userlist.html',
+                controller: 'UserListCtrl'
+                //resolve: {
             //    gameResponse: ['UserGamesService', '$stateParams', function (UserGamesService, $stateParams) {
             //        var games = UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName });
             //        return games.$promise;
             //    }]
             //}
-        })
-        .state('user.region', {
-            url: '/:consoleName/:regionName', templateUrl: 'app/user/userlist.html', controller: 'UserListCtrl'
-            //resolve: {
+            })
+            .state('user.region', {
+                url: '/:consoleName/:regionName',
+                templateUrl: 'app/user/userlist.html',
+                controller: 'UserListCtrl'
+                //resolve: {
             //    gameResponse: ['UserGamesRegionService', '$stateParams', function (UserGamesRegionService, $stateParams) {
             //        var games = UserGamesRegionService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName, regionName: $stateParams.regionName });
             //        return games.$promise;
             //    }]
             //}
-        })
-        .state('user.subRegion', {
-            url: '/:consoleName/:regionName/:subRegionName', templateUrl: 'app/user/userlist.html', controller: 'UserListCtrl'
-        })
-        .state('console', {
-            abstract: true, url: '/:consoleName', template: '<ui-view/>'
-        })
-        .state('console.region', {
-            url: '/:regionName', templateUrl: 'app/game/regionlist.html', controller: 'GameRegionCtrl'
-            //resolve: {
-            //    stats: function (GamesStatsService) {
-            //        var games = GamesStatsService.get({ level: 1 });
-            //        return games.$promise;
-            //    }
-            //}
+            })
+            .state('user.subRegion', {
+                url: '/:consoleName/:regionName/:subRegionName',
+                templateUrl: 'app/user/userlist.html',
+                controller: 'UserListCtrl'
+            })
+            .state('console', {
+                url: '/:consoleName', templateUrl: 'app/account/header.html', controller: 'HeaderCtrl',
+                resolve: {
+                    consoles: ['ConsoleService', function (ConsoleService) {
+                        return ConsoleService;
+                    }]
+                }
+            })
+            .state('console.region', {
+                url: '/:regionName',
+                templateUrl: 'app/game/regionlist.html',
+                controller: 'GameRegionCtrl'
         })
         .state('console.region.subregion', {
             url: '/:subRegionName', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl'
@@ -86,6 +93,31 @@ var validateUser = ['$q', '$http', '$location', '$timeout', function($q, $http, 
 
     return deferred.promise;
 }];
+
+app.factory('ConsoleService', ['GamesStatsService', '$q', function (GamesStatsService, $q) {
+    var deferred = $q.defer();
+    GamesStatsService.query({ level: 1 }).$promise.then(function (consoles) {
+        return $q.all(_.map(consoles, function (c) {
+            return GamesStatsService.query({ consoleName: c.id, level: 2 }).$promise.then(function (regions) {
+                c.regions = regions;
+                return $q.all(_.map(regions, function (r) {
+                    return GamesStatsService.query({ consoleName: c.id, regionName: r.id, level: 3 }).$promise.then(function (subRegions) {
+                        r.subRegions = subRegions;
+                        return subRegions;
+                    });
+                })).then(function (allSubRegions) {
+                    return regions;
+                });
+            });
+        })).then(function (allRegions) {
+            return consoles;
+        });
+    }).then(function (consoles) {
+        deferred.resolve(consoles);
+    });
+    
+    return deferred.promise;
+}]);
 
 app.factory('GamesStatsService', ['$resource', function ($resource) {
     return $resource('/api/stats');
