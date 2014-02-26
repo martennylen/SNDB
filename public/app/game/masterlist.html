@@ -7,7 +7,7 @@
                         <div class="game-name">
                             <span>
                                 {{game.data.name}}
-                                <span>({{game.data.regions.sub[0].toUpperCase()}})</span>
+                                <span>({{game.data.regions.sub.toUpperCase()}})</span>
                             </span>
                         </div></a><a href ng-click="editGame(game)" class="game-data-link" ng-class="{disabled: !$parent.loggedIn}"><div class="game-data"><div class="game-attr">
     <div class="common">
