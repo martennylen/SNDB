@@ -19,47 +19,59 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
             .state('user', {
                 //abstract: true,
                 url: '/user/:userName',
-                templateUrl: 'app/user/user.html',
-                controller: 'UserCtrl',
+                templateUrl: 'app/user/header.html',
+                controller: 'UserHeaderCtrl',
                 resolve: {
-                    stats: ['UserGamesStatsService', '$stateParams', function(UserGamesStatsService, $stateParams) {
-                        var stats = UserGamesStatsService.query({ userName: $stateParams.userName });
-                        return stats.$promise;
+                    stats: ['BazingaService', '$stateParams', '$q', function (BazingaService, $stateParams, $q) {
+                        var deferred = $q.defer();
+                        BazingaService.query({ userName: $stateParams.userName, level: 2 }).$promise.then(function (consoles) {
+                            return $q.all(_.map(consoles, function (c) {
+                                return BazingaService.query({ userName: $stateParams.userName, consoleName: c.id, level: 3 }).$promise.then(function (regions) {
+                                    c.regions = regions;
+                                    return $q.all(_.map(regions, function (r) {
+                                        return BazingaService.query({ userName: $stateParams.userName, consoleName: c.id, regionName: r.id, level: 4 }).$promise.then(function (subRegions) {
+                                            r.subRegions = subRegions;
+                                            return subRegions;
+                                        });
+                                    })).then(function (allSubRegions) {
+                                        return regions;
+                                    });
+                                });
+                            })).then(function (allRegions) {
+                                return consoles;
+                            });
+                        }).then(function (consoles) {
+                            deferred.resolve(consoles);
+                        });
+                        return deferred.promise;
                     }]
                 }
             })
-            .state('user.list', {
-                url: '/:consoleName',
-                templateUrl: 'app/user/userlist.html',
-                controller: 'UserListCtrl'
-                //resolve: {
-            //    gameResponse: ['UserGamesService', '$stateParams', function (UserGamesService, $stateParams) {
-            //        var games = UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName });
-            //        return games.$promise;
-            //    }]
-            //}
-            })
             .state('user.region', {
                 url: '/:consoleName/:regionName',
-                templateUrl: 'app/user/userlist.html',
-                controller: 'UserListCtrl'
-                //resolve: {
-            //    gameResponse: ['UserGamesRegionService', '$stateParams', function (UserGamesRegionService, $stateParams) {
-            //        var games = UserGamesRegionService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName, regionName: $stateParams.regionName });
-            //        return games.$promise;
-            //    }]
-            //}
+                templateUrl: 'app/user/user.html',
+                controller: 'UserCtrl'
             })
-            .state('user.subRegion', {
-                url: '/:consoleName/:regionName/:subRegionName',
+            .state('user.region.subRegion', {
+                url: '/:subRegionName',
                 templateUrl: 'app/user/userlist.html',
                 controller: 'UserListCtrl'
             })
+            //.state('user.list', {
+            //    url: '/:regionName',
+            //    templateUrl: 'app/user/userlist.html',
+            //    controller: 'UserListCtrl'
+            //})
+            //.state('user.subRegion', {
+            //    url: '/:subRegionName',
+            //    templateUrl: 'app/user/userlist.html',
+            //    controller: 'UserListCtrl'
+            //})
             .state('console', {
-                url: '/:consoleName', templateUrl: 'app/account/header.html', controller: 'HeaderCtrl',
+                url: '/:consoleName', templateUrl: 'app/game/header.html', controller: 'HeaderCtrl',
                 resolve: {
-                    consoles: ['ConsoleService', function (ConsoleService) {
-                        return ConsoleService;
+                    consoles: ['GameStructureService', function (GameStructureService) {
+                        return GameStructureService;
                     }]
                 }
             })
@@ -94,7 +106,7 @@ var validateUser = ['$q', '$http', '$location', '$timeout', function($q, $http, 
     return deferred.promise;
 }];
 
-app.factory('ConsoleService', ['GamesStatsService', '$q', function (GamesStatsService, $q) {
+app.factory('GameStructureService', ['GamesStatsService', '$q', function (GamesStatsService, $q) {
     var deferred = $q.defer();
     GamesStatsService.query({ level: 1 }).$promise.then(function (consoles) {
         return $q.all(_.map(consoles, function (c) {
@@ -123,8 +135,12 @@ app.factory('GamesStatsService', ['$resource', function ($resource) {
     return $resource('/api/stats');
 }]);
 
-app.factory('UserGamesStatsService', ['$resource', function ($resource) {
+app.factory('UserGamesService', ['$resource', function ($resource) {
     return $resource('/api/user/:userName/:consoleName/:regionName/:subRegionName');
+}]);
+
+app.factory('BazingaService', ['$resource', function ($resource) {
+    return $resource('/api/user/stats/:userName');
 }]);
 
 app.factory('GamesService', ['$resource', function ($resource) {

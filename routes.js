@@ -113,121 +113,37 @@ module.exports = function(app, passport) {
         res.send({});
     });
 
-    app.get('/api/user/:userName', function (req, res) {
+    app.get('/api/user/stats/:userName', function (req, res) {
         db.view('users/by_user', { key: req.params.userName }, function(err, response) {
             if (err) {
                 console.log("Ingen användare hittades");
                 res.send(404);
             }
             var userId = response[0].id;
+            var level = req.query.level;
 
-            db.view('games/stats_by_user', {
-                startkey: [userId],
-                endkey: [userId, {}],
-                group_level: 2
-            }, function (err, stats) {
-                if (err) {
-                    res.send(500);
-                }
-                res.send(
-                    _u.map(stats, function (s) {
-                        return({ console: s.key[1], count: s.value });
-                    })
-                );
+            var reqObj = { startkey: [userId], endkey: [userId, {}], group_level: level };
+
+            if (req.query.regionName) {
+                reqObj.startkey = [userId, req.query.consoleName, req.query.regionName];
+                reqObj.endkey = [userId, req.query.consoleName, req.query.regionName, {}];
+                reqObj.group_level = level;
+            }
+            else if (req.query.consoleName) {
+                reqObj.startkey = [userId, req.query.consoleName];
+                reqObj.endkey = [userId, req.query.consoleName, {}];
+                reqObj.group_level = level;
+            }
+
+            db.view('games/stats_by_user', reqObj, function(err, resp) {
+                var stats = _u.map(resp, function (c) {
+                    return { id: c.key[level - 1], count: c.value };
+                });
+
+                stats = _u.sortBy(stats, function (s) { return s.count; });
+                res.send(stats.reverse());
             });
         });
-    });
-
-    function getUserGamesByLevel(req, res, requestObj, level) {
-        db.view('users/by_user', { key: req.params.userName }, function(err, response) {
-            if (err) {
-                console.log("Ingen användare hittades");
-                res.send(404);
-            }
-            var userId = response[0].id;
-            requestObj.startkey[0] = userId;
-            requestObj.endkey[0] = userId;
-            db.view('games/stats_by_user', {
-                    startkey: requestObj.startkey,
-                    endkey: requestObj.endkey,
-                    group_level: level + 1
-                }, function(err, stats) {
-                    if (err) {
-                        res.send(409);
-                    }
-
-                    db.view('games/by_user', {
-                        startkey: requestObj.startkey,
-                        endkey: requestObj.endkey,
-                            limit: 21,
-                            skip: req.query.skip,
-                            include_docs: true
-                    }, function (err, response) {
-
-                            var managed = mapUserGameResponse(response, req.user);
-                            res.send({
-                                regions: _u.map(stats, function(s) {
-                                    return { region: s.key[level], count: s.value };
-                                }),
-                                games: managed.list,
-                                loggedIn: userId === managed.userId
-                            });
-                        });
-                });
-        });
-    }
-
-    function getStatsByLevel(req, res, requestObj, level) {
-        db.view('users/by_user', { key: req.params.userName }, function(err, response) {
-            if (err) {
-                console.log("Ingen användare hittades");
-                res.send(404);
-            }
-            var userId = response[0].id;
-            requestObj.startkey[0] = userId;
-            requestObj.endkey[0] = userId;
-            db.view('games/stats_by_user', {
-                    startkey: requestObj.startkey,
-                    endkey: requestObj.endkey,
-                    group_level: level + 1
-                }, function(err, stats) {
-                    if (err) {
-                        res.send(409);
-                    }
-
-                    res.send({
-                        regions: _u.map(stats, function(s) {
-                            return { region: s.key[level], count: s.value };
-                        })
-                    });
-                });
-        });
-    }
-
-    app.get('/api/user/:userName/:consoleName', function (req, res) {        
-        var requestObj = {
-            startkey: [0, req.params.consoleName],
-            endkey: [0, req.params.consoleName, {}]
-        };
-
-        if (req.query.statsOnly) {
-            return getStatsByLevel(req, res, requestObj, 2);
-        }
-        
-        return getUserGamesByLevel(req, res, requestObj, 2);
-    });
-
-    app.get('/api/user/:userName/:consoleName/:regionName', function (req, res) {
-        var requestObj = {
-            startkey: [0, req.params.consoleName, req.params.regionName],
-            endkey: [0, req.params.consoleName, req.params.regionName, {}]
-        };
-
-        if (req.query.statsOnly) {
-            return getStatsByLevel(req, res, requestObj, 3);
-        }
-        
-        return getUserGamesByLevel(req, res, requestObj, 3);
     });
 
     app.get('/api/user/:userName/:consoleName/:regionName/:subRegionName', function (req, res) {

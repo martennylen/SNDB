@@ -1,73 +1,60 @@
-﻿app.controller('UserListCtrl', ['$scope', '$location', '$stateParams', '$http', '$timeout', 'baseRegions',
-    function ($scope, $location, $stateParams, $http, $timeout, baseRegions) {
+﻿app.controller('UserListCtrl', ['$scope', '$location', '$stateParams', '$http', 'UserGamesService',
+    function ($scope, $location, $stateParams, $http, UserGamesService) {
     console.log('userlistctrl');
     $scope.userName = $stateParams.userName;
     $scope.subRegionName = $stateParams.subRegionName;
     $scope.regionName = $stateParams.regionName;
     $scope.consoleName = $stateParams.consoleName;
+      
+    $scope.selected = {};
+    var initialResult = [];
+
+    var docid = '';
+    var skip = 0;
+    var lastResult = {};
+    var lastGameName = '';
+    $scope.isFetching = false;
+    $scope.reachedEnd = false;
         
-    $scope.$watch('subRegionName', function (newValue, oldValue) {
-        console.log(newValue + ' ' + oldValue);
-        if (newValue !== undefined) {
-            console.log('userlistctrl triggar subRegionChanged med ' + newValue);
-            console.log($scope.consoleName + ' ' + $scope.regionName + ' ' + newValue);
-            $scope.$emit('subRegionChanged', { consoleName: $scope.consoleName, regionName: $scope.regionName, subRegionName: newValue });
+    $scope.$on('searchResult', function (event, games, success) {
+        if (success) {
+            $scope.games = games;
+        } else {
+            $scope.games = initialResult;
         }
     });
         
-    $scope.$watch('regionName', function (newValue, oldValue) {
-        console.log(newValue + ' ' + oldValue);
-        if (newValue !== undefined) {
-            console.log('userlistctrl triggar regionChanged med ' + newValue);
-            $scope.$emit('regionChanged', { consoleName: $scope.consoleName, regionName: newValue });
+    $scope.getGames = function () {
+        if ($scope.isFetching || $scope.reachedEnd || $scope.showQ) {
+            return;
         }
-    });
-        
-    $scope.$watch('consoleName', function (newValue, oldValue) {
-        console.log(newValue + ' ' + oldValue);
-        if (newValue !== undefined) {
-            console.log('userlistctrl triggar consoleChanged med ' + newValue);
+        $scope.isFetching = true;
+        UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName, regionName: $stateParams.regionName, subRegionName: $stateParams.subRegionName, gameName: lastGameName, docid: docid, skip: skip }).$promise.then(function (data) {
+            if (!_.isEmpty(lastResult)) {
+                initialResult.push(lastResult);
+            }
+
+            if (data.games.length < 21) {
+                initialResult = initialResult.concat(data.games);
+                $scope.reachedEnd = true;
+            } else {
+                initialResult = initialResult.concat(_.initial(data.games));
+                lastResult = _.last(data.games);
+                lastGameName = lastResult.data.name;
+                docid = lastResult.id;
+                skip = 1;
+            }
+            $scope.games = initialResult;
+            $scope.loggedIn = data.loggedIn;
+            $scope.isFetching = false;
+        });
+    };
+
+    $scope.$watch('consoleName', function (newValue) {
+        if (newValue) {
             $scope.$emit('consoleChanged', newValue);
         }
     });
-
-    $scope.selected = {};
-    $scope.searchResult = [];
-
-    $scope.$on('gamesReceived', function (event, gameResponse) {
-        console.log('FICK SPEL!');
-        console.log(gameResponse);
-        if ($scope.subRegionName !== undefined) {
-            if (gameResponse.level === 'subregion') {
-                $scope.initialResult = gameResponse.games;
-                $scope.games = gameResponse.games;
-                $scope.loggedIn = gameResponse.loggedIn;
-            }
-
-            return;
-        }
-    
-        if ($scope.regionName !== undefined) {
-            if (gameResponse.level === 'region') {
-                $scope.initialResult = gameResponse.games;
-                $scope.games = gameResponse.games;
-                $scope.loggedIn = gameResponse.loggedIn;
-            }
-
-            return;
-        }
-        
-        $scope.initialResult = gameResponse.games;
-        $scope.games = gameResponse.games;
-        $scope.loggedIn = gameResponse.loggedIn;
-    });
-
-    $scope.regions = baseRegions;
-    $scope.currentRegion = {
-        region: _.find($scope.regions, function (r) {
-            return r.id === $scope.regionName;
-        })
-    };
 
     $scope.idEditing = false;
     $scope.editGame = function (g) {
@@ -137,57 +124,4 @@
         var flat = _.reduceRight(attrs, function (a, b) { return a.concat(b); }, []);
         return _.every(flat, function (a) { return !a; });
     }
-
-    var latestResults = [];
-    $scope.search = function () {
-        if ($scope.q === undefined) {
-            return;
-        }
-
-        if ($scope.q.length === 0) {
-            $scope.games = $scope.initialResult;
-            $scope.showQ = false;
-            return;
-        }
-
-        var oldies = _.filter(latestResults, function (game) {
-            return _.any(game.tags, function (tag) {
-                return _(tag).startsWith($scope.q);
-            });
-        });
-
-        if (oldies.length === 0) {
-            searchThrottled($scope);
-        } else {
-            $scope.games = oldies;
-        }
-    };
-
-    var searchDelayed = function ($scope) {
-        $scope.$apply(function () { searchAction($scope); });
-    };
-
-    var searchThrottled = _.debounce(searchDelayed, 1000);
-
-    var searchAction = function ($scope) {
-        if ($scope.q !== undefined) {
-            console.log('eller så söker vi lite...');
-
-            $timeout(function () {
-                if ($scope.pendingPromise) { $timeout.cancel($scope.pendingPromise); }
-                $scope.pendingPromise = $http.get('/api/search/' + $stateParams.consoleName + '?q=' + $scope.q.substring(0, 3).toLowerCase() + '&r=' + $scope.userName);
-                $scope.pendingPromise
-                .success(function (res) {
-                    latestResults = res.games;
-                    $scope.games = _.filter(res.games, function (game) {
-                        return _.any(game.data.tags, function (tag) {
-                            return _(tag).startsWith($scope.q.toLowerCase());
-                        });
-                    });
-                    $scope.showQ = true;
-                    console.log('och nu kom resultatet');
-                });
-            }, 0);
-        }
-    };
 }]);

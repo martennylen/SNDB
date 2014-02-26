@@ -2,7 +2,6 @@
     function ($scope, $location, $stateParams, $rootScope, $timeout, $http) {
         console.log('gameregion');
         $scope.apa = $rootScope.consoles;
-        console.log($scope.apa);
 
         $scope.consoleName = $stateParams.consoleName;
         $scope.regionName = $stateParams.regionName;
