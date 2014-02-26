@@ -1,5 +1,5 @@
-﻿app.controller('UserCtrl', ['$scope', '$location', '$state', '$stateParams', 'stats',
-    function ($scope, $location, $state, $stateParams, stats) {
+﻿app.controller('UserCtrl', ['$scope', '$location', '$state', '$stateParams', '$http', '$timeout', 'stats',
+    function ($scope, $location, $state, $stateParams, $http, $timeout, stats) {
         console.log('userCtrl');
         $scope.userName = $stateParams.userName;
         $scope.consoleName = $stateParams.consoleName;
