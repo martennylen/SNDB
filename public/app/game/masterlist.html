@@ -26,7 +26,7 @@
                 <div class="game-content" ng-if="game.id === selected.id">
                     <div style="display: inline-block;width:100%">
                         <div class="variant-wrapper" ng-repeat="variant in selected.variants">
-                            <h3 ng-if="variant.desc.length" style="margin: 0;">{{variant.desc}}</h3>
+                            <h3 ng-if="variant.desc.length">{{variant.desc}}</h3>
                             <ul>
                                 <li ng-repeat="attr in variant.attr.common">
                                     <input id="{{selected.id + '_' + $parent.$index + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status" ng-change="attrChanged($parent.$index, $index, attr.status)">
