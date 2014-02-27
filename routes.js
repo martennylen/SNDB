@@ -113,6 +113,27 @@ module.exports = function(app, passport) {
         res.send({});
     });
 
+    app.get('/api/user/stats/attrs/:userName', function(req, res) {
+        db.view('users/by_user', { key: req.params.userName }, function(err, response) {
+            if (err) {
+                console.log("Ingen användare hittades");
+                res.send(404);
+            }
+            var userId = response[0].id;
+            var level = req.query.level;
+
+            var reqObj = { startkey: [userId], group_level: level };
+
+            db.view('games/stats_by_attrs', reqObj, function(err, response) {
+                var result = _u.map(response, function(a) {
+                    a.key[1] = a.key[1] === '0' ? 'c' : a.key[1] === '1' ? 'i' : 'b';
+                    return { id: a.key[1], count: a.value };
+                });
+                res.send(result);
+            });
+        });
+    });
+
     app.get('/api/user/stats/:userName', function (req, res) {
         db.view('users/by_user', { key: req.params.userName }, function(err, response) {
             if (err) {

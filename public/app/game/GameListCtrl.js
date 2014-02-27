@@ -65,11 +65,11 @@
         });
         console.log(attrs);
         if ($scope.isEditing) {
-            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.data.variants, attrs: attrs, isNew: g.isNew }));
+            $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, name: g.data.name, variants: g.data.variants, attrs: attrs, isNew: g.isNew }));
             console.log($scope.selected);
         } else {
             if ($scope.selected.id !== g.id) {
-                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, variants: g.data.variants, attrs: attrs, isNew: g.isNew }));
+                $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, name: g.data.name, variants: g.data.variants, attrs: attrs, isNew: g.isNew }));
                 $scope.isEditing = true;
             } else {
                 $scope.selected = {};
@@ -87,8 +87,8 @@
         var attrs = _.map(current.variants, function(v, i) {
             return { common: current.attrs[i], extras: v.attr.extras, note: v.attr.note };
         });
-        var combObj = { id: current.id, console: g.data.console, regions: g.data.regions, attr: attrs };
-
+        var combObj = { id: current.id, console: g.data.console, name: current.name, regions: g.data.regions, attr: attrs };
+        
         if (current.isNew) {
             console.log('lägger till!');
             $http.post('/api/user/add', combObj)

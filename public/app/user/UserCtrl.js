@@ -1,11 +1,12 @@
-﻿app.controller('UserCtrl', ['$scope', '$location', '$state', '$stateParams', '$http', '$timeout', 'stats',
-    function ($scope, $location, $state, $stateParams, $http, $timeout, stats) {
+﻿app.controller('UserCtrl', ['$scope', '$location', '$state', '$stateParams', '$http', '$timeout', 'stats', 'attrs',
+    function ($scope, $location, $state, $stateParams, $http, $timeout, stats, attrs) {
         console.log('userCtrl');
         $scope.userName = $stateParams.userName;
         $scope.consoleName = $stateParams.consoleName;
         $scope.regionName = $stateParams.regionName;;
         $scope.currentRegion = {};
         $scope.stats = stats;
+        $scope.userAttrs = attrs;
         
     if ($scope.regionName.length === 0) {
         $location.path('/user/' + $stateParams.userName + '/' + $stateParams.consoleName + '/' + $scope.stats[0].regions[0].id + '/' + $scope.stats[0].regions[0].subRegions[0].id).replace();

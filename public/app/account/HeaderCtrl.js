@@ -8,10 +8,12 @@
         }
     }]);
 
-app.controller('UserHeaderCtrl', ['$scope', '$location', '$state', '$stateParams', '$rootScope', 'stats',
-    function ($scope, $location, $state, $stateParams, $rootScope, stats) {
+app.controller('UserHeaderCtrl', ['$scope', '$location', '$state', '$stateParams', '$rootScope', 'stats', 'attrs',
+    function ($scope, $location, $state, $stateParams, $rootScope, stats, attrs) {
         console.log('userheader');
         $rootScope.stats = stats;
+        $scope.userAttrs = attrs;
+        $scope.userName = $stateParams.userName;
         $scope.stats = $rootScope.stats;
         console.log($location.$$path.split('/').length);
         if ($location.$$path.split('/').length === 3) {

@@ -44,6 +44,14 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
                             deferred.resolve(consoles);
                         });
                         return deferred.promise;
+                    }],
+                    attrs: ['UserAttrService', '$stateParams', '$q', function (UserAttrService, $stateParams, $q) {
+                        var deferred = $q.defer();
+                        UserAttrService.query({ userName: $stateParams.userName, level: 2 }).$promise.then(function (data) {
+                            deferred.resolve(data);
+                        });
+
+                        return deferred.promise;
                     }]
                 }
             })
@@ -137,6 +145,10 @@ app.factory('GamesStatsService', ['$resource', function ($resource) {
 
 app.factory('UserGamesService', ['$resource', function ($resource) {
     return $resource('/api/user/:userName/:consoleName/:regionName/:subRegionName');
+}]);
+
+app.factory('UserAttrService', ['$resource', function($resource) {
+    return $resource('/api/user/stats/attrs/:userName');
 }]);
 
 app.factory('BazingaService', ['$resource', function ($resource) {

@@ -1,7 +1,16 @@
-﻿<ul id="header-console-list" style="margin-bottom: 0">
-    <li ng-repeat="c in stats">
-        <a ng-href="#/{{c.id}}/">{{c.id.toUpperCase()}} ({{c.count}})</a>
-    </li>
-</ul>
+﻿<div style="width: 100%">
+    <div id="header-console-left">
+        <ul id="header-console-list" style="margin-bottom: 0">
+            <li ng-repeat="c in stats">
+                <a ng-href="#/user/{{userName}}/{{c.id}}/">{{c.id.toUpperCase()}} ({{c.count}})</a>
+            </li>
+            <li style="color: #fff">
+                
+            </li>
+        </ul>
+    </div><div id="header-console-right">
+        <span ng-repeat="a in userAttrs">{{a.id.toUpperCase()}}: {{a.count}}</span>
+    </div>
+</div>
 <div ui-view>
 </div>

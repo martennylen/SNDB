@@ -46,7 +46,7 @@ html {
             .view-wrapper {
                 .spinner {
                     height: 40px;
-                    background: url(../img/ajax-loader.gif) no-repeat center center;  
+                    background: url(../img/ajax-loader.gif) no-repeat center center;
                 }
             }
 
@@ -69,29 +69,52 @@ html {
                     }*/
             }
 
+            #header-console-left {
+                .column-no-float(9);
+            }
+
             #header-console-list {
-                //background-color: #F39D52;
-                //background-color: #E58838;
-                //background-color: #ECA76C;
-                //background-color: #EA974F;
-                background-color: #B53121;
-                //padding: 10px;
-                border-radius: 6px;
-                padding-left: 10px;
+                    //background-color: #F39D52;
+                    //background-color: #E58838;
+                    //background-color: #ECA76C;
+                    //background-color: #EA974F;
+                    background-color: #B53121;
+                    //padding: 10px;
+                    border-radius: 6px;
+                    padding-left: 10px;
 
-                > li {
-                    display: inline-block;
-                    padding: 10px;
+                    > li {
+                        display: inline-block;
+                        padding: 10px;
 
-                    a {
-                        font-weight: bold;
-                        text-decoration: none;
-                        color: #fff;
-                    }
-
-                        a:hover {
-                            text-decoration: underline;
+                        a {
+                            font-weight: bold;
+                            text-decoration: none;
+                            color: #fff;
                         }
+
+                            a:hover {
+                                text-decoration: underline;
+                            }
+                    }
+                }
+
+            #header-console-right {
+                .column-no-float(3);
+                .last-col();
+                padding: 10px;
+                background-color: #B53121;
+                color: #fff;
+                border-radius: 6px;
+                text-align: center;
+
+                span {
+                    font-weight: bold;
+                    margin-right:20px;
+                }
+
+                span:last-of-type {
+                    margin-right: 0;
                 }
             }
         }
@@ -114,6 +137,7 @@ html {
                 //border-radius: 6px;
                 //padding: 20px;
                 border-bottom: 1px solid #B53121;
+
                 a.disabled {
                     cursor: default;
                 }
@@ -248,6 +272,7 @@ html {
 
                 .search-engine-holder {
                     .column-no-float-zwei(6,0);
+
                     input {
                         width: 100%;
                     }
@@ -261,14 +286,15 @@ html {
 
                     ul#games {
                         font-size: 18px;
+
                         a {
                             color: #5a5a5a;
                         }
 
-                        a.complete {
-                            //color: #A8CD1B;
-                            color: #7FA000;
-                        }
+                            a.complete {
+                                //color: #A8CD1B;
+                                color: #7FA000;
+                            }
 
                         .game-wrapper {
                             a:hover {
@@ -351,20 +377,21 @@ html {
                             }
 
                             button {
-                                margin-top: 10px;
+                                margin-top: 20px;
+                                padding: 10px 20px;
                             }
 
                             .variant-wrapper {
                                 margin-top: 20px;
+
                                 h3 {
-                                    color: #B53121;
-                                    margin: 0;
+                                    margin-top: 0;
                                 }
                             }
 
-                            .variant-wrapper:first-of-type {
-                                margin-top: 0;
-                            }
+                                .variant-wrapper:first-of-type {
+                                    margin-top: 0;
+                                }
                         }
                     }
 
@@ -535,6 +562,7 @@ html {
 
                             .button-holder {
                                 padding: 0 10px 10px 10px;
+
                                 button {
                                     width: 100%;
                                 }
@@ -542,7 +570,6 @@ html {
 
                             .variant-wrapper {
                                 padding: 10px;
-
                                 /*h3 {
                                     color: #B53121;
                                 }*/
