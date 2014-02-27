@@ -8,7 +8,7 @@
                             {{game.data.name}}
                             <span>({{game.data.regions.sub.toUpperCase()}})</span>
                         </span>
-                    </div></a><a href ng-click="editGame(game)" ng-class="{disabled: !$parent.loggedIn}"><div class="game-data"><div class="game-attr">
+                    </div></a><a href ng-click="editGame(game)" class="game-data-link" ng-class="{disabled: !$parent.loggedIn}"><div class="game-data"><div class="game-attr">
                         <div class="common">
                             <span ng-if="game.data.variants.length === 1" ng-repeat="attr in game.data.variants[0].attr.common" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
                             <div ng-if="game.data.variants.length > 1" ng-repeat="v in game.data.variants" class="attr-multiple desktop-only">
@@ -23,8 +23,8 @@
             </div>
             <div class="game-content" ng-if="game.id === selected.id">
                 <div style="display: inline-block">
-                    <div ng-repeat="variant in selected.variants">
-                        <h3 ng-if="variant.desc.length" style="margin: 0">{{variant.desc}}</h3>
+                    <div class="variant-wrapper" ng-repeat="variant in selected.variants">
+                        <h3 ng-if="variant.desc.length">{{variant.desc}}</h3>
                         <ul>
                             <li ng-repeat="attr in variant.attr.common" style="padding: 0;margin-right: 20px">
                                 <input id="{{selected.id + '_' + $parent.$index + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status" ng-change="attrChanged($parent.$index, $index, attr.status)">
@@ -43,7 +43,7 @@
                         </div>
                     </div>
                 </div>
-                <div>
+                <div class="button-holder">
                     <button ng-disabled="!isDirty(game.variants)" class="yeah" ng-click="updateGame(game)">Spara</button>
                     <span ng-if="willRemove">Spelet kommer att tas bort från din samling.</span>
                 </div>

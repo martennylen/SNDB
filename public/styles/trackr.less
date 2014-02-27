@@ -129,13 +129,13 @@ html {
                 }
 
                 .game-content {
-                    padding: 20px;
+                    padding: 10px 20px 20px 20px;
                     //margin-bottom: 10px;
                     background-color: #fff;
                     //margin-top: 10px;
                     margin: 20px;
                     margin-top: 0;
-                    color: #666 !important;
+                    color: #666;
                     border-radius: 6px;
                 }
             }
@@ -347,6 +347,18 @@ html {
                             button {
                                 margin-top: 10px;
                             }
+
+                            .variant-wrapper {
+                                margin-top: 20px;
+                                h3 {
+                                    color: #B53121;
+                                    margin: 0;
+                                }
+                            }
+
+                            .variant-wrapper:first-of-type {
+                                margin-top: 0;
+                            }
                         }
                     }
 
@@ -417,11 +429,11 @@ html {
                 }
 
                 #game-search {
-                        width: 100%;
-                        height: 40px;
-                        font-size: 18px;
-                        margin-top: 10px;
-                    }
+                    width: 100%;
+                    height: 40px;
+                    font-size: 18px;
+                    margin-top: 10px;
+                }
 
                 .view-wrapper {
                     .column(12);
@@ -435,9 +447,9 @@ html {
                         }
                     }
 
-                    .user-list:first-of-type {
-                        margin-left: 0;
-                    }
+                        .user-list:first-of-type {
+                            margin-left: 0;
+                        }
 
                     ul#games {
                         font-size: 14px;
@@ -450,10 +462,10 @@ html {
                             color: #5a5a5a;
                         }
 
-                        a.complete {
-                            //color: #A8CD1B;
-                            color: #7FA000;
-                        }
+                            a.complete {
+                                //color: #A8CD1B;
+                                color: #7FA000;
+                            }
 
                         .game-wrapper {
                             .game-name {
@@ -470,23 +482,23 @@ html {
                         }
 
                         .master-wrapper {
-                            /*a.complete {
-                                color: #A8CD1B;
-                            }*/
 
                             .game-name {
                                 .column-no-float(9, 0);
+                            }
+
+                            .game-data-link {
+                                color: #B53121;
                             }
 
                             .game-data {
                                 .column-no-float(3,0);
 
                                 a {
-                                    color:#B53121;
+                                    color: #B53121;
                                 }
 
                                 .game-attr {
-                                    //.column-no-float(12, 0);
                                     text-align: center;
 
                                     .common {
@@ -502,7 +514,7 @@ html {
 
                         .game-content {
                             margin: 10px 0 0 0;
-                            padding: 5px;
+                            padding: 0;
                             font-size: 14px;
 
                             li {
@@ -515,14 +527,19 @@ html {
                                 border: 1px solid #ccc;
                             }
 
-                            button {
-                                margin-top: 10px;
+                            .button-holder {
+                                padding: 0 10px 10px 10px;
+                                button {
+                                    width: 100%;
+                                }
                             }
 
                             .variant-wrapper {
-                                h3 {
+                                padding: 10px;
+
+                                /*h3 {
                                     color: #B53121;
-                                }
+                                }*/
                             }
                         }
                     }
