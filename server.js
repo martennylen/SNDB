@@ -4,7 +4,7 @@ var http = require('http'),
     couch = require('./app_modules/couch'),
     passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
-    pwhelper = require('./app_modules/password.js'),
+    pwhelper = require('./app_modules/password'),
     uuid = require('node-uuid'),
     assets = require('./assets'),
     BundleUp = require('bundle-up2');
@@ -67,9 +67,9 @@ var http = require('http'),
         app.use(express.errorHandler());
     });
     
-    require('./app_modules/routes/account.js')(app, passport);
-    require('./app_modules/routes/user.js')(app, passport);
-    require('./app_modules/routes/game.js')(app, passport);
+    require('./app_modules/routes/account')(app, passport);
+    require('./app_modules/routes/user')(app, passport);
+    require('./app_modules/routes/game')(app, passport);
 
     http.createServer(app).listen(app.get('port'), function () {
         console.log("Express server listening on port " + app.get('port'));

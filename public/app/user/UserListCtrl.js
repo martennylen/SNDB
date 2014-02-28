@@ -28,12 +28,13 @@
         if ($scope.isFetching || $scope.reachedEnd || $scope.showQ) {
             return;
         }
+        console.log('came further');
         $scope.isFetching = true;
         UserGamesService.get({ userName: $stateParams.userName, consoleName: $stateParams.consoleName, regionName: $stateParams.regionName, subRegionName: $stateParams.subRegionName, gameName: lastGameName, docid: docid, skip: skip }).$promise.then(function (data) {
             if (!_.isEmpty(lastResult)) {
                 initialResult.push(lastResult);
             }
-
+            console.log(data.games.length);
             if (data.games.length < 21) {
                 initialResult = initialResult.concat(data.games);
                 $scope.reachedEnd = true;
@@ -41,8 +42,9 @@
                 initialResult = initialResult.concat(_.initial(data.games));
                 lastResult = _.last(data.games);
                 lastGameName = lastResult.data.name;
-                docid = lastResult.id;
+                docid = lastResult.item;
                 skip = 1;
+                console.log(lastResult);
             }
             $scope.games = initialResult;
             $scope.loggedIn = data.loggedIn;
