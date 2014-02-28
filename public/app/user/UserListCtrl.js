@@ -33,7 +33,7 @@
             if (!_.isEmpty(lastResult)) {
                 initialResult.push(lastResult);
             }
-            console.log(data.games);
+
             if (data.games.length < 21) {
                 initialResult = initialResult.concat(data.games);
                 $scope.reachedEnd = true;
