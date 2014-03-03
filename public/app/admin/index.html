@@ -7,8 +7,8 @@
             <input type="text" id="game-search" style="width: 100%; height: 30px;" placeholder="S&ouml;k spel" ng-model="q" ng-change="search()" ng-minlength="3" />
             <div ng-if="games.length" style="position: absolute; width: 100%">
                 <ul id="games" style="margin: 0">
-                    <li ng-repeat="game in games" ng-click="setSelected(game)" style="padding: 10px" ng-class-odd="'odd'" ng-class-even="'even'">
-                        <span>{{game.data.name}} ({{game.data.console.toUpperCase()}} {{game.data.regions.sub[0].toUpperCase()}})</span>
+                    <li ng-repeat="game in games" ng-click="setSelected(game)" style="padding: 10px; color: #5a5a5a" ng-class-odd="'odd'" ng-class-even="'even'">
+                        <span>{{game.data.name}} ({{game.data.console.toUpperCase()}} {{game.data.regions.sub.toUpperCase()}})</span>
                     </li>
                 </ul>
             </div>

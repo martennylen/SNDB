@@ -38,7 +38,7 @@ module.exports = function(app, passport) {
         game.data.tags = [game.data.name.replace(/[^a-z0-9\s]/gi, '').toLowerCase()];
 
         if (_u.indexOf(game.data.name, ' ') > -1) {
-            _u.each(game.data.name.split(' '), function(word) {
+            _u.each(game.data.name.toLowerCase().split(' '), function(word) {
                 if (word.length > 2 && word !== 'the') {
                     game.data.tags.push(word.replace(/[^a-z0-9\s]/gi, '').toLowerCase());
                 }

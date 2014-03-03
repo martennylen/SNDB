@@ -17,6 +17,7 @@
     };
 
     $scope.setSelected = function (game) {
+        console.log(game);
         _.each(game.data.variants, function (v) {
             _.each(v.attr.common, function (a) {
                 a.selected = true;
@@ -27,7 +28,7 @@
         currentRegion.selected = true;
         $scope.currentRegions.main = currentRegion;
 
-        var currentSubRegion = _.findWhere(currentRegion.regions, { id: game.data.regions.sub[0] });
+        var currentSubRegion = _.findWhere(currentRegion.regions, { id: game.data.regions.sub });
         currentSubRegion.selected = true;
         $scope.currentRegions.sub = currentSubRegion;
         
@@ -73,7 +74,7 @@
         });
 
         $scope.game.data.regions.main = $scope.currentRegions.main.id;
-        $scope.game.data.regions.sub = [$scope.currentRegions.sub.id];
+        $scope.game.data.regions.sub = $scope.currentRegions.sub.id;
         
         console.log(angular.toJson($scope.game));
         if ($scope.isEditing) {
@@ -115,7 +116,7 @@
         }
 
         if ($scope.q.length === 0) {
-            $scope.games = $scope.initialResult;
+            $scope.games = [];
             $scope.showQ = false;
             return;
         }
@@ -141,7 +142,7 @@
 
     var searchAction = function ($scope) {
         if ($scope.q !== undefined) {
-            console.log('eller så söker vi lite...');
+            console.log('eller så söker vi lite...meep');
 
             $timeout(function () {
                 if ($scope.pendingPromise) { $timeout.cancel($scope.pendingPromise); }
