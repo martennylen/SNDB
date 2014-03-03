@@ -194,7 +194,7 @@ module.exports = function(app, passport) {
     });
 
     app.get('/api/:consoleName/:regionName/:subRegionName/:gameName', function (req, res) {
-        db.view('games/all', { key: req.params.gameName.split('-').join(' ') }, function (err, response) {
+        db.view('games/all', { key: req.params.gameName.split('-').join(' ').split('+').join('-') }, function (err, response) {
             //TA BARA DET VI BEHÖVER, INTE HELA COUCH-MODELLEN
             if (err) {
                 res.send(404);

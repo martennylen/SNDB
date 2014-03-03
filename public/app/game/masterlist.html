@@ -3,7 +3,7 @@
     <ul id="games" infinite-scroll="getGames()" infinite-scroll-disabled="isFetching" infinite-scroll-distance="1">
             <li ng-repeat="game in games" ng-if="!game.isRemoved" ng-class-odd="'odd'" ng-class-even="'even'">
                 <div class="master-wrapper">
-                    <a ng-class="{complete: game.isComplete}" ui-sref="game({consoleName:game.data.console, regionName:game.data.regions.main, subRegionName:game.data.regions.sub[0], gameName:game.data.name.split(' ').join('-')})">
+                    <a ng-class="{complete: game.isComplete}" ui-sref="game({consoleName:game.data.console, regionName:game.data.regions.main, subRegionName:game.data.regions.sub, gameName:game.data.name.split('-').join('+').split(' ').join('-')})">
                         <div class="game-name">
                             <span>
                                 {{game.data.name}}
@@ -20,7 +20,7 @@
         </div>
         <div ng-if="game.data.variants.length > 3" class="desktop-only" style="text-align: center"><span>{{game.data.variants.length}} varianter</span></div>
         <div ng-if="game.data.variants.length > 1" class="mobile-only" style="text-align: center"><span>{{game.data.variants.length}}</span></div>
-    </div><span ng-if="game.data.variants.length === 1 && game.variants[0].attr.extras.length" ng-class="{exists: game.attr.extrasComplete}">+</span>
+    </div><span ng-if="game.data.variants.length === 1 && game.data.variants[0].attr.extras.length" ng-class="{exists: game.attr.extrasComplete}">+</span>
 </div></div></a>
                 </div>
                 <div class="game-content" ng-if="game.id === selected.id">

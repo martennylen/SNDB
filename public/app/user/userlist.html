@@ -2,7 +2,7 @@
     <ul id="games" infinite-scroll="getGames()" infinite-scroll-disabled="isFetching" infinite-scroll-distance="1">
         <li ng-repeat="game in games" ng-if="!game.isRemoved" ng-class-odd="'odd'" ng-class-even="'even'">
             <div class="master-wrapper">
-                <a ng-class="{complete: game.isComplete}" ui-sref="game({consoleName:game.data.console, regionName:game.data.regions.main, subRegionName:game.data.regions.sub[0], gameName:game.data.name.split(' ').join('-')})">
+                <a ng-class="{complete: game.isComplete}" ui-sref="game({consoleName:game.data.console, regionName:game.data.regions.main, subRegionName:game.data.regions.sub, gameName:game.data.name.split('-').join('+').split(' ').join('-')})">
                     <div class="game-name">
                         <span>
                             {{game.data.name}}
@@ -11,12 +11,13 @@
                     </div></a><a href ng-click="editGame(game)" class="game-data-link" ng-class="{disabled: !$parent.loggedIn}"><div class="game-data"><div class="game-attr">
                         <div class="common">
                             <span ng-if="game.data.variants.length === 1" ng-repeat="attr in game.data.variants[0].attr.common" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
-                            <div ng-if="game.data.variants.length > 1" ng-repeat="v in game.data.variants" class="attr-multiple desktop-only">
+                            <div ng-if="game.data.variants.length > 1 && game.data.variants.length < 4" ng-repeat="v in game.data.variants" class="attr-multiple desktop-only">
                                 <span ng-repeat="attr in v.attr.common" ng-class="{exists: attr.status}" style="margin-right: 0">
                                     {{attr.id.toUpperCase()}}
                                 </span>
                                 <span ng-if="$index !== game.data.variants.length-1">/ </span>
                             </div>
+                                <div ng-if="game.data.variants.length > 3" class="desktop-only" style="text-align: center"><span>{{game.data.variants.length}} varianter</span></div>
                                 <div ng-if="game.data.variants.length > 1" class="mobile-only" style="text-align: center"><span>{{game.data.variants.length}}</span></div>
                             </div><span ng-if="game.data.variants.length === 1 && game.data.variants[0].attr.extras.length" ng-class="{exists: game.attr.extrasComplete}">+</span>
                     </div></div></a>
