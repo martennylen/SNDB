@@ -41,7 +41,7 @@ var http = require('http'),
     BundleUp(app, assets, {
         staticRoot: __dirname + '/public/',
         staticUrlRoot: '/', 
-        bundle: true,
+        bundle: false,
         minifyCss: true,
         minifyJs: true,
         //complete: console.log.bind(console, "Bundle-up: static files are minified/ready")
@@ -63,8 +63,8 @@ var http = require('http'),
     
     app.configure(function(){ 
         app.set('port', port);
-        app.use(express.static(__dirname + '/public')); 
         app.use(require('less-middleware')({ src: __dirname + '/public' }));
+        app.use(express.static(__dirname + '/public')); 
         app.use(express.cookieParser()); 
         app.use(express.logger('dev'));
         app.use(express.bodyParser());
