@@ -74,7 +74,7 @@ app.controller('RegisterCtrl', ['$scope', '$location', '$http', function ($scope
     };
 }]);
 
-app.controller('LogoutCtrl', function ($scope, $location, $http, $rootScope) {
+app.controller('LogoutCtrl', ['$scope', '$location', '$http', function ($scope, $location, $http) {
     $scope.logout = function () {
         $http.post('/api/logout').
             success(function () {
@@ -82,4 +82,4 @@ app.controller('LogoutCtrl', function ($scope, $location, $http, $rootScope) {
                 $location.path('/login');
             });
     };
-});
+}]);
