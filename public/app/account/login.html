@@ -3,7 +3,7 @@
         <input type="text" placeholder="Användarnamn" ng-model="credentials.username" ng-minlength="3" ng-maxlength="20" required />
         <input type="password" placeholder="Lösenord" ng-model="credentials.password" ng-minlength="3" ng-maxlength="20" required />
         <div>
-            <button ng-disabled="!validateFields()" ng-click="validateCredentials(credentials)">Logga in</button>
+            <button class="yeah" ng-disabled="!validateFields()" ng-click="validateCredentials(credentials)">Logga in</button>
             <span>{{errorMessage}}</span>
         </div>
     </form>

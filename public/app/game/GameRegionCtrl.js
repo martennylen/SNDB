@@ -15,7 +15,6 @@
         
         if ($location.$$path.split('/').length === 4) {
             $scope.subRegionName = $location.$$path.split('/')[3];
-            console.log('APA ' + $scope.subRegionName);
         }
 
         $scope.regions = _.find($scope.apa, function (c) {
