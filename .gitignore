@@ -1,4 +1,4 @@
 # Misc folders
 *.css
 *.min.css
-public/min/bundle/*.js
+# public/min/bundle/*.js

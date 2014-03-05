@@ -37,29 +37,6 @@ var http = require('http'),
 
     var port = process.env.PORT || 8101;
     var app = express();
-
-    BundleUp(app, assets, {
-        staticRoot: __dirname + '/public/',
-        staticUrlRoot: '/', 
-        bundle: false,
-        minifyCss: true,
-        minifyJs: true,
-        //complete: console.log.bind(console, "Bundle-up: static files are minified/ready")
-        complete: function() {
-            fs.readdir(__dirname + '/public/min/bundle', function(err, files) {
-                files.forEach(function (f) {
-                    var name = f.split('_')[1];
-                    fs.rename(__dirname + '/public/min/bundle/' + f, __dirname + '/public/min/bundle/' + name, function(err) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            console.log('asset files renamed');
-                        }
-                    });
-                });
-            });
-        }
-    });
     
     app.configure(function(){ 
         app.set('port', port);
@@ -74,7 +51,30 @@ var http = require('http'),
     });
     
     app.configure('development', function () {
-        app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+        app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+        
+        BundleUp(app, assets, {
+            staticRoot: __dirname + '/public/',
+            staticUrlRoot: '/',
+            bundle: false,
+            minifyCss: true,
+            minifyJs: true,
+            //complete: console.log.bind(console, "Bundle-up: static files are minified/ready")
+            complete: function () {
+                fs.readdir(__dirname + '/public/min/bundle', function (err, files) {
+                    files.forEach(function (f) {
+                        var name = f.split('_')[1];
+                        fs.rename(__dirname + '/public/min/bundle/' + f, __dirname + '/public/min/bundle/' + name, function (err) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log('asset files renamed');
+                            }
+                        });
+                    });
+                });
+            }
+        });
     });
 
     app.configure('production', function () {
