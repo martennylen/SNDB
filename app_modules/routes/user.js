@@ -20,7 +20,7 @@ module.exports = function(app, passport) {
             var userId = response[0].id;
             var level = req.query.level;
 
-            var reqObj = { startkey: [userId], group_level: level };
+            var reqObj = { startkey: [userId, "0"], endkey: [userId, "2"], group_level: level };
 
             db.view('games/stats_by_attrs', reqObj, function(err, response) {
                 var result = _u.map(response, function(a) {

@@ -1,4 +1,4 @@
-﻿<div style="width: 100%">
+﻿<div ng-if="stats.length" style="width: 100%">
     <div id="header-console-left">
         <ul id="header-console-list" style="margin-bottom: 0">
             <li ng-repeat="c in stats">
@@ -11,6 +11,9 @@
     </div><div id="header-console-right" class="desktop-only">
         <span ng-repeat="a in userAttrs">{{a.id.toUpperCase()}}: {{a.count}}</span>
     </div>
+</div>
+<div ng-if="!stats.length" style="margin-top: 30px; background-color: #fff; border-radius: 6px; padding: 20px;">
+    <span>Det verkar som du inte har några spel inlagda än! Gå till "Alla spel" och lägg till de spel du har i din samling så blir den här sidan roligare att titta på.</span>
 </div>
 <div ui-view>
 </div>

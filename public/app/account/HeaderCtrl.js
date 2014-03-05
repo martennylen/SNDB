@@ -15,8 +15,10 @@ app.controller('UserHeaderCtrl', ['$scope', '$location', '$state', '$stateParams
         $scope.userAttrs = attrs;
         $scope.userName = $stateParams.userName;
         $scope.stats = $rootScope.stats;
-        console.log($location.$$path.split('/').length);
+
         if ($location.$$path.split('/').length === 3) {
-            $location.path('/user/' + $stateParams.userName + '/' + $rootScope.stats[0].id + '/').replace();
+            if ($rootScope.stats.length) {
+                $location.path('/user/' + $stateParams.userName + '/' + $rootScope.stats[0].id + '/').replace();
+            }
         }
     }]);
