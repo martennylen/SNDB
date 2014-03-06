@@ -10,10 +10,17 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
         $stateProvider
             .state('login', { url: '/login', templateUrl: 'app/account/login.html', controller: 'LoginCtrl' })
             .state('register', { url: '/register', templateUrl: 'app/account/register.html', controller: 'RegisterCtrl' })
-            .state('admin', {
-                url: '/admin',
+            .state('admin', { url: '/admin', templateUrl: 'app/admin/header.html', controller: 'AdminHeaderCtrl', resolve: { user: validateUser } })
+            .state('admin.index', {
+                url: '/index',
                 templateUrl: 'app/admin/index.html',
                 controller: 'AdminCtrl',
+                resolve: { user: validateUser }
+            })
+            .state('admin.register', {
+                url: '/register',
+                templateUrl: 'app/admin/register.html',
+                controller: 'RegisterCtrl',
                 resolve: { user: validateUser }
             })
             .state('user', {

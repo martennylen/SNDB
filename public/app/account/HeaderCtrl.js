@@ -22,3 +22,12 @@ app.controller('UserHeaderCtrl', ['$scope', '$location', '$state', '$stateParams
             }
         }
     }]);
+
+app.controller('AdminHeaderCtrl', ['$scope', '$location',
+    function ($scope, $location) {
+        console.log('adminheader');
+
+        if ($location.$$path.split('/').length === 2) {
+            $location.path('/admin/index').replace();
+        }
+    }]);
