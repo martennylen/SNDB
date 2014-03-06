@@ -214,29 +214,4 @@ app.constant('baseRegions', [
     }
   ]);
 
-//app.filter('codeFilter', function($filter){
-//    return function (games, filters) {
-//        var r = [], c = [];
-//        if (games) {
-//            c = getChecked(filters);
-//            _.each(games, function (g) {
-//                if (_.intersection(g.regions, c).length) {
-//                    r.push(g);
-//                }
-//            });
-//        }
-//        return r;
-//    };
-
-//  function getChecked(f){
-//    var c = [];
-//    for(var k in f){
-//      if(f[k]){
-//        c.push(k);
-//      } 
-//    }
-//    return c;
-//  }
-//});
-
 _.mixin(_.str.exports());
