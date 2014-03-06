@@ -6,7 +6,7 @@
         <input type="password" placeholder="Lösenord, 3-20 tecken" ng-model="credentials.password" ng-minlength="3" ng-maxlength="20" required />
         <span class="desktop-only">Minst 3, max 20 tecken</span>
         <div>
-            <button ng-disabled="!validateFields()" ng-click="registerCredentials()">Registrera</button>
+            <button class="yeah" ng-disabled="!validateFields()" ng-click="registerCredentials()">Registrera</button>
             <span style="color: rgb(162, 26, 58)">{{errorMessage}}</span>
         </div>
     </form>
