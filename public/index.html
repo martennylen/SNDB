@@ -39,7 +39,7 @@
                     <div style="height:100%;display:table-cell;width:100%;vertical-align: bottom;padding-left:10px">
                         <span class="nintendoid" style="display:block">SNDB</span>
                         <span class="nintendoid">TRACKR</span>
-                        <span style="color:#fff">({{loggedInUser.username}})</span>
+                        <span ng-if="isLoggedIn()" style="color:#fff">({{loggedInUser.username}})</span>
                     </div>
                     <span id="cart-separator" style="width: 2px; height: 100%; display: table-cell; border-left: 1px solid #990000; border-right: 1px solid #f86d6d;"></span>
                     <div ng-click="toggleBurger()" id="cart-burger" style="display:table-cell;width:20%;vertical-align: middle">
@@ -57,18 +57,38 @@
             <div ng-if="burgerIsOpen" style="background-color: #000; background-color: rgba(0,0,0,0.5); color: #5a5a5a; width: 100%; height: 100%">
                 <div style="background-color: rgba(0,0,0,1);">
                     <ul style="margin-top: 0;padding-top: 0;width:100%">
-                        <li style="padding: 15px; background-color: #e2e2e2; border-bottom: 1px solid #B53121;">
-                            <a ng-click="toggleBurger()" href="/">Alla spel</a>
+                        <li style="background-color: #e2e2e2; border-bottom: 1px solid #B53121;">
+                            <a ng-click="toggleBurger()" href="/">
+                                <div style="width: 100%; padding: 15px;">
+                                    <span>Alla spel</span>
+                                </div>
+                            </a>
                         </li>
-                        <li ng-if="isLoggedIn()" style="padding: 15px; background-color: #fff; border-bottom: 1px solid #B53121;">
-                            <a ng-click="toggleBurger()" href ui-sref="user({userName: loggedInUser.username})">Min sida</a>
+                        <li ng-if="isLoggedIn()" style="background-color: #fff; border-bottom: 1px solid #B53121;">
+                            <a ng-click="toggleBurger()" href ui-sref="user({userName: loggedInUser.username})">
+                                <div style="width: 100%; padding: 15px;">
+                                    <span>Min sida</span>
+                                </div>
+                            </a>
                         </li>
-                        <li ng-if="showAdminLink()" style="padding: 15px; background-color: #e2e2e2; border-bottom: 1px solid #B53121;">
-                            <a ng-click="toggleBurger()" href ng-href="#/admin">Admin</a>
+                        <li ng-if="showAdminLink()" style="background-color: #e2e2e2; border-bottom: 1px solid #B53121;">
+                            <a ng-click="toggleBurger()" href ng-href="#/admin">
+                                <div style="width: 100%; padding: 15px;">
+                                    <span>Admin</span>
+                                </div>
+                            </a>
                         </li>
-                        <li style="padding: 15px; background-color: #fff; border-bottom: 1px solid #B53121;">
-                            <a ng-if="isLoggedIn()" href ng-click="logout()">Logga ut</a>
-                            <a ng-if="!isLoggedIn()" ng-click="toggleBurger()" ng-href="#/login">Logga in</a>
+                        <li style="background-color: #fff; border-bottom: 1px solid #B53121;">
+                            <a ng-if="isLoggedIn()" href ng-click="logout()">
+                                <div style="width: 100%; padding: 15px;">
+                                    <span>Logga ut</span>
+                                </div>
+                            </a>
+                            <a ng-if="!isLoggedIn()" ng-click="toggleBurger()" ng-href="#/login">
+                                <div style="width: 100%; padding: 15px;">
+                                    <span>Logga in</span>
+                                </div>
+                            </a>
                         </li>
                     </ul>
                 </div>
