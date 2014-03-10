@@ -1,4 +1,4 @@
-﻿app.controller('IndexCtrl', ['$scope', '$http', function ($scope, $http) {
+﻿app.controller('IndexCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
         console.log('indexCtrl');
 
     $scope.loggedInUser = {};
@@ -18,6 +18,20 @@
         console.log('user ' + JSON.stringify(user));
         $scope.loggedInUser = user;
     });
+
+    $scope.burgerIsOpen = false;
+    $scope.toggleBurger = function () {
+        $scope.burgerIsOpen = !$scope.burgerIsOpen;
+    };
+
+    $scope.logout = function () {
+        $http.post('/api/logout').
+            success(function () {
+                $scope.toggleBurger();
+                $scope.$emit('userLog', {});
+                $location.path('/login');
+            });
+    };
     //$scope.loggedInUser = $cookieStore.get('trackr.sess').username || {};
 }]);
 
@@ -43,15 +57,5 @@ app.controller('LoginCtrl', ['$scope', '$location', '$http', function ($scope, $
 
     $scope.validateFields = function () {
         return $scope.loginForm.$valid;
-    };
-}]);
-
-app.controller('LogoutCtrl', ['$scope', '$location', '$http', function ($scope, $location, $http) {
-    $scope.logout = function () {
-        $http.post('/api/logout').
-            success(function () {
-                $scope.$emit('userLog', {});
-                $location.path('/login');
-            });
     };
 }]);
