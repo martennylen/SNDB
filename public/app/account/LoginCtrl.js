@@ -22,6 +22,7 @@
     $scope.burgerIsOpen = false;
     $scope.toggleBurger = function () {
         $scope.burgerIsOpen = !$scope.burgerIsOpen;
+        document.getElementById('cart-holder').style.height = $scope.burgerIsOpen ? '100%' : 0;
     };
 
     $scope.logout = function () {
