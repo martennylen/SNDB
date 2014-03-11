@@ -6,8 +6,6 @@
         <ul style="margin-left: 50px;margin-top: 0;margin-bottom:0">
             <li ng-repeat="sr in subRegions" style="display: inline-block"><label ng-class="{'selected': currentRegion.subRegion.id === sr.id}" for="{{sr.id}}">{{sr.id.toUpperCase()}} ({{sr.count}})</label><input type="radio" id="{{sr.id}}" ng-model="currentRegion.subRegion" ng-value="sr" ng-change="subRegionChanged(sr)"></li>
         </ul>
-    </div><div class="search-engine-holder">
-        <input type="text" id="game-search" placeholder="Sök i mina spel" ng-model="q" ng-change="search()" ng-minlength="2" />
-     </div>
+    </div>
 </div>
 <ui-view />

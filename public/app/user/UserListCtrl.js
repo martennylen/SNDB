@@ -17,6 +17,7 @@
     $scope.reachedEnd = false;
         
     $scope.$on('searchResult', function (event, games, success) {
+        console.log(games);
         if (success) {
             $scope.games = games;
         } else {

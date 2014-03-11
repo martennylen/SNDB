@@ -1,4 +1,7 @@
-﻿<ul id="header-console-list" style="margin-bottom: 0">
+﻿<div class="search-engine-holder">
+    <input type="text" id="game-search" placeholder="Sök i alla regioner" ng-model="q" ng-change="search()" ng-minlength="3" />
+</div>
+<ul id="header-console-list" style="margin-bottom: 0">
     <li ng-repeat="c in consoles">
         <a ng-href="#/{{c.id}}/">{{c.id.toUpperCase()}} ({{c.count}})</a>
     </li>

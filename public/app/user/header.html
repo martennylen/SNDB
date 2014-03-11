@@ -1,4 +1,7 @@
 ﻿<div ng-if="stats.length" style="width: 100%">
+    <div class="search-engine-holder">
+        <input type="text" id="game-search" placeholder="Sök i mina spel" ng-model="$parent.q" ng-change="search()" ng-minlength="3" />
+    </div>
     <div id="header-console-left">
         <ul id="header-console-list" style="margin-bottom: 0">
             <li ng-repeat="c in stats">
