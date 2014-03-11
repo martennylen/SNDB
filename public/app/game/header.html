@@ -3,7 +3,7 @@
 </div>
 <ul id="header-console-list" style="margin-bottom: 0">
     <li ng-repeat="c in consoles">
-        <a ng-href="#/{{c.id}}/">{{c.id.toUpperCase()}} ({{c.count}})</a>
+        <a ng-href="#/{{c.id}}/"><img src="../img/{{c.id.toUpperCase()}}.png"/></a>
     </li>
 </ul>
 <div ui-view>
