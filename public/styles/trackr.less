@@ -99,7 +99,8 @@ html {
                         color: #fff;
 
                         img {
-
+                            -webkit-transform: translateZ(0);
+                            transform: translateZ(0);
                             -webkit-filter: grayscale(1);
                             opacity: 0.2;
                             width: 120px;
@@ -113,18 +114,16 @@ html {
                             //filter: grayscale(100%);
                             //opacity: 0.2;*/
                             vertical-align: middle;
-                            -webkit-transform: translateZ(0);
-                            z-index: 5000;
                         }
 
                         img.active {
-                            -webkit-filter: grayscale(0);
-                            opacity: 1;
+                            /*-webkit-filter: grayscale(0);
+                            opacity: 1;*/
                             //-webkit-filter: opacity(100%);
 	                        /*-moz-filter: none;
 	                        -o-filter: none;
 	                        -ms-filter: none;*/
-                            filter: none;
+                            //filter: none;
                             //opacity: 1;
                         }
                     }
@@ -138,14 +137,14 @@ html {
                     cursor: pointer;
 
                     a img {
-                        -webkit-filter: grayscale(0);
-                        opacity: 1;
+                        //-webkit-filter: grayscale(0);
+                        //opacity: 1;
                         //-webkit-filter: opacity(100%);
 	                        /*-moz-filter: none;
 	                        -o-filter: none;
 	                        -ms-filter: none;*/
-                            filter: none;
-                            opacity: 1;
+                            //filter: none;
+                            //opacity: 1;
                     }
                 }
             }
