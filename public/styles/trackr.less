@@ -101,7 +101,8 @@ html {
                         img {
                             width: 120px;
                             vertical-align: middle;
-                            filter: grayscale(1);
+                            -webkit-transform: translateZ(0);
+                            -webkit-filter: grayscale(1);
                             opacity: 0.2;
 	                        //-webkit-filter: opacity(20%);
                             //-webkit-transform: translateZ(0);
@@ -115,7 +116,7 @@ html {
                         }
 
                         img.active {
-                            filter: grayscale(0);
+                            -webkit-filter: grayscale(0);
                             opacity: 1;
                             //-webkit-filter: opacity(100%);
 	                        /*-moz-filter: none;
@@ -135,7 +136,7 @@ html {
                     cursor: pointer;
 
                     a img {
-                        filter: grayscale(0);
+                        -webkit-filter: grayscale(0);
                         opacity: 1;
                         //-webkit-filter: opacity(100%);
 	                        /*-moz-filter: none;
