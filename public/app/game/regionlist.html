@@ -1,11 +1,16 @@
 ﻿<div>
     <div class="filter-holder">
         <ul id="filters" style="margin-bottom: 0">
-            <li ng-repeat="r in regions" style="display: inline-block"><label ng-class="{'selected': currentRegion.region.id === r.id}" for="{{r.id}}">{{r.id.toUpperCase()}} ({{r.count}})</label><input type="radio" id="{{r.id}}" ng-model="currentRegion.region" ng-value="r" ng-change="regionChanged(r)"></li>
+            <li ng-repeat="r in regions" style="margin-bottom:10px">
+                <label ng-class="{'selected': currentRegion.region.id === r.id}" for="{{r.id}}">{{r.id.toUpperCase()}} ({{r.count}})</label>
+                <ul>
+                    <li ng-repeat="sr in r.subRegions" style="display: inline-block"><label ng-class="{'selected': currentRegion.subRegion.id === sr.id}" for="{{sr.id}}">{{sr.id.toUpperCase()}} ({{sr.count}})</label><input type="radio" id="{{sr.id}}" ng-model="currentRegion.subRegion" ng-value="sr" ng-change="subRegionChanged(r, sr)"></li>
+                </ul>
+            </li>
         </ul>
-        <ul id="subfilters">
+        <!--<ul id="subfilters">
             <li ng-repeat="sr in subRegions" style="display: inline-block"><label ng-class="{'selected': currentRegion.subRegion.id === sr.id}" for="{{sr.id}}">{{sr.id.toUpperCase()}} ({{sr.count}})</label><input type="radio" id="{{sr.id}}" ng-model="currentRegion.subRegion" ng-value="sr" ng-change="subRegionChanged(sr)"></li>
-        </ul>
+        </ul>-->
     </div>
 </div>
 <ui-view/>
