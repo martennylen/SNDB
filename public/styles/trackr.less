@@ -153,7 +153,19 @@ html {
         }
 
         .filter-holder {
-            padding: 8px 4px;
+            padding: 8px 0;
+            label {
+                color: #5a5a5a;
+            }
+
+            label.main-selected {
+                font-weight: bold;
+            }
+
+            label.selected {
+                font-weight: bold;
+                color: #B53121;
+            }
 
             #subfilters {
                 margin-left: 50px;
@@ -319,10 +331,6 @@ html {
                 .blockify {
                     display: block;
                 }
-            }
-
-            .filter-holder {
-                .column-no-float-zwei(6,0);
             }
 
             .search-engine-holder {
