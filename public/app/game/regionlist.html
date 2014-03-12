@@ -2,7 +2,7 @@
     <div class="filter-holder">
         <ul id="filters" style="margin-bottom: 0">
             <li ng-repeat="r in regions" style="border-bottom: 2px solid #cecece;background-color:#fff;padding:8px">
-                <label ng-class="{'main-selected': currentRegion.region.id === r.id}" for="{{r.id}}">{{r.id.toUpperCase()}} ({{r.count}})</label>
+                <label class="main" for="{{r.id}}">{{r.id.toUpperCase()}} ({{r.count}})</label>
                 <ul>
                     <li ng-repeat="sr in r.subRegions" style="display: inline-block"><input type="radio" id="{{sr.id}}" ng-model="currentRegion.subRegion" ng-value="sr" ng-change="subRegionChanged(r, sr)"><label ng-class="{'selected': currentRegion.subRegion.id === sr.id}" for="{{sr.id}}">{{sr.id.toUpperCase()}} ({{sr.count}})</label></li>
                 </ul>
