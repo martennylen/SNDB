@@ -5,13 +5,14 @@
     <div id="header-console-left">
         <ul id="header-console-list" style="margin-bottom: 0">
             <li ng-repeat="c in stats">
-                <a ng-href="#/user/{{userName}}/{{c.id}}/">{{c.id.toUpperCase()}} ({{c.count}})</a>
-            </li>
-            <li style="color: #fff">
-                
+                <div style="padding: 5px">
+                    <a ng-href="#/user/{{userName}}/{{c.id}}/">
+                        <img ng-src="/img/{{c.id.toUpperCase()}}.png" ng-class="{active: c.id === $parent.console}" />
+                    </a>
+                </div>
             </li>
         </ul>
-    </div><div id="header-console-right" class="desktop-only">
+    </div><div id="header-console-right" class="desktop-only" style="vertical-align: top; margin-top: 24px">
         <span ng-repeat="a in userAttrs">{{a.id.toUpperCase()}}: {{a.count}}</span>
     </div>
 </div>
