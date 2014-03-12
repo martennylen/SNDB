@@ -2,8 +2,12 @@
     <input type="text" id="game-search" placeholder="Sök i alla regioner" ng-model="q" ng-change="search()" ng-minlength="3" />
 </div>
 <ul id="header-console-list" style="margin-bottom: 0">
-    <li ng-repeat="c in consoles">
-        <a ng-href="#/{{c.id}}/"><img src="/img/{{c.id.toUpperCase()}}.png"/></a>
+    <li ng-repeat="c in consoles" ng-click="changeConsole(c)">
+        <a ng-href="#/{{c.id}}/">
+            <div style="padding: 5px">
+                <img ng-src="/img/{{c.id.toUpperCase()}}.png" ng-class="{active: c.id === $parent.console}" />
+            </div>
+        </a>
     </li>
 </ul>
 <div ui-view>

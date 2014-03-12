@@ -7,10 +7,15 @@
             $location.path('/' + $rootScope.consoles[0].id + '/').replace();
         }
 
+        $scope.console = $stateParams.consoleName;
+        $scope.changeConsole = function(c) {
+            $location.path('/' + c.id + '/').replace();
+        };
+
         var latestResults = [];
         var searchResults = [];
         $scope.search = function () {
-            console.log($scope.q);
+
             if ($scope.q === undefined) {
                 return;
             }
