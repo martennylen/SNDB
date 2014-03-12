@@ -5,8 +5,7 @@
     <li ng-repeat="c in consoles" ng-click="changeConsole(c)">
         <a ng-href="#/{{c.id}}/">
             <div style="padding: 5px">
-                <!--<img ng-src="/img/{{c.id.toUpperCase()}}.png" ng-class="{active: c.id === $parent.console}" />-->
-                <img src="http://www.macprime.ch/_images/idb/Steve-Jobs-Portrait.jpg" />
+                <img ng-src="/img/{{c.id.toUpperCase()}}.png" ng-class="{active: c.id === $parent.console}" />
             </div>
         </a>
     </li>
