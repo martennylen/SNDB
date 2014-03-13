@@ -19,7 +19,8 @@ html {
     }
 
     body {
-        background-color: #BEE2E9;
+        //background-color: #BEE2E9;
+        background-color: #f0f0f0;
         color: #B53121;
         font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
 
@@ -62,7 +63,7 @@ html {
             }
 
             #header-console-left {
-                .column-no-float(9);
+                width: 100%;
             }
 
             #header-console-list {
@@ -113,9 +114,8 @@ html {
             }
 
         #header-console-right {
-            .column-no-float(3);
-            .last-col();
-            padding: 10px;
+            .column-no-float(8);
+            padding: 6px;
             background-color: #B53121;
             color: #fff;
             border-radius: 6px;
@@ -159,6 +159,7 @@ html {
     }
 
     #game-search {
+        margin: 0;
         border: none;
         outline: none;
         padding: 8px;
@@ -168,7 +169,8 @@ html {
         > li {
             .column-no-float(12, 0);
             color: #eee;
-            border-bottom: 1px solid #B53121;
+            //border-bottom: 1px solid #B53121;
+            border-bottom: 2px solid #e2e2e2;
 
             a.disabled {
                 cursor: default;
@@ -203,7 +205,11 @@ html {
         }
 
         li.odd {
-            background-color: #e2e2e2;
+            //background-color: #e2e2e2;
+            background-color: #fff;
+            .game-content {
+                background-color: #cfcfcf;
+            }
         }
 
         li.even {
@@ -300,11 +306,11 @@ html {
             }
 
             .search-engine-holder {
-                width: 100%;
+                .column-no-float(4,0);
                 text-align: right;
 
                 input {
-                    width: 50%;
+                    width: 100%;
                 }
             }
 
@@ -319,6 +325,7 @@ html {
 
                     a {
                         color: #5a5a5a;
+                        //color: #B53121;
                     }
 
                         a.complete {
@@ -351,7 +358,7 @@ html {
 
                         .game-name {
                             .column-no-float(7, 0);
-                            border-right: 1px solid #B53121;
+                            //border-right: 1px solid #B53121;
                             padding: 20px;
                         }
 

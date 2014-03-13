@@ -1,11 +1,13 @@
-﻿<div class="search-engine-holder">
+﻿<div id="header-console-right" style="background-color: #f0f0f0" class="desktop-only" style="vertical-align: top">
+    
+</div><div class="search-engine-holder">
     <input type="text" id="game-search" placeholder="Sök i alla regioner" ng-model="q" ng-change="search()" ng-minlength="3" />
 </div>
 <ul id="header-console-list" style="margin-bottom: 0">
     <li ng-repeat="c in consoles" ng-click="changeConsole(c)">
         <a ng-href="#/{{c.id}}/">
             <div style="padding: 5px">
-                <img ng-src="/img/{{c.id.toUpperCase()}}.png" ng-class="{active: c.id === $parent.console}" />
+                <img ng-src="/img/{{c.id}}.png" ng-class="{active: c.id === $parent.console}" />
             </div>
         </a>
     </li>

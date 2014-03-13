@@ -22,18 +22,16 @@
                 return c.id === $scope.consoleName;
         }).regions;
 
-        console.log($scope.regions);
-
-            $scope.currentRegion.region =
-                _.find($scope.regions, function (r) {
-                    return r.id === $scope.regionName;
-                });
-
-            //$scope.subRegions = $scope.currentRegion.region.subRegions;
-            
-            $scope.currentRegion.subRegion = _.find($scope.currentRegion.region.subRegions, function (sr) {
-                return sr.id === $scope.subRegionName;
+        $scope.currentRegion.region =
+            _.find($scope.regions, function (r) {
+                return r.id === $scope.regionName;
             });
+
+        //$scope.subRegions = $scope.currentRegion.region.subRegions;
+            
+        $scope.currentRegion.subRegion = _.find($scope.currentRegion.region.subRegions, function (sr) {
+            return sr.id === $scope.subRegionName;
+        });
        
     $scope.regionChanged = function (r) {
         $location.path('/' + $stateParams.consoleName + '/' + $scope.currentRegion.region.id + '/' + $scope.currentRegion.region.subRegions[0].id).replace();
