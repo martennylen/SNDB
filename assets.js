@@ -10,6 +10,7 @@
     assets.addJs('/public/lib/angular-cookies.js', 'lib');
     assets.addJs('/public/lib/underscore-1.4.1.js', 'lib');
     assets.addJs('/public/lib/underscore.string.min.js', 'lib');
+    assets.addJs('/public/lib/modernizr-2.5.3', 'lib');
     
     assets.addJs('/public/app/app.js', 'app');
     assets.addJs('/public/app/user/*.js', 'app');

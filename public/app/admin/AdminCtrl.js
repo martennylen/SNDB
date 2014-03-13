@@ -12,6 +12,8 @@
         sub: baseRegions[0].regions[0]
     };
 
+    console.log(consoles);
+
     $scope.regionChanged = function () {
         $scope.currentRegions.sub = $scope.currentRegions.main.regions[0];
     };
