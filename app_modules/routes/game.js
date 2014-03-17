@@ -60,7 +60,7 @@ module.exports = function(app, passport) {
             endkey: [req.query.q + '\u9999', req.params.consoleName]
         };
         
-        if (req.params.consoleName === 'null') {
+        if (req.params.consoleName === 'undefined') {
             reqObj = {
                 startkey: [req.query.q, {}],
                 endkey: [req.query.q + '\u9999', {}]
@@ -73,7 +73,7 @@ module.exports = function(app, passport) {
 
             response = _u.uniq(response, function (g) { return g.id; });
             
-            if (req.user !== undefined && req.params.consoleName !== 'null') {
+            if (req.user !== undefined && req.params.consoleName !== 'undefined') {
                 db.view('games/by_user', {
                     startkey: [req.user.id, req.params.consoleName],
                     endkey: [req.user.id, req.params.consoleName, '\u9999']

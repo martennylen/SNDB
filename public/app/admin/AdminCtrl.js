@@ -1,4 +1,5 @@
-﻿app.controller('AdminCtrl',  ['$scope', '$http', '$timeout', '$location', 'consoles', 'baseRegions', 'user', function($scope, $http, $timeout, $location, consoles, baseRegions, user) {
+﻿app.controller('AdminCtrl', ['$scope', '$http', '$timeout', '$location', 'SearchService', 'consoles', 'baseRegions', 'user',
+    function ($scope, $http, $timeout, $location, SearchService, consoles, baseRegions, user) {
     $scope.user = user;
     $scope.consoles = consoles;
     $scope.regions = baseRegions;
@@ -11,8 +12,6 @@
         main: baseRegions[0],
         sub: baseRegions[0].regions[0]
     };
-
-    console.log(consoles);
 
     $scope.regionChanged = function () {
         $scope.currentRegions.sub = $scope.currentRegions.main.regions[0];
@@ -111,57 +110,8 @@
         return $scope.addGameForm.$valid && $scope.game.data.variants.length;
     };
 
-    var latestResults = [];
-    $scope.search = function () {
-        if ($scope.q === undefined) {
-            return;
-        }
-
-        if ($scope.q.length === 0) {
-            $scope.games = [];
-            $scope.showQ = false;
-            return;
-        }
-
-        var oldies = _.filter(latestResults, function (game) {
-            return _.any(game.tags, function (tag) {
-                return _(tag).startsWith($scope.q);
-            });
-        });
-
-        if (oldies.length === 0) {
-            searchThrottled($scope);
-        } else {
-            $scope.games = oldies;
-        }
+    $scope.search = function() {
+        SearchService.SearchInternal($scope);
     };
 
-    var searchDelayed = function ($scope) {
-        $scope.$apply(function () { searchAction($scope); });
-    };
-
-    var searchThrottled = _.debounce(searchDelayed, 1000);
-
-    var searchAction = function ($scope) {
-        if ($scope.q !== undefined) {
-            console.log('eller så söker vi lite...meep');
-
-            $timeout(function () {
-                if ($scope.pendingPromise) { $timeout.cancel($scope.pendingPromise); }
-                $scope.pendingPromise = $http.get('/api/search/null?q=' + $scope.q.substring(0, 3).toLowerCase() + '&r=' + $scope.userName);
-                $scope.pendingPromise
-                .success(function (res) {
-                    latestResults = res.games;
-                    $scope.games = _.filter(res.games, function (game) {
-                        return _.any(game.data.tags, function (tag) {
-                            return _(tag).startsWith($scope.q.toLowerCase());
-                        });
-                    });
-                    $scope.showQ = true;
-                    console.log($scope.games);
-                    console.log('och nu kom resultatet');
-                });
-            }, 0);
-        }
-    };
-}]);
+    }]);

@@ -121,6 +121,87 @@ var validateUser = ['$q', '$http', '$location', '$timeout', function($q, $http, 
     return deferred.promise;
 }];
 
+app.factory('SearchService', ['$timeout', '$http', function ($timeout, $http) {
+    var latestResults = [];
+    var searchResults = [];
+    var self = this;
+    
+    self.search = function ($scope) {
+        if ($scope.q === undefined) {
+            return;
+        }
+
+        if ($scope.q.length === 0) {
+            if (self.internal) {
+                $scope.games = [];
+            } else {
+                $scope.$broadcast('searchResult', null, false);
+            }
+            return;
+        }
+
+        var oldies = _.filter(latestResults, function (game) {
+            return _.any(game.tags, function (tag) {
+                return _(tag).startsWith($scope.q);
+            });
+        });
+
+        if (oldies.length === 0) {
+            searchThrottled($scope);
+        } else {
+            if (internal) {
+                $scope.games = oldies;
+            } else {
+                $scope.$broadcast('searchResult', oldies, true);
+            }
+        }
+    };
+
+    var searchDelayed = function ($scope) {
+        $scope.$apply(function () { searchAction($scope); });
+    };
+
+    var searchThrottled = _.debounce(searchDelayed, 1000);
+
+    var searchAction = function ($scope) {
+        if ($scope.q !== undefined && $scope.q.length) {
+            console.log('eller så söker vi lite...');
+
+            $timeout(function () {
+                if ($scope.pendingPromise) { $timeout.cancel($scope.pendingPromise); }
+                $scope.pendingPromise = $http.get('/api/search/' + $scope.consoleName + '?q=' + $scope.q.substring(0, 3).toLowerCase() + '&r=' + $scope.userName);
+                $scope.pendingPromise
+                .success(function (res) {
+                    latestResults = res.games;
+                    
+                    searchResults = _.filter(res.games, function (game) {
+                        return _.any(game.data.tags, function (tag) {
+                            return _(tag).startsWith($scope.q.toLowerCase());
+                        });
+                    });
+
+                    if (self.internal) {
+                        $scope.games = searchResults;
+                    } else {
+                        $scope.$broadcast('searchResult', searchResults, true);
+                    }
+                    console.log('och nu kom resultatet');
+                });
+            }, 0);
+        }
+    };
+
+    return {
+        Search: function($scope) {
+            return self.search($scope);
+        },
+        SearchInternal: function ($scope) {
+            self.internal = true;
+            return self.search($scope);
+        }
+    };
+}]);
+
 app.factory('GameStructureService', ['GamesStatsService', '$q', function (GamesStatsService, $q) {
     var deferred = $q.defer();
     GamesStatsService.query({ level: 1 }).$promise.then(function (consoles) {

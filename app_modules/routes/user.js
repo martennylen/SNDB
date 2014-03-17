@@ -87,7 +87,6 @@ module.exports = function(app, passport) {
                     skip: req.query.skip,
                     include_docs: true
             }, function (err, response) {
-                console.log(response.length);
                     var managed = mapUserGameResponse(response, req.user);
                     res.send({
                         games: managed.list,
