@@ -1,15 +1,15 @@
 ﻿<div ng-if="stats.length" style="width: 100%">
-    <div id="header-console-right" class="desktop-only" style="vertical-align: top">
+    <div id="subheader-left" class="desktop-only" style="vertical-align: top">
         <span ng-repeat="a in userAttrs">{{a.id.toUpperCase()}}: {{a.count}}</span>
     </div><div class="search-engine-holder">
         <input type="text" id="game-search" placeholder="Sök i mina spel" ng-model="$parent.q" ng-change="search()" ng-minlength="3" />
     </div>
-    <div id="header-console-left">
+    <div>
         <ul id="header-console-list" style="margin-bottom: 0">
             <li ng-repeat="c in stats">
                 <div style="padding: 5px">
                     <a ng-href="#/user/{{userName}}/{{c.id}}/">
-                        <img ng-src="/img/{{c.id}}.png" ng-class="{active: c.id === $parent.console}" />
+                        <img ng-src="/img/{{c.id}}.png" ng-class="{active: c.id === $parent.consoleName}" />
                     </a>
                 </div>
             </li>

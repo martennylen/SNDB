@@ -7,7 +7,7 @@
             $location.path('/' + $rootScope.consoles[0].id + '/').replace();
         }
 
-        $scope.console = $stateParams.consoleName;
+        $scope.consoleName = $stateParams.consoleName;
         $scope.changeConsole = function(c) {
             $location.path('/' + c.id + '/').replace();
         };
