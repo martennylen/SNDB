@@ -31,24 +31,8 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
                 resolve: {
                     stats: ['BazingaService', '$stateParams', '$q', function (BazingaService, $stateParams, $q) {
                         var deferred = $q.defer();
-                        BazingaService.query({ userName: $stateParams.userName, level: 2 }).$promise.then(function (consoles) {
-                            return $q.all(_.map(consoles, function (c) {
-                                return BazingaService.query({ userName: $stateParams.userName, consoleName: c.id, level: 3 }).$promise.then(function (regions) {
-                                    c.regions = regions;
-                                    return $q.all(_.map(regions, function (r) {
-                                        return BazingaService.query({ userName: $stateParams.userName, consoleName: c.id, regionName: r.id, level: 4 }).$promise.then(function (subRegions) {
-                                            r.subRegions = subRegions;
-                                            return subRegions;
-                                        });
-                                    })).then(function (allSubRegions) {
-                                        return regions;
-                                    });
-                                });
-                            })).then(function (allRegions) {
-                                return consoles;
-                            });
-                        }).then(function (consoles) {
-                            deferred.resolve(consoles);
+                        BazingaService.query({ userName: $stateParams.userName, level: 2 }).$promise.then(function(data) {
+                            deferred.resolve(data);
                         });
                         return deferred.promise;
                     }],
@@ -196,31 +180,6 @@ app.factory('SearchService', ['$timeout', '$http', function ($timeout, $http) {
         }
     };
 }]);
-
-//app.factory('GameStructureService', ['GamesStatsService', '$q', function (GamesStatsService, $q) {
-//    var deferred = $q.defer();
-//    GamesStatsService.query({ level: 1 }).$promise.then(function (consoles) {
-//        return $q.all(_.map(consoles, function (c) {
-//            return GamesStatsService.query({ consoleName: c.id, level: 2 }).$promise.then(function (regions) {
-//                c.regions = regions;
-//                return $q.all(_.map(regions, function (r) {
-//                    return GamesStatsService.query({ consoleName: c.id, regionName: r.id, level: 3 }).$promise.then(function (subRegions) {
-//                        r.subRegions = subRegions;
-//                        return subRegions;
-//                    });
-//                })).then(function (allSubRegions) {
-//                    return regions;
-//                });
-//            });
-//        })).then(function (allRegions) {
-//            return consoles;
-//        });
-//    }).then(function (consoles) {
-//        deferred.resolve(consoles);
-//    });
-    
-//    return deferred.promise;
-//}]);
 
 app.factory('GamesStatsService', ['$resource', function ($resource) {
     return $resource('/api/stats');

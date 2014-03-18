@@ -205,7 +205,7 @@ module.exports = function(app, passport) {
     });
 
     app.get('/api/stats', function (req, res) {
-        var level = 1;
+        var level = req.query.level;
         var reqObj = { group_level: level };
 
         var getStats = function (obj) {

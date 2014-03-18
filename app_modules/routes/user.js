@@ -1,4 +1,5 @@
 ﻿var _u = require('underscore'),
+    Q = require('q'),
     request = require('request'),
     couch = require('../couch'),
     db = couch.db();
@@ -43,23 +44,52 @@ module.exports = function(app, passport) {
 
             var reqObj = { startkey: [userId], endkey: [userId, {}], group_level: level };
 
-            if (req.query.regionName) {
-                reqObj.startkey = [userId, req.query.consoleName, req.query.regionName];
-                reqObj.endkey = [userId, req.query.consoleName, req.query.regionName, {}];
-                reqObj.group_level = level;
-            } else if (req.query.consoleName) {
-                reqObj.startkey = [userId, req.query.consoleName];
-                reqObj.endkey = [userId, req.query.consoleName, {}];
-                reqObj.group_level = level;
-            }
-
-            db.view('games/stats_by_user', reqObj, function(err, resp) {
-                var stats = _u.map(resp, function(c) {
-                    return { id: c.key[level - 1], count: c.value };
+            var getStats = function (obj) {
+                var deferred = Q.defer();
+                db.view('games/stats_by_user', obj, function (err, resp) {
+                    deferred.resolve(resp);
                 });
+                return deferred.promise;
+            };
 
-                stats = _u.sortBy(stats, function(s) { return s.count; });
-                res.send(stats.reverse());
+            getStats(reqObj).then(function (consoles) {
+                return Q.all(_u.map(consoles, function (c) {
+                    reqObj.startkey = [userId, c.key[1]];
+                    reqObj.endkey = [userId, c.key[1], {}];
+                    reqObj.group_level = 3;
+                    return getStats(reqObj).then(function (regions) {
+                        c.regions = regions;
+                        return Q.all(_u.map(regions, function (r) {
+                            reqObj.startkey = [userId, r.key[1], r.key[2]];
+                            reqObj.endkey = [userId, r.key[1], r.key[2], {}];
+                            reqObj.group_level = 4;
+                            return getStats(reqObj).then(function (subRegions) {
+                                r.subRegions = _u.sortBy(_u.map(subRegions, function (sr) {
+                                    return { id: sr.key[3], count: sr.value };
+                                }), function (sr) {
+                                    return sr.count;
+                                }).reverse();
+                                return subRegions;
+                            });
+                        })).then(function (allSubRegions) {
+                            return regions;
+                        });
+                    });
+                })).then(function (allRegions) {
+                    return _u.map(consoles, function (c) {
+                        return {
+                            id: c.key[1],
+                            count: c.value,
+                            regions: _u.sortBy(_u.map(c.regions, function (r) {
+                                return { id: r.key[2], count: r.value, subRegions: r.subRegions };
+                            }), function (c) {
+                                return c.count;
+                            }).reverse()
+                        };
+                    });
+                });
+            }).then(function (consoles) {
+                res.send(_u.sortBy(consoles, function (c) { return c.count; }).reverse());
             });
         });
     });

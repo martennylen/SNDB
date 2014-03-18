@@ -21,6 +21,7 @@
 app.controller('UserHeaderCtrl', ['$scope', '$location', '$state', '$stateParams', '$rootScope', 'SearchService', 'stats', 'attrs',
     function ($scope, $location, $state, $stateParams, $rootScope, SearchService, stats, attrs) {
         console.log('userheader');
+
         $rootScope.stats = stats;
         $scope.userAttrs = attrs;
         $scope.userName = $stateParams.userName;
