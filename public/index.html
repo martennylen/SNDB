@@ -31,140 +31,137 @@
     <!--<script src="min/bundle/lib.js"></script>
     <script src="min/bundle/app.js"></script>-->
   </head>
-<body style="margin: 0" ng-controller="IndexCtrl">
-    <div class="mobile-only" style="padding-bottom:45px">
-        <div id="cart-holder" style="width:100%;position:absolute;top:0;z-index:5000">
-            <div>
-                <div id="cart-content" style="height: 50px; background-color: #B53121; border-bottom: 4px solid #fff;display: table;table-layout: fixed;width:100%">
-                    <div style="height:100%;display:table-cell;width:100%;vertical-align: bottom;padding-left:10px">
-                        <span class="nintendoid" style="display:block">SNDB</span>
-                        <span class="nintendoid">TRACKR</span>
-                        <span ng-if="isLoggedIn()" style="color:#fff">({{loggedInUser.username}})</span>
-                    </div>
-                    <span id="cart-separator" style="width: 2px; height: 100%; display: table-cell; border-left: 1px solid #990000; border-right: 1px solid #f86d6d;"></span>
-                    <div ng-click="toggleBurger()" id="cart-burger" style="display:table-cell;width:20%;vertical-align: middle">
-                        <div ng-if="!burgerIsOpen">
-                            <span style="display: block; width: 24px; height: 2px; margin: 5px 14px; background: #fafafa;"></span>
-                            <span style="display: block; width: 24px; height: 2px; margin: 5px 14px; background: #fafafa;"></span>
-                            <span style="display: block; width: 24px; height: 2px; margin: 5px 14px; background: #fafafa;"></span>
+    <body ng-controller="IndexCtrl">
+        <div class="mobile-only" style="padding-bottom:45px">
+            <div id="cart-holder" style="width:100%;position:absolute;top:0;z-index:5000">
+                <div>
+                    <div id="cart-content" style="height: 50px; background-color: #B53121; border-bottom: 4px solid #fff;display: table;table-layout: fixed;width:100%">
+                        <div style="height:100%;display:table-cell;width:100%;vertical-align: bottom;padding-left:10px">
+                            <span class="nintendoid" style="display:block">SNDB</span>
+                            <span class="nintendoid">TRACKR</span>
+                            <span ng-if="isLoggedIn()" style="color:#fff">({{loggedInUser.username}})</span>
                         </div>
-                        <div ng-if="burgerIsOpen" style="color:#fff;">
-                            <span style="padding-left: 16px; font-size: 24px" class="glyphicon glyphicon-chevron-up"></span>
+                        <span id="cart-separator" style="width: 2px; height: 100%; display: table-cell; border-left: 1px solid #990000; border-right: 1px solid #f86d6d;"></span>
+                        <div ng-click="toggleBurger()" id="cart-burger" style="display:table-cell;width:20%;vertical-align: middle">
+                            <div ng-if="!burgerIsOpen">
+                                <span style="display: block; width: 24px; height: 2px; margin: 5px 14px; background: #fafafa;"></span>
+                                <span style="display: block; width: 24px; height: 2px; margin: 5px 14px; background: #fafafa;"></span>
+                                <span style="display: block; width: 24px; height: 2px; margin: 5px 14px; background: #fafafa;"></span>
+                            </div>
+                            <div ng-if="burgerIsOpen" style="color:#fff;">
+                                <span style="padding-left: 16px; font-size: 24px" class="glyphicon glyphicon-chevron-up"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div ng-if="burgerIsOpen" style="background-color: #000; background-color: rgba(0,0,0,0.5); color: #5a5a5a; width: 100%; height: 100%">
-                <div style="background-color: rgba(0,0,0,1);">
-                    <ul class="mobile-menu" style="margin-top: 0;padding-top: 0;width:100%">
-                        <li style="background-color: #e2e2e2; border-bottom: 1px solid #B53121;">
-                            <a ng-click="toggleBurger()" href="/">
-                                <div style="width: 100%; padding: 15px;">
-                                    <span>Alla spel</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li ng-if="isLoggedIn()" style="background-color: #fff; border-bottom: 1px solid #B53121;">
-                            <a ng-click="toggleBurger()" href ui-sref="user({userName: loggedInUser.username})">
-                                <div style="width: 100%; padding: 15px;">
-                                    <span>Min sida</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li ng-if="showAdminLink()" style="background-color: #e2e2e2; border-bottom: 1px solid #B53121;">
-                            <a ng-click="toggleBurger()" href ng-href="#/admin">
-                                <div style="width: 100%; padding: 15px;">
-                                    <span>Admin</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li style="background-color: #fff; border-bottom: 1px solid #B53121;">
-                            <a ng-if="isLoggedIn()" href ng-click="logout()">
-                                <div style="width: 100%; padding: 15px;">
-                                    <span>Logga ut</span>
-                                </div>
-                            </a>
-                            <a ng-if="!isLoggedIn()" ng-click="toggleBurger()" ng-href="#/login">
-                                <div style="width: 100%; padding: 15px;">
-                                    <span>Logga in</span>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="content-wrapper">
-        <div class="desktop-only">
-            <div id="header-left">
-                <h1>
-                    <a ng-href="/" class="nintendoid" style="display:block">SNDB</a>
-                    <a ng-href="/" class="nintendoid" style="color: #B53121">Trackr</a>
-                </h1>
-            </div><div id="header-right">
-                <div ng-switch on="isLoggedIn()">
-                    <div ng-switch-when="true">
-                        <a href="/"><span class="glyphicon glyphicon-home mobile-only"></span><span style="margin-left:6px" class="desktop-only">Alla spel</span></a>
-                        <a href ui-sref="user({userName: loggedInUser.username})"><span class="glyphicon glyphicon-user mobile-only"></span><span style="margin-left:6px" class="desktop-only">Min sida</span></a>
-                        <a ng-if="showAdminLink()" href ng-href="#/admin"><span class="glyphicon glyphicon-lock mobile-only"></span><span style="margin-left:6px" class="desktop-only">Admin</span></a>
-                        <span class="blockify">
-                            <span class="desktop-only" style="color: #5a5a5a;font-weight:bold">{{loggedInUser.username}} </span>
-                            <a href ng-click="logout()"><span class="glyphicon glyphicon-log-out mobile-only"></span><span style="margin-left:6px" class="desktop-only">(Logga ut)</span></a>
-                        </span>
-                    </div>
-                    <div ng-switch-default>
-                        <a ng-controller="LoginCtrl" ng-href="#/login"><span class="glyphicon glyphicon-log-in mobile-only"></span><span class="desktop-only blockify">Logga in</span></a>
+                <div ng-if="burgerIsOpen" style="background-color: #000; background-color: rgba(0,0,0,0.5); color: #5a5a5a; width: 100%; height: 100%">
+                    <div style="background-color: rgba(0,0,0,1);">
+                        <ul class="mobile-menu" style="margin-top: 0;padding-top: 0;width:100%">
+                            <li style="background-color: #e2e2e2; border-bottom: 1px solid #B53121;">
+                                <a ng-click="toggleBurger()" href="/">
+                                    <div style="width: 100%; padding: 15px;">
+                                        <span>Alla spel</span>
+                                    </div>
+                                </a>
+                            </li>
+                            <li ng-if="isLoggedIn()" style="background-color: #fff; border-bottom: 1px solid #B53121;">
+                                <a ng-click="toggleBurger()" href ui-sref="user({userName: loggedInUser.username})">
+                                    <div style="width: 100%; padding: 15px;">
+                                        <span>Min sida</span>
+                                    </div>
+                                </a>
+                            </li>
+                            <li ng-if="showAdminLink()" style="background-color: #e2e2e2; border-bottom: 1px solid #B53121;">
+                                <a ng-click="toggleBurger()" href ng-href="#/admin">
+                                    <div style="width: 100%; padding: 15px;">
+                                        <span>Admin</span>
+                                    </div>
+                                </a>
+                            </li>
+                            <li style="background-color: #fff; border-bottom: 1px solid #B53121;">
+                                <a ng-if="isLoggedIn()" href ng-click="logout()">
+                                    <div style="width: 100%; padding: 15px;">
+                                        <span>Logga ut</span>
+                                    </div>
+                                </a>
+                                <a ng-if="!isLoggedIn()" ng-click="toggleBurger()" ng-href="#/login">
+                                    <div style="width: 100%; padding: 15px;">
+                                        <span>Logga in</span>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="clearfix"></div>
-        <ui-view />
-    </div>
-    <script>
-        if (Modernizr.mq('only all and (max-width: 640px)')) {
-            window.onscroll = isScrolling;
-        }
-
-        var scrollElement = document.getElementById('cart-holder');
-        var contentElement = scrollElement.firstElementChild;
-        var stop = 50;
-        var currentTop = 0;
-        var lastTop = 0;
-
-        function posTop() {
-            return (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
-        }
-
-        function isScrolling() {
-            currentTop = posTop();
-
-            if (currentTop > lastTop) { //scrolling down
-                if (currentTop > stop) {
-                    contentElement.style.display = 'none';
-                    scrollElement.style.position = 'fixed';
-                }
-            }
-            else { //scrolling up
-                var top = (scrollElement.offsetTop - currentTop);
-
-                if (top < -25) {
-                    scrollElement.style.position = 'fixed';
-
-                }
-                else {
-                    scrollElement.style.position = 'absolute';
-                }
-
-                contentElement.style.display = 'block';
+        <div class="content-wrapper">
+            <div class="desktop-only">
+                <div id="header-left">
+                    <h1>
+                        <a ng-href="/" class="nintendoid" style="display:block">SNDB</a>
+                        <a ng-href="/" class="nintendoid" style="color: #B53121">Trackr</a>
+                    </h1>
+                </div><div id="header-right">
+                    <div ng-switch on="isLoggedIn()">
+                        <div ng-switch-when="true">
+                            <a href="/"><span class="glyphicon glyphicon-home mobile-only"></span><span style="margin-left:6px" class="desktop-only">Alla spel</span></a>
+                            <a href ui-sref="user({userName: loggedInUser.username})"><span class="glyphicon glyphicon-user mobile-only"></span><span style="margin-left:6px" class="desktop-only">Min sida</span></a>
+                            <a ng-if="showAdminLink()" href ng-href="#/admin"><span class="glyphicon glyphicon-lock mobile-only"></span><span style="margin-left:6px" class="desktop-only">Admin</span></a>
+                            <span class="blockify">
+                                <span class="desktop-only" style="color: #5a5a5a;font-weight:bold">{{loggedInUser.username}} </span>
+                                <a href ng-click="logout()"><span class="glyphicon glyphicon-log-out mobile-only"></span><span style="margin-left:6px" class="desktop-only">(Logga ut)</span></a>
+                            </span>
+                        </div>
+                        <div ng-switch-default>
+                            <a ng-controller="LoginCtrl" ng-href="#/login"><span class="glyphicon glyphicon-log-in mobile-only"></span><span class="desktop-only blockify">Logga in</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <ui-view />
+        </div>
+        <script>
+            if (Modernizr.mq('only all and (max-width: 640px)')) {
+                window.onscroll = isScrolling;
             }
 
-            lastTop = currentTop;
-        }
-    </script>
-</body>
+            var scrollElement = document.getElementById('cart-holder');
+            var contentElement = scrollElement.firstElementChild;
+            var stop = 50;
+            var currentTop = 0;
+            var lastTop = 0;
 
+            function posTop() {
+                return (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
+            }
 
+            function isScrolling() {
+                currentTop = posTop();
 
+                if (currentTop > lastTop) { //scrolling down
+                    if (currentTop > stop) {
+                        contentElement.style.display = 'none';
+                        scrollElement.style.position = 'fixed';
+                    }
+                }
+                else { //scrolling up
+                    var top = (scrollElement.offsetTop - currentTop);
+
+                    if (top < -25) {
+                        scrollElement.style.position = 'fixed';
+
+                    }
+                    else {
+                        scrollElement.style.position = 'absolute';
+                    }
+
+                    contentElement.style.display = 'block';
+                }
+
+                lastTop = currentTop;
+            }
+        </script>
+    </body>
 </html>

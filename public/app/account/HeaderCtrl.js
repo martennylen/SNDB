@@ -1,6 +1,7 @@
 ﻿app.controller('HeaderCtrl', ['$scope', '$location', '$state', '$stateParams', '$rootScope', 'SearchService', 'consoles',
     function ($scope, $location, $state, $stateParams, $rootScope, SearchService, consoles) {
         console.log('header');
+        console.log(consoles);
         $rootScope.consoles = consoles;
         $scope.consoles = $rootScope.consoles;
         if ($location.$$path.split('/').length === 2) {
