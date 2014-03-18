@@ -1,4 +1,5 @@
 ﻿var _u = require('underscore'),
+    Q = require('q'),
     couch = require('../couch'),
     db = couch.db();
 
@@ -204,30 +205,55 @@ module.exports = function(app, passport) {
     });
 
     app.get('/api/stats', function (req, res) {
-        var level = req.query.level;
-
+        var level = 1;
         var reqObj = { group_level: level };
-        if (req.query.regionName) {
-            reqObj.startkey = [req.query.consoleName, req.query.regionName];
-            reqObj.endkey = [req.query.consoleName, req.query.regionName, {}];
-            reqObj.group_level = level;
-        }
-        else if (req.query.consoleName) {
-            reqObj.startkey = [req.query.consoleName];
-            reqObj.endkey = [req.query.consoleName, {}];
-            reqObj.group_level = level;
-        }
-        
-        db.view('games/stats_by_console', reqObj, function(err, resp) {            
-            if (err) {
-                res.send(500);
-            }
-            var stats = _u.map(resp, function(c) {
-                return { id: c.key[level-1], count: c.value };
-            });
 
-            stats = _u.sortBy(stats, function (s) { return s.count; });
-            res.send(stats.reverse());
+        var getStats = function (obj) {
+            var deferred = Q.defer();
+            db.view('games/stats_by_console', obj, function (err, resp) {
+                deferred.resolve(resp);
+            });
+            return deferred.promise;
+        };
+
+        getStats(reqObj).then(function (consoles) {
+            return Q.all(_u.map(consoles, function (c) {
+                reqObj.startkey = [c.key[0]];
+                reqObj.endkey = [c.key[0], {}];
+                reqObj.group_level = 2;
+                return getStats(reqObj).then(function (regions) {
+                    c.regions = regions;
+                    return Q.all(_u.map(regions, function (r) {
+                        reqObj.startkey = [r.key[0], r.key[1]];
+                        reqObj.endkey = [r.key[0], r.key[1], {}];
+                        reqObj.group_level = 3;
+                        return getStats(reqObj).then(function (subRegions) {
+                            r.subRegions = _u.sortBy(_u.map(subRegions, function(sr) {
+                                return { id: sr.key[2], count: sr.value };
+                            }), function(sr) {
+                                return sr.count;
+                            }).reverse();
+                            return subRegions;
+                        });
+                    })).then(function (allSubRegions) {
+                        return regions;
+                    });
+                });
+            })).then(function (allRegions) {
+                return _u.map(consoles, function(c) {
+                    return {
+                        id: c.key[0],
+                        count: c.value,
+                        regions: _u.sortBy(_u.map(c.regions, function(r) {
+                            return { id: r.key[1], count: r.value, subRegions: r.subRegions };
+                        }), function(c) {
+                            return c.count;
+                        }).reverse()
+                    };
+                });
+            });
+        }).then(function (consoles) {
+            res.send(_u.sortBy(consoles, function (c) { return c.count; }).reverse());
         });
     });
 }

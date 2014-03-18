@@ -72,21 +72,16 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
                 templateUrl: 'app/user/userlist.html',
                 controller: 'UserListCtrl'
             })
-            //.state('user.list', {
-            //    url: '/:regionName',
-            //    templateUrl: 'app/user/userlist.html',
-            //    controller: 'UserListCtrl'
-            //})
-            //.state('user.subRegion', {
-            //    url: '/:subRegionName',
-            //    templateUrl: 'app/user/userlist.html',
-            //    controller: 'UserListCtrl'
-            //})
             .state('console', {
                 url: '/:consoleName', templateUrl: 'app/game/header.html', controller: 'HeaderCtrl',
                 resolve: {
-                    consoles: ['GameStructureService', function (GameStructureService) {
-                        return GameStructureService;
+                    consoles: ['GamesStatsService','$q', function (GamesStatsService, $q) {
+                        var deferred = $q.defer();
+                        GamesStatsService.query({level: 1}).$promise.then(function(data) {
+                            deferred.resolve(data);
+                        });
+
+                        return deferred.promise;
                     }]
                 }
             })
@@ -202,30 +197,30 @@ app.factory('SearchService', ['$timeout', '$http', function ($timeout, $http) {
     };
 }]);
 
-app.factory('GameStructureService', ['GamesStatsService', '$q', function (GamesStatsService, $q) {
-    var deferred = $q.defer();
-    GamesStatsService.query({ level: 1 }).$promise.then(function (consoles) {
-        return $q.all(_.map(consoles, function (c) {
-            return GamesStatsService.query({ consoleName: c.id, level: 2 }).$promise.then(function (regions) {
-                c.regions = regions;
-                return $q.all(_.map(regions, function (r) {
-                    return GamesStatsService.query({ consoleName: c.id, regionName: r.id, level: 3 }).$promise.then(function (subRegions) {
-                        r.subRegions = subRegions;
-                        return subRegions;
-                    });
-                })).then(function (allSubRegions) {
-                    return regions;
-                });
-            });
-        })).then(function (allRegions) {
-            return consoles;
-        });
-    }).then(function (consoles) {
-        deferred.resolve(consoles);
-    });
+//app.factory('GameStructureService', ['GamesStatsService', '$q', function (GamesStatsService, $q) {
+//    var deferred = $q.defer();
+//    GamesStatsService.query({ level: 1 }).$promise.then(function (consoles) {
+//        return $q.all(_.map(consoles, function (c) {
+//            return GamesStatsService.query({ consoleName: c.id, level: 2 }).$promise.then(function (regions) {
+//                c.regions = regions;
+//                return $q.all(_.map(regions, function (r) {
+//                    return GamesStatsService.query({ consoleName: c.id, regionName: r.id, level: 3 }).$promise.then(function (subRegions) {
+//                        r.subRegions = subRegions;
+//                        return subRegions;
+//                    });
+//                })).then(function (allSubRegions) {
+//                    return regions;
+//                });
+//            });
+//        })).then(function (allRegions) {
+//            return consoles;
+//        });
+//    }).then(function (consoles) {
+//        deferred.resolve(consoles);
+//    });
     
-    return deferred.promise;
-}]);
+//    return deferred.promise;
+//}]);
 
 app.factory('GamesStatsService', ['$resource', function ($resource) {
     return $resource('/api/stats');
