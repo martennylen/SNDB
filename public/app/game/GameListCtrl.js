@@ -2,7 +2,7 @@
     function ($scope, $location, $stateParams, $http, $timeout, GamesService) {
         console.log('gamelistctrl');
 
-        $scope.$emit('PUNG', $stateParams.subRegionName);
+        //$scope.$emit('PUNG', $stateParams.subRegionName);
 
     $scope.selected = {};
     var initialResult = [];
@@ -48,11 +48,12 @@
         });
     };
 
-    $scope.$watch('consoleName', function (newValue) {
-        if (newValue) {
-            $scope.$emit('consoleChanged', newValue);
-        }
-    });
+    //$scope.$watch('consoleName', function (newValue) {
+    //    console.log('hallå');
+    //    if (newValue) {
+    //        $scope.$emit('consoleChanged', newValue);
+    //    }
+    //});
 
     $scope.idEditing = false;
     $scope.editGame = function (g) {

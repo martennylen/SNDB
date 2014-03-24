@@ -99,13 +99,13 @@
             <div class="desktop-only">
                 <div id="header-left">
                     <h1>
-                        <a ng-href="/" class="nintendoid" style="display:block">SNDB</a>
-                        <a ng-href="/" class="nintendoid" style="color: #B53121">Trackr</a>
+                        <a ng-href="/all" class="nintendoid" style="display:block">SNDB</a>
+                        <a ng-href="/all" class="nintendoid" style="color: #B53121">Trackr</a>
                     </h1>
                 </div><div id="header-right">
                     <div ng-switch on="isLoggedIn()">
                         <div ng-switch-when="true">
-                            <a href="/"><span class="glyphicon glyphicon-home mobile-only"></span><span style="margin-left:6px" class="desktop-only">Alla spel</span></a>
+                            <a href ui-sref="all()"><span class="glyphicon glyphicon-home mobile-only"></span><span style="margin-left:6px" class="desktop-only">Alla spel</span></a>
                             <a href ui-sref="user({userName: loggedInUser.username})"><span class="glyphicon glyphicon-user mobile-only"></span><span style="margin-left:6px" class="desktop-only">Min sida</span></a>
                             <a ng-if="showAdminLink()" href ng-href="#/admin"><span class="glyphicon glyphicon-lock mobile-only"></span><span style="margin-left:6px" class="desktop-only">Admin</span></a>
                             <span class="blockify">

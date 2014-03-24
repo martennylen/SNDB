@@ -7,15 +7,23 @@
         $scope.consoleName = $stateParams.consoleName;
         $scope.regionName = $stateParams.regionName;
 
+        console.log('weo ' + $scope.regionName);
+
         $scope.currentRegion = {};
+
+        //if ($scope.consoleName.length === 0) {
+        //    console.log('ingen console');
+        //    $location.path('/all/' + $scope.apa[0].id + '/' + $scope.apa[0].regions[0].id + '/' + $scope.apa[0].regions[0].subRegions[0].id).replace();
+        //    return;
+        //}
         
         if ($scope.regionName.length === 0) {
-            $location.path('/' + $stateParams.consoleName + '/' + $scope.apa[0].regions[0].id + '/' + $scope.apa[0].regions[0].subRegions[0].id).replace();
+            $location.path('/all/' + $stateParams.consoleName + '/' + $scope.apa[0].regions[0].id + '/' + $scope.apa[0].regions[0].subRegions[0].id).replace();
             return;
         }
         
-        if ($location.$$path.split('/').length === 4) {
-            $scope.subRegionName = $location.$$path.split('/')[3];
+        if ($location.$$path.split('/').length === 5) {
+            $scope.subRegionName = $location.$$path.split('/')[4];
         }
 
         $scope.regions = _.find($scope.apa, function (c) {
@@ -33,13 +41,15 @@
             return sr.id === $scope.subRegionName;
         });
        
-    $scope.regionChanged = function (r) {
-        $location.path('/' + $stateParams.consoleName + '/' + $scope.currentRegion.region.id + '/' + $scope.currentRegion.region.subRegions[0].id).replace();
-    };
+        $scope.regionChanged = function (r) {
+            $location.path('/all/' + $stateParams.consoleName + '/' + $scope.currentRegion.region.id + '/' + $scope.currentRegion.region.subRegions[0].id).replace();
+        };
 
-    $scope.subRegionChanged = function (r, sr) {
-        $location.path('/' + $stateParams.consoleName + '/' + r.id + '/' + sr.id).replace();
-    };
+        $scope.subRegionChanged = function (r, sr) {
+            $location.path('/all/' + $stateParams.consoleName + '/' + r.id + '/' + sr.id).replace();
+        };
+        
+        $scope.$emit('consoleChanged', $scope.consoleName);
         
     //$scope.$on('PUNG', function (event, data) {
     //    console.log('jldfejpfpwefoeå');

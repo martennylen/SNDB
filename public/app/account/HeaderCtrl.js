@@ -1,17 +1,24 @@
 ﻿app.controller('HeaderCtrl', ['$scope', '$location', '$state', '$stateParams', '$rootScope', 'SearchService', 'consoles',
     function ($scope, $location, $state, $stateParams, $rootScope, SearchService, consoles) {
         console.log('header');
-        console.log(consoles);
         $rootScope.consoles = consoles;
         $scope.consoles = $rootScope.consoles;
+
         if ($location.$$path.split('/').length === 2) {
-            $location.path('/' + $rootScope.consoles[0].id + '/').replace();
+            console.log('gör nåt skumt');
+            $location.path('/all/' + $rootScope.consoles[0].id + '/').replace();
         }
 
-        $scope.consoleName = $stateParams.consoleName;
-        $scope.changeConsole = function(c) {
-            $location.path('/' + c.id + '/').replace();
-        };
+        $scope.consoleName = $scope.consoles[0].id;
+        //$scope.changeConsole = function (c) {
+        //    console.log('djdjd');
+        //    $location.path('/all/' + c.id + '/').replace();
+        //};
+
+        $scope.$on('consoleChanged', function (event, data) {
+            console.log(data);
+            $scope.consoleName = data;
+        });
 
         $scope.search = function() {
             SearchService.Search($scope);

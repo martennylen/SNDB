@@ -56,12 +56,12 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
                 templateUrl: 'app/user/userlist.html',
                 controller: 'UserListCtrl'
             })
-            .state('console', {
-                url: '/:consoleName', templateUrl: 'app/game/header.html', controller: 'HeaderCtrl',
+            .state('all', {
+                url: '/all', templateUrl: 'app/game/header.html', controller: 'HeaderCtrl',
                 resolve: {
-                    consoles: ['GamesStatsService','$q', function (GamesStatsService, $q) {
+                    consoles: ['GamesStatsService', '$q', function (GamesStatsService, $q) {
                         var deferred = $q.defer();
-                        GamesStatsService.query({level: 1}).$promise.then(function(data) {
+                        GamesStatsService.query({ level: 1 }).$promise.then(function (data) {
                             deferred.resolve(data);
                         });
 
@@ -69,12 +69,15 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
                     }]
                 }
             })
-            .state('console.region', {
-                url: '/:regionName',
+            //.state('all.console', {
+            //    abstract: true, url: '/:consoleName', template: '<ui-view/>', controller: 'GameRegionCtrl'
+            //})
+            .state('all.region', {
+                url: '/:consoleName/:regionName',
                 templateUrl: 'app/game/regionlist.html',
                 controller: 'GameRegionCtrl'
         })
-        .state('console.region.subregion', {
+        .state('all.region.subregion', {
             url: '/:subRegionName', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl'
         })
         .state('game', {
