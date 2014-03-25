@@ -23,6 +23,11 @@
         $scope.search = function() {
             SearchService.Search($scope);
         };
+
+        $scope.clearSearch = function() {
+            $scope.q = '';
+            $scope.search();
+        };
     }]);
 
 app.controller('UserHeaderCtrl', ['$scope', '$location', '$state', '$stateParams', '$rootScope', 'SearchService', 'stats', 'attrs',
@@ -48,6 +53,11 @@ app.controller('UserHeaderCtrl', ['$scope', '$location', '$state', '$stateParams
         
         $scope.search = function () {
             SearchService.Search($scope);
+        };
+
+        $scope.clearSearch = function () {
+            $scope.q = '';
+            $scope.search();
         };
     }]);
 

@@ -1,6 +1,7 @@
 ﻿<div id="subheader-left" style="background-color: #f0f0f0" class="desktop-only" style="vertical-align: top">
     
 </div><div class="search-engine-holder">
+    <span ng-show="q.length" ng-click="clearSearch()" class="glyphicon glyphicon-remove"></span>
     <input type="text" id="game-search" placeholder="Sök i alla regioner" ng-model="q" ng-change="search()" ng-minlength="3" />
 </div>
 <ul id="header-console-list" style="margin-bottom: 0">
