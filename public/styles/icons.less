@@ -47,7 +47,15 @@
 
 .glyphicon-remove {
     top: 3px;
-    font-size: 16px;
+    font-size: 16px !important;
+}
+
+@media all and (max-width : 999px) {
+    .glyphicon-remove {
+        float: right;
+        top: 15px;
+        font-size: 18px !important;
+    }
 }
 
 .glyphicon-remove:hover {
