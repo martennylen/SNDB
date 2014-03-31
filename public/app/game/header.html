@@ -8,7 +8,7 @@
     <li ng-repeat="c in consoles">
         <a href ui-sref="all.region({consoleName: c.id, regionName: ''})">
             <div style="padding: 5px">
-                <img ng-src="/img/{{c.id}}.png" ng-class="{active: c.id === $parent.consoleName}" />
+                <img ng-src="/img/{{c.id}}.svg" ng-class="{active: c.id === $parent.consoleName}" />
             </div>
         </a>
     </li>

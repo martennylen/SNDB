@@ -5,7 +5,7 @@ var app = angular.module('trackr', ['ngResource', 'ngRoute', 'ui.router', 'ngCoo
 app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterProvider', '$stateProvider',
     function ($httpProvider, $routeProvider, $locationProvider, $urlRouterProvider, $stateProvider) {
     $urlRouterProvider
-        .when('', '/nes/');
+        .when('', '/all/nes/');
 
         $stateProvider
             .state('login', { url: '/login', templateUrl: 'app/account/login.html', controller: 'LoginCtrl' })
@@ -96,7 +96,7 @@ var validateUser = ['$q', '$http', '$location', '$timeout', function($q, $http, 
                 $timeout(function() {deferred.resolve(res.user);}, 0);
             } else {
                 $timeout(function() {deferred.reject();}, 0);
-                $location.path('/nes');
+                $location.path('/all/nes/');
             }
         });
 

@@ -58,7 +58,7 @@
                     <div style="background-color: rgba(0,0,0,1);">
                         <ul class="mobile-menu" style="margin-top: 0;padding-top: 0;width:100%">
                             <li style="background-color: #e2e2e2; border-bottom: 1px solid #B53121;">
-                                <a ng-click="toggleBurger()" href="/">
+                                <a ng-click="toggleBurger()" href ui-sref="all()">
                                     <div style="width: 100%; padding: 15px;">
                                         <span>Alla spel</span>
                                     </div>
@@ -99,8 +99,8 @@
             <div class="desktop-only">
                 <div id="header-left">
                     <h1>
-                        <a ng-href="/all" class="nintendoid" style="display:block">SNDB</a>
-                        <a ng-href="/all" class="nintendoid" style="color: #B53121">Trackr</a>
+                        <a href ui-sref="all()" class="nintendoid" style="display:block">SNDB</a>
+                        <a href ui-sref="all()" class="nintendoid" style="color: #B53121">Trackr</a>
                     </h1>
                 </div><div id="header-right">
                     <div ng-switch on="isLoggedIn()">
