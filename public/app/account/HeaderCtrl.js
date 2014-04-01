@@ -4,8 +4,15 @@
         $rootScope.consoles = consoles;
         $scope.consoles = $rootScope.consoles;
 
+        $rootScope.$on('$stateChangeStart',
+            function (event, toState, toParams, fromState, fromParams) {
+                console.log(JSON.stringify(fromState) + ' ' + JSON.stringify(toState));
+                if (toState.name === 'all' && _.str.include(fromState.name, "all")) {
+                    event.preventDefault();
+                }
+            });
+
         if ($location.$$path.split('/').length === 2) {
-            console.log('gör nåt skumt');
             $location.path('/all/' + $rootScope.consoles[0].id + '/').replace();
         }
 
@@ -39,6 +46,14 @@ app.controller('UserHeaderCtrl', ['$scope', '$location', '$state', '$stateParams
         $scope.userName = $stateParams.userName;
         $scope.stats = $rootScope.stats;
         $scope.consoleName = $rootScope.stats[0].id;
+
+        $rootScope.$on('$stateChangeStart',
+            function (event, toState, toParams, fromState, fromParams) {
+                console.log(JSON.stringify(fromState) + ' ' + JSON.stringify(toState));
+                if (toState.name === 'user' && _.str.include(fromState.name, "user")) {
+                    event.preventDefault();
+                }
+            });
 
         if ($location.$$path.split('/').length === 3) {
             if ($rootScope.stats.length) {
