@@ -40,8 +40,8 @@ var http = require('http'),
     
     app.configure(function(){ 
         app.set('port', port);
-        app.use(require('less-middleware')({ src: __dirname + '/public' }));
-        app.use(express.static(__dirname + '/public')); 
+        app.use(require('less-middleware')({ src: __dirname + '/public_html' }));
+        app.use(express.static(__dirname + '/public_html')); 
         app.use(express.cookieParser()); 
         app.use(express.logger('dev'));
         app.use(express.bodyParser());
@@ -54,7 +54,7 @@ var http = require('http'),
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
         
         //BundleUp(app, assets, {
-        //    staticRoot: __dirname + '/public/',
+        //    staticRoot: __dirname + '/public/_html',
         //    staticUrlRoot: '/',
         //    bundle: true,
         //    minifyCss: true,
@@ -64,7 +64,7 @@ var http = require('http'),
         //        fs.readdir(__dirname + '/public/min/bundle', function (err, files) {
         //            files.forEach(function (f) {
         //                var name = f.split('_')[1];
-        //                fs.rename(__dirname + '/public/min/bundle/' + f, __dirname + '/public/min/bundle/' + name, function (err) {
+        //                fs.rename(__dirname + '/public_html/min/bundle/' + f, __dirname + '/public_html/min/bundle/' + name, function (err) {
         //                    if (err) {
         //                        console.log(err);
         //                    } else {

@@ -162,17 +162,17 @@ module.exports = function(app, passport) {
     }
     
     app.get('/api/:consoleName/:regionName/:subRegionName', function (req, res) {
-        var gameName = req.query.gameName.length ? req.query.gameName.replace('+', '%20') : {};
         var startkey = [req.params.consoleName, req.params.regionName, req.params.subRegionName];
-        if (gameName.length) {
-            startkey = [req.params.consoleName, req.params.regionName, req.params.subRegionName, gameName];
+
+        if (req.query.gameName) {
+            startkey = [req.params.consoleName, req.params.regionName, req.params.subRegionName, req.query.gameName.replace('+', '%20')];
         }
         db.view('games/by_console', { 
             startkey: startkey,
             endkey: [req.params.consoleName, req.params.regionName, req.params.subRegionName, {}],
-            startkey_docid: req.query.docid,
+            startkey_docid: req.query.docid || '',
                 limit: 21,
-                skip: req.query.skip
+                skip: req.query.skip || 0
         }, function (err, response) {
             if (req.user !== undefined) {
                 db.view('games/by_user', {
