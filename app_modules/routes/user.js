@@ -136,7 +136,7 @@ module.exports = function(app, passport) {
             current.data.variants = game.doc.data.variants;
             _u.each(current.data.variants, function(v, j) {
                 v.attr.common = _u.map(v.attr.common, function(attr, i) {
-                    return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: game.value.game.attr[j] ? game.value.game.attr[j].common[i] : false };
+                    return { id: attr.id, 'desc': attr.desc, status: game.value.game.attr[j] ? game.value.game.attr[j].common[i] : false };
                 });
 
                 v.attr.extras = _u.map(v.attr.extras, function(attr, i) {
@@ -146,17 +146,20 @@ module.exports = function(app, passport) {
                 v.attr.note = game.value.game.attr[j] ? game.value.game.attr[j].note : '';
                 v.extrasComplete = v.attr.extras.length ? _u.all(_u.pluck(v.attr.extras, 'status')) : true;
                 v.isComplete = _u.all(_u.pluck(v.attr.common, 'status')) && v.extrasComplete;
+                v.someComplete = _u.some(_u.pluck(v.attr.common, 'status')) || false;
 
                 v.attr.isNew = false;
             });
 
+            current.data.name = game.doc.data.name;
             current.item = game.id;
             current.isComplete = _u.some(_u.pluck(current.data.variants, 'isComplete'));
+            current.someComplete = _u.some(_u.pluck(current.data.variants, 'someComplete'));
             list.push(current);
         });
 
         var requestId = '';
-        if (user !== undefined) {
+        if (user !== 'undefined') {
             requestId = user.id;
         }
 
@@ -167,6 +170,7 @@ module.exports = function(app, passport) {
         var gameItem = {
             type: 'item',
             owner: req.user.id,
+            key: req.user.id + '_' + req.body.id,
             game: req.body
         };
         db.save(gameItem, function(err, resp) {

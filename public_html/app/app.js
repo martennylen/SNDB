@@ -151,9 +151,10 @@ app.factory('SearchService', ['$timeout', '$http', function ($timeout, $http) {
 
             $timeout(function () {
                 if ($scope.pendingPromise) { $timeout.cancel($scope.pendingPromise); }
-                $scope.pendingPromise = $http.get('/api/search/' + $scope.consoleName + '?q=' + $scope.q.substring(0, 3).toLowerCase() + '&r=' + $scope.userName);
+                $scope.pendingPromise = self.internal ? $http.get('/api/admin/search/' + '?q=' + $scope.q.substring(0, 3).toLowerCase()) : $http.get('/api/search/' + $scope.consoleName + '?q=' + $scope.q.substring(0, 3).toLowerCase() + '&r=' + $scope.userName);
                 $scope.pendingPromise
                 .success(function (res) {
+                    console.log(res.games);
                     latestResults = res.games;
                     
                     searchResults = _.filter(res.games, function (game) {
@@ -162,8 +163,11 @@ app.factory('SearchService', ['$timeout', '$http', function ($timeout, $http) {
                         });
                     });
 
+                    console.log(searchResults);
+
                     if (self.internal) {
                         $scope.games = searchResults;
+                        console.log($scope.games);
                     } else {
                         $scope.$broadcast('searchResult', searchResults, true);
                     }
@@ -208,6 +212,10 @@ app.factory('GameDetailsService', ['$resource', function ($resource) {
     return $resource('/api/:consoleName/:regionName/:subRegionName/:gameName');
 }]);
 
+app.factory('GameDataService', ['$resource', function($resource) {
+    return $resource('/api/game/:gameId');
+}]);
+
 app.constant('consoles', [
 	{'id': 'nes', 'name': 'NES'}, 
 	{ 'id': 'snes', 'name': 'SNES' },
@@ -241,7 +249,7 @@ app.constant('baseRegions', [
     {
         id: 'ntsc', name: 'NTSC', selected: false, regions:
         [
-            { id: 'ntsc', name: 'NTSC', selected: true }
+            { id: 'rev-a', name: 'REV-A', selected: true }
         ]
     },
     {

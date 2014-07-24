@@ -34,7 +34,7 @@ module.exports = function(app, passport) {
     //    res.header("Access-Control-Allow-Methods", "GET, POST");
     //});
 
-    app.post('/api/newgame', function (req, res) {
+    app.post('/api/game/add', function (req, res) {
         var game = req.body;
         game.data.tags = [game.data.name.replace(/[^a-z0-9\s]/gi, '').toLowerCase()];
 
@@ -51,7 +51,63 @@ module.exports = function(app, passport) {
                 res.send(500);
             }
 
-            res.send(200);
+            res.send({id: resp.id});
+        });
+    });
+
+    app.post('/api/game/update', function (req, res) {
+        var game = req.body;
+        console.log(JSON.stringify(game));
+        res.send(200);
+        //game.data.tags = [game.data.name.replace(/[^a-z0-9\s]/gi, '').toLowerCase()];
+
+        //if (_u.indexOf(game.data.name, ' ') > -1) {
+        //    _u.each(game.data.name.toLowerCase().split(' '), function (word) {
+        //        if (word.length > 2 && word !== 'the') {
+        //            game.data.tags.push(word.replace(/[^a-z0-9\s]/gi, '').toLowerCase());
+        //        }
+        //    });
+        //}
+
+        //db.save(game, function (err, resp) {
+        //    if (err) {
+        //        res.send(500);
+        //    }
+
+        //    res.send({ id: resp.id });
+        //});
+    });
+
+    app.get('/api/game/:gameId', function (req, res) {
+        db.view('games/by_id', {key: req.params.gameId}, function (err, response) {
+            if (err) {
+                res.send(500);
+            }
+            res.send(mapAttributes(response, true)[0]);
+        });
+    });
+
+    app.get('/api/admin/search', function (req, res) {
+        var reqObj = {
+            startkey: [req.query.q],
+            endkey: [req.query.q + '\u9999']
+        };
+        
+        db.view('games/by_parent_tags', reqObj, function (err, response) {
+            if (err) {
+                res.send(500);
+            }
+
+            response = _u.uniq(response, function (g) { return g.id; });
+            response = _u.map(response, function(r) {
+                return {                    
+                    id: r.value.id,
+                    type: r.value.type,
+                    data: r.value.data,
+                    releases: r.value.rel
+                };
+            });
+            res.send({games: response});
         });
     });
 
@@ -67,28 +123,33 @@ module.exports = function(app, passport) {
                 endkey: [req.query.q + '\u9999', {}]
             };
         }
+
         db.view('games/by_tags', reqObj, function (err, response) {
             if (err) {
                 res.send(500);
             }
 
             response = _u.uniq(response, function (g) { return g.id; });
-            
+            var gameIds = _u.map(response, function (g) { return req.user.id + '_' + g.id; });
+
+            console.log(gameIds);
             if (req.user !== undefined && req.params.consoleName !== 'undefined') {
-                db.view('games/by_user', {
-                    startkey: [req.user.id, req.params.consoleName],
-                    endkey: [req.user.id, req.params.consoleName, '\u9999']
+                db.view('games/by_item_id', {
+                    keys: gameIds
+                    //startkey: [req.user.id, req.params.consoleName, req.query.q],
+                    //endkey: [req.user.id, req.params.consoleName, req.query.q + '\u9999'],
+                    //include_docs: true
                 }, function (e, resp) {
                     if (e) {
                         res.send(500);
                     }
-
-                    var list = mapGameInformation(resp, response, (req.query.r !== undefined));
+                    console.log(resp);
+                    var list = mapGameInformation(resp, response, (req.query.r !== 'undefined'));
                     res.send({ games: list, loggedIn: true });
                 });
             } else {
                 res.send({
-                    games: mapAttributes(response), loggedIn: false
+                    games: mapAttributes(response, false), loggedIn: false
                 });
             }
         });
@@ -101,7 +162,6 @@ module.exports = function(app, passport) {
         
         _u.each(response, function (game) {
             if (hasGames) {
-
                 found = _u.indexOf(resp, function (comb) {
                     return game.value.id === comb.value.game.id;
                 });
@@ -109,24 +169,28 @@ module.exports = function(app, passport) {
 
             _u.each(game.value.data.variants, function (v, j) {
                 v.attr.common = _u.map(v.attr.common, function (attr, i) {
-                    return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong', status: ((found > -1) ? resp[found].value.game.attr[j] ? resp[found].value.game.attr[j].common[i] : false : false) };
+                    return { id: attr.id, desc: attr.desc, included: _u.isUndefined(attr.included) ? true : attr.included, status: ((found > -1) ? resp[found].value.game.attr[j] ? resp[found].value.game.attr[j].common[i] : false : false) };
                 });
 
                 v.attr.extras = _u.map(v.attr.extras, function (attr, i) {
-                    return { id: i, 'longName': attr.name, status: ((found > -1) ? resp[found].value.game.attr[j] ? resp[found].value.game.attr[j].extras[i] : false : false) };
+                    return { id: i, name: attr.name, status: ((found > -1) ? resp[found].value.game.attr[j] ? resp[found].value.game.attr[j].extras[i] : false : false) };
                 });
 
                 v.attr.note = (found > -1) ? resp[found].value.game.attr[j] ? resp[found].value.game.attr[j].note : '' : '';
                 v.extrasComplete = (found > -1) ? v.attr.extras.length ? _u.all(_u.pluck(v.attr.extras, 'status')) : true : false;
                 v.isComplete = (found > -1) ? _u.all(_u.pluck(v.attr.common, 'status')) && v.extrasComplete : false;
+                v.someComplete = (found > -1) ? _u.some(_u.pluck(v.attr.common, 'status')) : false;
 
                 v.isNew = (found > 1) ? false : true;
             });
+
+            //game.value.parent = game.doc._id;
 
             if (found > -1) {
                 game.value.item = resp[found].id;
                 game.value.isNew = false;
                 game.value.isComplete = _u.some(_u.pluck(game.value.data.variants, 'isComplete'));
+                game.value.someComplete = _u.some(_u.pluck(game.value.data.variants, 'someComplete'));
                 resp.splice(found, 1);
             } else {
                 game.value.isNew = true;
@@ -144,15 +208,16 @@ module.exports = function(app, passport) {
         return result;
     }
     
-    function mapAttributes(response) {
+    function mapAttributes(response, isAdminScope) {
         var result = [];
+        
         _u.each(response, function (game) {
             _u.each(game.value.data.variants, function(v) {
                 v.attr.common = _u.map(v.attr.common, function (attr) {
-                    return { id: attr.id, 'desc': attr.desc, 'longName': attr.id === 'c' ? 'Kassett' : attr.id === 'i' ? 'Manual' : 'Kartong'};
+                    return { id: attr.id, desc: attr.desc, included: _u.isUndefined(attr.included) ? true : attr.included };
                 });
-                v.attr.extras = _u.map(v.attr.extras, function (attr) {
-                    return { id: attr.id };
+                v.attr.extras = _u.map(v.attr.extras, function (attr, i) {
+                    return { id: i, name: attr.name };
                 });
             });
             result.push(game.value);
@@ -172,7 +237,8 @@ module.exports = function(app, passport) {
             endkey: [req.params.consoleName, req.params.regionName, req.params.subRegionName, {}],
             startkey_docid: req.query.docid || '',
                 limit: 21,
-                skip: req.query.skip || 0
+                skip: req.query.skip || 0,
+                include_docs: true
         }, function (err, response) {
             if (req.user !== undefined) {
                 db.view('games/by_user', {
@@ -188,7 +254,7 @@ module.exports = function(app, passport) {
                 });
             } else {
                 res.send({
-                    games: mapAttributes(response), loggedIn: false
+                    games: mapAttributes(response, false), loggedIn: false
                 });
             }
         });

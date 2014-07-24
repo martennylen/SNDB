@@ -8,7 +8,7 @@
             <div ng-if="games.length" style="position: absolute; width: 100%">
                 <ul id="games" style="margin: 0">
                     <li ng-repeat="game in games" ng-click="setSelected(game)" style="padding: 10px; color: #5a5a5a" ng-class-odd="'odd'" ng-class-even="'even'">
-                        <span>{{game.data.name}} ({{game.data.console.toUpperCase()}} {{game.data.regions.sub.toUpperCase()}})</span>
+                        <span>{{game.data.name}} ({{game.data.console.toUpperCase()}})</span>
                     </li>
                 </ul>
             </div>
@@ -21,54 +21,85 @@
         <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Spelnamn" ng-model="game.data.name" required />
         <span style="font-weight: bold">Utgivare:</span>
         <input style="width: 100%;padding: 10px;border:0" type="text" placeholder="Spelutgivare" ng-model="game.data.publisher" required />
-
-        <span style="font-weight: bold">Varianter:</span>
-        <div style="background-color: #fff; padding: 10px; border-radius: 6px;">
-            <input style="width: 100%; padding: 10px; border: 1px solid #74AFAD" type="text" placeholder="Variantbeskrivning" ng-model="currentVariant.desc" />
-            <label>Vanliga delar</label>
-            <ul style="margin: 0">
-                <li ng-repeat="attr in currentVariant.attr.common">
-                    <input type="checkbox" ng-model="attr.selected">
-                    <span>{{attr.longName}}</span>
-                    <input style="width: 100%; padding: 10px; border: 1px solid #74AFAD" type="text" placeholder="Beskrivning" ng-model="attr.desc" />
-                </li>
-            </ul>
-            <label style="display: block">Extratillbeh&ouml;r</label>
-            <input style="width: 80%; padding: 10px; border: 1px solid #74AFAD" type="text" placeholder="Extratillbeh&ouml;r" ng-model="currentExtra" />
-            <button class="yeah" ng-click="handleExtra(currentExtra)" ng-disabled="currentExtra.length === 0">L&auml;gg till</button>
-            <ul style="margin: 0">
-                <li style="display: inline-block" ng-repeat="attr in currentVariant.attr.extras">
-                    <span>{{attr.name}}</span>
-                    <button class="danger" ng-click="handleExtra(attr)">Ta bort</button>
-                </li>
-            </ul>
-            <button class="yeah" ng-if="!isEditingVariant" ng-click="handleVariant(currentVariant, true)">L&auml;gg till variant</button>
-            <button class="yeah" ng-if="isEditingVariant" ng-click="handleVariant(currentVariant, false)">Uppdatera variant</button>
-        </div>
-
-        <span ng-if="game.data.variants.length" style="font-weight: bold">Aktuella varianter:</span>
-        <div ng-if="game.data.variants.length" style="background-color: #fff; padding: 10px; border-radius: 6px;">
-            <ul style="margin: 0">
-                <li style="display: inline-block" ng-repeat="v in game.data.variants">
-                    <span>{{v.desc}}</span>
-                    <button class="yeah" ng-click="editVariant(v)">Redigera</button>
-                    <button class="danger" ng-click="handleVariant(v, true)">Ta bort</button>
-                </li>
-            </ul>
-        </div>
-
-        <span style="font-weight: bold">Region:</span>
-        <div style="background-color: #fff;padding:10px;border-radius: 6px">
-            <ul style="margin-bottom: 0">
-                <li ng-repeat="r in regions" style="display: inline"><label ng-class="{'selected': currentRegions.main.id === r.id}" for="{{r.id}}">{{r.name}}</label><input type="radio" id="{{r.id}}" ng-model="currentRegions.main" ng-value="r" ng-change="regionChanged(r)"></li>
-            </ul>
-            <ul style="margin-left: 20px;margin-top: 0">
-                <li ng-repeat="sr in currentRegions.main.regions" style="display: inline"><label ng-class="{'selected': currentRegions.sub.id === sr.id}" for="{{sr.id}}">{{sr.name}}</label><input type="radio" id="{{sr.id}}" ng-model="currentRegions.sub" ng-value="sr"></li>
-            </ul>
-        </div>
-        <div style="margin-top:10px">
-            <button ng-click="addGame(game)" ng-disabled="!validateFields()" ng-class="{'yeah': validateFields()}">Spara</button>
+        
+        <div ng-if="!isEditing">
+            <button ng-click="addGame(game)" ng-disabled="!validateAddFields()" ng-class="{'yeah': validateAddFields()}">Spara</button>
+            <button ng-click="abortAdd()" class="danger">Avbryt</button>
             <span ng-show="postMessage" ng-style="{color: 'green'}">{{ postMessage }}</span>
+        </div>
+
+        <div ng-if="isEditing">
+            <span style="font-weight: bold">Region:</span>
+            <div style="background-color: #fff;padding:10px;border-radius: 6px">
+                <ul style="margin-bottom: 0">
+                    <li ng-repeat="r in regions" style="display: inline"><input type="radio" id="{{r.id}}" ng-model="currentRegions.main" ng-value="r" ng-change="regionChanged(r)"><label ng-class="{'selected': currentRegions.main.id === r.id, 'exists': r.exists}" for="{{r.id}}">{{r.name}}</label></li>
+                </ul>
+                <ul style="margin-left: 20px;margin-top: 0">
+                    <li ng-repeat="sr in currentRegions.main.regions" style="display: inline"><input type="radio" id="{{sr.id}}" ng-model="currentRegions.sub" ng-value="sr" ng-change="subRegionChanged(sr)"><label ng-class="{'selected': currentRegions.sub.id === sr.id, 'exists': sr.exists}" for="{{sr.id}}">{{sr.name}}</label></li>
+                </ul>
+            </div>
+            <div style="background-color: #fff; padding: 10px; border-radius: 6px; margin-top: 10px;margin-left:40px;">
+                <span style="font-weight: bold">Namn:</span>
+                <input style="width: 100%;padding: 10px" type="text" placeholder="Spelnamn" ng-model="currentRelease.data.name" required />
+                <span style="font-weight: bold">Alternativt namn:</span>
+                <input style="width: 100%;padding: 10px" type="text" placeholder="Alternativt namn" ng-model="currentRelease.data.alternativeName" />
+                <span style="font-weight: bold">Utgivare:</span>
+                <input style="width: 100%;padding: 10px" type="text" placeholder="Spelutgivare" ng-model="currentRelease.data.publisher" required />
+                <span style="font-weight: bold">Taggar:</span>
+                <input style="width: 95%;padding: 10px" type="text" placeholder="Tagg" ng-model="currentTag" />
+                <button class="yeah iconize glyphicon glyphicon-plus" ng-click="handleTag(currentTag)" ng-disabled="currentTag.length < 3"></button>
+                <ul style="margin: 10px 0 0 0">
+                    <li class="tag-list" style="display: inline-block; border: 1px solid #cc3333; border-radius: 6px; margin-right: 5px;padding-left: 0.2em" ng-repeat="tag in currentRelease.data.tags">
+                        <span style="vertical-align: top">{{tag}}</span>
+                        <button class="icon glyphicon glyphicon-remove-button" ng-click="handleTag(tag)"></button>
+                    </li>
+                </ul>
+            </div>
+            <div style="background-color:#ccc;padding:10px;margin-top:10px;margin-left:40px;border-radius:6px" class="clearfix">
+                <span style="font-weight: bold">Varianter:</span>
+                <button class="yeah iconize glyphicon glyphicon-plus" style="float:right" ng-click="toggleVariantForm()"></button>
+                <div>
+                    <ul style="margin: 0">
+                        <li style="display: inline-block" ng-repeat="v in currentRelease.data.variants">
+                            <span>{{v.desc}}</span>
+                            <button class="yeah iconize glyphicon glyphicon-pencil" ng-click="editVariant(v)"></button>
+                            <button class="danger iconize glyphicon glyphicon-remove-button" ng-click="removeVariant(v)"></button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div ng-if="showVariantForm" style="background-color: #fff; padding: 10px; border-radius: 6px;margin-top:10px; margin-left: 40px">
+                <input style="width: 100%; padding: 10px; border: 1px solid #74AFAD" type="text" placeholder="Variantbeskrivning" ng-model="currentVariant.desc" />
+                <label>Vanliga delar</label>
+                <ul style="margin: 0">
+                    <li ng-repeat="attr in currentVariant.attr.common">
+                        <input type="checkbox" ng-model="attr.included">
+                        <span ng-bind="$parent.getName(attr.id)"></span>
+                        <input style="width: 100%; padding: 10px; border: 1px solid #74AFAD" type="text" placeholder="Beskrivning" ng-model="attr.desc" />
+                    </li>
+                </ul>
+                <label style="display: block">Extratillbeh&ouml;r</label>
+                <input style="width: 80%; padding: 10px; border: 1px solid #74AFAD" type="text" placeholder="Extratillbeh&ouml;r" ng-model="currentExtra" />
+                <button class="yeah iconize glyphicon glyphicon-plus" ng-click="handleExtra(currentExtra)" ng-disabled="currentExtra.length === 0"></button>
+                <ul style="margin: 0">
+                    <li style="display: inline-block" ng-repeat="attr in currentVariant.attr.extras">
+                        <span>{{attr.name}}</span>
+                        <button class="danger" ng-click="handleExtra(attr)">Ta bort</button>
+                    </li>
+                </ul>
+                <button class="yeah" ng-if="!isEditingVariant" ng-disabled="!currentVariant.desc.length" ng-click="addVariant()">L&auml;gg till variant</button>
+                <button class="yeah" ng-if="isEditingVariant" ng-click="updateVariant()">Uppdatera variant</button>
+                <button class="danger" ng-click="editVariant()">Avbryt</button>
+            </div>
+            <div style="background-color: #fff; padding: 10px; border-radius: 6px; margin-top: 10px;margin-left:40px;">
+                <button class="yeah" ng-click="addRelease()" ng-disabled="!currentRelease.data.variants.length" ng-bind="addOrUpdateRegionText()"></button>
+            </div>
+            <div style="margin-top:10px">
+                <button ng-click="updateGame(game)" ng-disabled="!validateUpdateFields()" ng-class="{'yeah': validateUpdateFields()}">Spara</button>
+                <button ng-click="abortUpdate()" class="danger">Avbryt</button>
+                <span ng-show="postMessage" ng-style="{color: 'green'}">{{ postMessage }}</span>
+            </div>
         </div>
     </form>
 </div>

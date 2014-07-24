@@ -6,7 +6,6 @@
 
         $rootScope.$on('$stateChangeStart',
             function (event, toState, toParams, fromState, fromParams) {
-                console.log(JSON.stringify(fromState) + ' ' + JSON.stringify(toState));
                 if (toState.name === 'all' && _.str.include(fromState.name, "all")) {
                     event.preventDefault();
                 }
@@ -49,7 +48,6 @@ app.controller('UserHeaderCtrl', ['$scope', '$location', '$state', '$stateParams
 
         $rootScope.$on('$stateChangeStart',
             function (event, toState, toParams, fromState, fromParams) {
-                console.log(JSON.stringify(fromState) + ' ' + JSON.stringify(toState));
                 if (toState.name === 'user' && _.str.include(fromState.name, "user")) {
                     event.preventDefault();
                 }

@@ -17,7 +17,6 @@
     $scope.reachedEnd = false;
         
     $scope.$on('searchResult', function (event, games, success) {
-        console.log(games);
         if (success) {
             $scope.games = games;
         } else {
@@ -52,6 +51,11 @@
         });
     };
 
+    var attrNames = { c: 'Kassett', i: "Manual", b: 'Kartong' };
+    $scope.getName = function (id) {
+        return attrNames[id];
+    };
+
     $scope.$watch('consoleName', function (newValue) {
         if (newValue) {
             $scope.$emit('consoleChanged', newValue);
@@ -80,6 +84,8 @@
     };
 
     $scope.attrChanged = function (variant, attr, status) {
+        console.log(variant);
+        console.log(attr);
         $scope.selected.attrs[variant][attr] = status;
         $scope.willRemove = mapCheckboxAttributes($scope.selected.attrs);
     };

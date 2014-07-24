@@ -2,3 +2,21 @@
 *.css
 *.min.css
 # public/min/bundle/*.js
+
+# stuff on the server
+.ssh
+.usermin
+awstats
+cgi-bin
+etc
+fcgi-bin
+homes
+logs
+tmp
+.awstats*
+.bash*
+.profile
+.stats*
+public_html/awstats*
+public_html/icon
+public_html/stats

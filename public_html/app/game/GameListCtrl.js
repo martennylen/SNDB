@@ -2,8 +2,6 @@
     function ($scope, $location, $stateParams, $http, $timeout, GamesService) {
         console.log('gamelistctrl');
 
-        //$scope.$emit('PUNG', $stateParams.subRegionName);
-
     $scope.selected = {};
     var initialResult = [];
 
@@ -16,6 +14,7 @@
 
     $scope.$on('searchResult', function (event, games, success) {
         if (success) {
+            console.log(games);
             $scope.games = games;
         } else {
             $scope.games = initialResult;
@@ -23,7 +22,7 @@
     });
     
     $scope.getGames = function () {
-        if ($scope.isFetching || $scope.reachedEnd || $scope.showQ) {
+        if (($scope.q && $scope.q.length) || $scope.isFetching || $scope.reachedEnd) {
             return;
         }
         $scope.isFetching = true;
@@ -48,6 +47,11 @@
         });
     };
 
+    var attrNames = { c: 'Kassett', i: "Manual", b: 'Kartong' };
+    $scope.getName = function(id) {
+        return attrNames[id];
+    };
+
     //$scope.$watch('consoleName', function (newValue) {
     //    console.log('hallå');
     //    if (newValue) {
@@ -65,6 +69,7 @@
             return _.pluck(v.attr.common, 'status');
         });
         console.log(attrs);
+        console.log(g);
         if ($scope.isEditing) {
             $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, name: g.data.name, variants: g.data.variants, attrs: attrs, isNew: g.isNew }));
             console.log($scope.selected);
@@ -79,6 +84,8 @@
     };
 
     $scope.attrChanged = function (variant, attr, status) {
+        console.log(variant);
+        console.log(attr);
         $scope.selected.attrs[variant][attr] = status;
         $scope.willRemove = !$scope.selected.isNew && mapCheckboxAttributes($scope.selected.attrs);
     };

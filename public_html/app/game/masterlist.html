@@ -2,55 +2,61 @@
     <!--<h3 style="margin: 0 5px" ng-if="showQ">{{games.length}} spel hittades</h3>-->
     <ul id="games" infinite-scroll="getGames()" infinite-scroll-disabled="isFetching" infinite-scroll-distance="1">
             <li ng-repeat="game in games" ng-if="!game.isRemoved" ng-class-odd="'odd'" ng-class-even="'even'">
-                <div class="master-wrapper">
-                    <a ng-class="{complete: game.isComplete}" ui-sref="game({consoleName:game.data.console, regionName:game.data.regions.main, subRegionName:game.data.regions.sub, gameName:game.data.name.split('-').join('+').split(' ').join('-')})">
+                <a href ng-click="editGame(game)" ng-class="{'game-data-link': game.someComplete, complete: game.isComplete, disabled: !$parent.loggedIn}">
+                    <div class="master-wrapper">
+                        <!--ui-sref="game({consoleName:game.data.console, regionName:game.data.regions.main, subRegionName:game.data.regions.sub, gameName:game.data.name.split('-').join('+').split(' ').join('-')})"-->
                         <div class="game-name">
                             <span>
                                 {{game.data.name}}
                                 <span>({{game.data.regions.sub.toUpperCase()}})</span>
                             </span>
-                        </div></a><a href ng-click="editGame(game)" class="game-data-link" ng-class="{disabled: !$parent.loggedIn}"><div class="game-data"><div class="game-attr">
-    <div class="common">
-        <span ng-if="game.data.variants.length === 1" ng-repeat="attr in game.data.variants[0].attr.common" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
-        <div ng-if="game.data.variants.length > 1 && game.data.variants.length < 4" ng-repeat="v in game.data.variants" class="attr-multiple desktop-only">
-            <span ng-repeat="attr in v.attr.common" ng-class="{exists: attr.status}" style="margin-right: 0">
-                {{attr.id.toUpperCase()}}
-            </span>
-            <span ng-if="$index !== game.data.variants.length-1">/</span>
-        </div>
-        <div ng-if="game.data.variants.length > 3" class="desktop-only" style="text-align: center"><span>{{game.data.variants.length}} varianter</span></div>
-        <div ng-if="game.data.variants.length > 1" class="mobile-only" style="text-align: center"><span>{{game.data.variants.length}}</span></div>
-    </div><span ng-if="game.data.variants.length === 1 && game.data.variants[0].attr.extras.length" ng-class="{exists: game.attr.extrasComplete}">+</span>
-</div></div></a>
-                </div>
-                <div class="game-content" ng-if="game.id === selected.id">
-                    <div style="display: inline-block;width:100%">
-                        <div class="variant-wrapper" ng-repeat="variant in selected.variants">
-                            <h3 ng-if="variant.desc.length">{{variant.desc}}</h3>
-                            <ul>
-                                <li ng-repeat="attr in variant.attr.common">
-                                    <input id="{{selected.id + '_' + $parent.$index + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status" ng-change="attrChanged($parent.$index, $index, attr.status)">
-                                    <label for="{{selected.id + '_' + $parent.$index + '_' + attr.id}}" style="font-weight: bold">{{attr.longName}} <span style="font-weight:normal" ng-if="attr.desc.length">({{attr.desc}})</span></label>
-                                </li>
-                            </ul>
-                            <ul ng-if="variant.attr.extras.length">
-                                <li ng-repeat="attr in variant.attr.extras" style="padding: 0; display: inline; margin-right: 20px">
-                                    <input id="{{selected.id + '_' + $parent.$index + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status">
-                                    <label style="color: #6495ed" for="{{selected.id + '_' + $parent.$index + '_' + attr.id}}">{{attr.longName}}</label>
-                                </li>
-                            </ul>
-                            <div>
-                                <label for="{{selected.id + '_' + $parent.$index + '_' + '_note'}}" style="font-weight:bold">Anteckning:</label>
-                                <input id="{{selected.id + '_' + $parent.$index + '_' + '_note'}}" type="text" ng-model="variant.attr.note">
+                        </div><div class="game-data">
+                            <div class="game-attr">
+                                <div class="common">
+                                    <span ng-if="game.data.variants.length === 1" ng-repeat="attr in game.data.variants[0].attr.common" ng-class="{exists: attr.status}">{{attr.id.toUpperCase()}}</span>
+                                    <div ng-if="game.data.variants.length > 1 && game.data.variants.length < 4" ng-repeat="v in game.data.variants" class="attr-multiple desktop-only">
+                                        <span ng-repeat="attr in v.attr.common" ng-class="{exists: attr.status}" style="margin-right: 0">
+                                            {{attr.id.toUpperCase()}}
+                                        </span>
+                                        <span ng-if="$index !== game.data.variants.length-1">/</span>
+                                    </div>
+                                    <div ng-if="game.data.variants.length > 3" class="desktop-only" style="text-align: center"><span>{{game.data.variants.length}} varianter</span></div>
+                                    <div ng-if="game.data.variants.length > 1" class="mobile-only" style="text-align: center"><span>{{game.data.variants.length}}</span></div>
+                                </div><span ng-if="game.data.variants.length === 1 && game.data.variants[0].attr.extras.length" ng-class="{exists: game.attr.extrasComplete}">+</span>
                             </div>
                         </div>
                     </div>
-                    <div class="button-holder">
-                        <button ng-disabled="!isDirty(game.variants)" class="yeah" ng-click="updateGame(game)">Spara</button>
-                        <span ng-if="willRemove">Spelet kommer att tas bort från din samling.</span>
+                </a>
+                    <div class="game-content" ng-if="game.id === selected.id">
+                        <div style="display: inline-block;width:100%">
+                            <div class="variant-wrapper" ng-repeat="variant in selected.variants">
+                                <h3 ng-if="variant.desc.length">{{variant.desc}}</h3>
+                                <ul>
+                                    <li ng-repeat="attr in variant.attr.common">
+                                        <div ng-if="attr.included">
+                                            <input id="{{selected.id + '_' + $parent.$parent.$index + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status" ng-change="attrChanged($parent.$parent.$index, $index, attr.status)">
+                                            <label for="{{selected.id + '_' + $parent.$parent.$index + '_' + attr.id}}" style="font-weight: bold"><span ng-bind="$parent.getName(attr.id)"></span><span style="font-weight:normal;margin-left: 4px" ng-if="attr.desc.length">{{attr.desc}}</span></label>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <ul ng-if="variant.attr.extras.length">
+                                    <li ng-repeat="attr in variant.attr.extras" style="padding: 0; display: inline; margin-right: 20px">
+                                        <input id="{{selected.id + '_' + $parent.$index + '_' + attr.id}}" type="checkbox" ng-model="attr.status" ng-checked="attr.status">
+                                        <label style="color: #6495ed" for="{{selected.id + '_' + $parent.$index + '_' + attr.id}}">{{attr.name}}</label>
+                                    </li>
+                                </ul>
+                                <div>
+                                    <label for="{{selected.id + '_' + $parent.$index + '_' + '_note'}}" style="font-weight:bold">Anteckning:</label>
+                                    <input id="{{selected.id + '_' + $parent.$index + '_' + '_note'}}" type="text" ng-model="variant.attr.note">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="button-holder">
+                            <button ng-disabled="!isDirty(game.variants)" class="yeah" ng-click="updateGame(game)">Spara</button>
+                            <span ng-if="willRemove">Spelet kommer att tas bort från din samling.</span>
+                        </div>
                     </div>
-                </div>
-            </li>
+</li>
     </ul>
     <div class="spinner" ng-show="isFetching"></div>
 </div>
