@@ -72,7 +72,6 @@
         console.log(g);
         if ($scope.isEditing) {
             $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, name: g.data.name, variants: g.data.variants, attrs: attrs, isNew: g.isNew }));
-            console.log($scope.selected);
         } else {
             if ($scope.selected.id !== g.id) {
                 $scope.selected = JSON.parse(angular.toJson({ id: g.id, item: g.item, name: g.data.name, variants: g.data.variants, attrs: attrs, isNew: g.isNew }));
@@ -81,6 +80,7 @@
                 $scope.selected = {};
             }
         }
+        console.log($scope.selected);
     };
 
     $scope.attrChanged = function (variant, attr, status) {

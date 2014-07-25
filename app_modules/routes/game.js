@@ -1,6 +1,7 @@
 ﻿var _u = require('underscore'),
     Q = require('q'),
     couch = require('../couch'),
+    request = require('request'),
     db = couch.db();
 
 var indexOfValue = _u.indexOf;
@@ -51,23 +52,54 @@ module.exports = function(app, passport) {
                 res.send(500);
             }
 
-            res.send({id: resp.id});
+            res.send({id: resp.id, tags: game.data.tags});
         });
     });
 
     app.post('/api/game/update', function (req, res) {
         var game = req.body;
-        console.log(JSON.stringify(game));
-        res.send(200);
-        //game.data.tags = [game.data.name.replace(/[^a-z0-9\s]/gi, '').toLowerCase()];
+        var toInsert = [];
+        var error = false;
 
-        //if (_u.indexOf(game.data.name, ' ') > -1) {
-        //    _u.each(game.data.name.toLowerCase().split(' '), function (word) {
-        //        if (word.length > 2 && word !== 'the') {
-        //            game.data.tags.push(word.replace(/[^a-z0-9\s]/gi, '').toLowerCase());
-        //        }
-        //    });
-        //}
+        _u.each(game.children, function(child) {
+            if (child.id.length === 0) { //New edition
+                toInsert.push(child);
+            } else {
+                if (!saveDoc(child.id, child.data, "/data")) {
+                    error = true;
+                };
+            }
+        });
+
+        if (toInsert.length > 0) {
+            db.save(toInsert, function(err, resp) {
+                if (err) {
+                    error = true;
+                } else {
+                    var c = 0;
+                    _u.each(toInsert, function(inserted) {
+                        var exists = _u.indexOf(game.releases, function(r) {
+                            return r.region == inserted.data.regions.main;
+                        });
+                        if (exists > -1) {
+                            game.releases[exists].editions.push({ subregion: inserted.data.regions.sub, id: resp[c].id });
+                        } else {
+                            console.log('FANNS EJ');
+                            game.releases.push({ region: inserted.data.regions.main, editions: [{ subregion: inserted.data.regions.sub, id: resp[c].id }] });
+                            console.log(game.releases);
+                        }
+                        c++;
+                    });
+
+                    saveDoc(game.id, game.releases, "/releases");
+                }
+            });
+        }
+
+        if (error) {
+            res.send(500);
+        }
+        res.send(200);
 
         //db.save(game, function (err, resp) {
         //    if (err) {
@@ -77,6 +109,22 @@ module.exports = function(app, passport) {
         //    res.send({ id: resp.id });
         //});
     });
+
+    function saveDoc(id, doc, path) {
+        var json = { };
+        json[path] = doc;
+        
+        request.put({
+            uri: couch.updatePath() + id,
+            body: JSON.stringify(json)
+        }, function (err) {
+            if (err) {
+                return false;
+            }
+        });
+
+        return true;
+    };
 
     app.get('/api/game/:gameId', function (req, res) {
         db.view('games/by_id', {key: req.params.gameId}, function (err, response) {

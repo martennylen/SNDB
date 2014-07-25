@@ -46,12 +46,12 @@
                 <span style="font-weight: bold">Utgivare:</span>
                 <input style="width: 100%;padding: 10px" type="text" placeholder="Spelutgivare" ng-model="currentRelease.data.publisher" required />
                 <span style="font-weight: bold">Taggar:</span>
-                <input style="width: 95%;padding: 10px" type="text" placeholder="Tagg" ng-model="currentTag" />
-                <button class="yeah iconize glyphicon glyphicon-plus" ng-click="handleTag(currentTag)" ng-disabled="currentTag.length < 3"></button>
+                <input style="width: 95%;padding: 10px" type="text" placeholder="Tagg" ng-model="currentTag.tag" />
+                <button class="yeah iconize glyphicon glyphicon-plus" ng-click="handleTag(currentTag)" ng-disabled="currentTag.tag.length < 3"></button>
                 <ul style="margin: 10px 0 0 0">
                     <li class="tag-list" style="display: inline-block; border: 1px solid #cc3333; border-radius: 6px; margin-right: 5px;padding-left: 0.2em" ng-repeat="tag in currentRelease.data.tags">
                         <span style="vertical-align: top">{{tag}}</span>
-                        <button class="icon glyphicon glyphicon-remove-button" ng-click="handleTag(tag)"></button>
+                        <button class="icon glyphicon glyphicon-remove-button" ng-click="handleTag({tag:tag})"></button>
                     </li>
                 </ul>
             </div>

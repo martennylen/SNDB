@@ -2,7 +2,7 @@
     function ($scope, $http, $timeout, $location, SearchService, GameDataService, consoles, baseRegions, user) {
 
     var emptyGame = { type: 'parent', data: {console: consoles[0].id }, releases: [] };
-    var emptyRelease = { id: '', type: 'game', parent: '', data: { variants: [], regions: {} }, $isNew: true };
+    var emptyRelease = { id: '', type: 'game', parent: '', data: { tags: [], variants: [], regions: {} }, $isNew: true };
     var emptyVariant = { desc: '', attr: { common: [{ id: 'c', desc: '', included: true }, { id: 'i', desc: '', included: true }, { id: 'b', desc: '', included: true }], extras: [] } };
     $scope.regions = angular.copy(baseRegions);
         
@@ -13,7 +13,7 @@
     $scope.currentRelease = angular.copy(emptyRelease);
     $scope.currentVariant = angular.copy(emptyVariant);
     $scope.currentExtra = '';
-    $scope.currentTag = '';
+    $scope.currentTag = {};
         
     $scope.postMessage = '';
     $scope.addOrUpdateRegionText = function () {
@@ -44,10 +44,13 @@
             if (existingRelease) {
                 $scope.currentRelease = existingRelease;
             } else { //Completely new region edition
+                console.log('NY UTGÅVA');
                 $scope.currentRelease = angular.copy(emptyRelease);
                 $scope.currentRelease.data = angular.copy($scope.game.data);
                 $scope.currentRelease.data.variants = [];
                 $scope.currentRelease.data.regions = {};
+
+                console.log($scope.game.data);
             }
         }
 
@@ -61,8 +64,10 @@
 
     $scope.setSelected = function (game) {
         console.log(game);
-        resetScope();
-
+        resetScope(false);
+        $scope.game = game;
+        game.children = [];
+        
         if (game.releases.length) {
             _.each(game.releases, function(release) {
                 var currentRegion = _.find($scope.regions, function (region) { return region.id === release.region; });
@@ -84,10 +89,9 @@
                 main: $scope.regions[0],
                 sub: $scope.regions[0].regions[0]
             };
-        }
 
-        $scope.game = game;
-        game.children = [];
+            $scope.subRegionChanged($scope.currentRegions.sub);
+        }
     };
 
     var setSelectedRelease = function (release) {
@@ -105,7 +109,7 @@
             $scope.game.children = [];
         }
 
-        var existing = (_.find($scope.game.children, function (child) { return child.id === $scope.currentRelease.id; }));
+        var existing = (_.find($scope.game.children, function (child) { return child.data.regions.sub === $scope.currentRelease.data.regions.sub; }));
         if (!existing) {
             var currentRegion = _.find($scope.regions, function (region) { return region.id === $scope.currentRelease.data.regions.main; });
             var subregion = _.find(currentRegion.regions, function (region) { return region.id === $scope.currentRelease.data.regions.sub; });
@@ -168,13 +172,14 @@
     };
 
     $scope.handleTag = function (tag) {
-        if (_.contains($scope.currentRelease.data.tags, tag)) {
-            $scope.currentRelease.data.tags.splice(_.indexOf($scope.currentRelease.data.tags, tag), 1);
+        console.log(tag);
+        if (_.contains($scope.currentRelease.data.tags, tag.tag)) {
+            $scope.currentRelease.data.tags.splice(_.indexOf($scope.currentRelease.data.tags, tag.tag), 1);
         } else {
-            $scope.currentRelease.data.tags.push(tag);
+            $scope.currentRelease.data.tags.push(tag.tag);
         }
 
-        $scope.currentTag = '';
+        $scope.currentTag = {};
     };
 
     $scope.abortUpdate = function () {
@@ -190,39 +195,44 @@
         console.log('vill spara nytt');
 
         console.log(angular.toJson($scope.game));
-        resetScope();
+        //resetScope();
         $scope.isEditing = true;
-        //$http.post('/api/game/add', angular.toJson($scope.game))
-        //    .success(function (response) {
-        //        $scope.game.id = response.id;
-        //        $scope.postMessage = 'Spel sparat';
-        //    })
-        //    .error(function(err) {
-        //        console.log(err);
-        //    });
+        $http.post('/api/game/add', angular.toJson($scope.game))
+            .success(function (response) {
+                console.log(response);
+                $scope.setSelected($scope.game);
+
+                $scope.game.data.tags = response.tags;
+                $scope.game.id = response.id;
+                
+                $scope.currentRelease = angular.copy(emptyRelease);
+                $scope.currentRelease.data = angular.copy($scope.game.data);
+                $scope.currentRelease.data.variants = [];
+                $scope.currentRelease.data.regions = {};
+
+                $scope.postMessage = 'Spel sparat';
+            })
+            .error(function(err) {
+                console.log(err);
+            });
     };
 
     $scope.updateGame = function () {
         
         console.log('vill uppdatera');
         console.log(angular.toJson($scope.game));
-        resetScope();
-        $scope.game = angular.copy(emptyGame);
+        //resetScope();
+        //$scope.game = angular.copy(emptyGame);
 
-        //$http.post('/api/game/update', angular.toJson($scope.game))
-        //    .success(function () {
-        //        $scope.postMessage = 'Spel uppdaterat';
-        //        $scope.game = angular.copy(emptyGame);
-        //        $scope.regions = angular.copy(baseRegions);
-        //        $scope.currentRegions = {
-        //            main: $scope.regions[0],
-        //            sub: $scope.regions[0].regions[0]
-        //        };
-        //    })
-        //    .error(function () {
-        //        console.log('HIELP');
-        //    });
-        $scope.isEditing = false;
+        $http.post('/api/game/update', angular.toJson($scope.game))
+            .success(function () {
+                $scope.postMessage = 'Spel uppdaterat';
+                resetScope(true);
+                $scope.isEditing = false;
+            })
+            .error(function () {
+                console.log('HIELP');
+            });
     };
 
     $scope.validateUpdateFields = function () {
@@ -237,10 +247,15 @@
         SearchService.SearchInternal($scope);
     };
 
-    function resetScope() {
+    function resetScope(empty) {
         console.log('RENSA');
-        $scope.games = [];
         $scope.q = '';
+        $scope.postMessage = '';
+        $scope.games = [];
+        
+        if (empty) {
+            $scope.game = angular.copy(emptyGame);
+        }
         $scope.currentRelease = angular.copy(emptyRelease);
         $scope.currentVariant = angular.copy(emptyVariant);
         $scope.currentRegions = {
@@ -255,6 +270,7 @@
             });
         });
         $scope.isEditing = true;
+        console.log($scope.game.data);
     };
 
     function uuid() {
