@@ -45,8 +45,8 @@
             $location.path('/all/' + $stateParams.consoleName + '/' + $scope.currentRegion.region.id + '/' + $scope.currentRegion.region.subRegions[0].id).replace();
         };
 
-        $scope.subRegionChanged = function (r, sr) {
-            $location.path('/all/' + $stateParams.consoleName + '/' + r.id + '/' + sr.id).replace();
+        $scope.subRegionChanged = function (sr) {
+            $location.path('/all/' + $stateParams.consoleName + '/' + $scope.currentRegion.region.id + '/' + sr.id).replace();
         };
         
         $scope.$emit('consoleChanged', $scope.consoleName);

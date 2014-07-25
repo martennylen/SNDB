@@ -226,7 +226,7 @@ html {
                     }
             }
 
-            #header-console-list {
+            .header-console-list {
                 background-color: #fff;
                 border-top: 2px solid #B53121;
                 border-bottom: 2px solid #B53121;
@@ -260,6 +260,14 @@ html {
                         a:hover {
                             text-decoration: underline;
                         }
+                }
+
+                > li.first-item {
+                    padding-left: 15px;
+                }
+
+                > li.last-item {
+                    border-right: none;
                 }
 
                 > li:hover {
@@ -297,12 +305,17 @@ html {
                 color: #5a5a5a;
             }
 
-            label.main {
-                font-weight: bold;
+            label:hover {
+                cursor: pointer;
             }
 
             label.selected {
                 color: #B53121;
+            }
+            
+            label.main.selected {
+                font-weight: bold;
+                color: #5a5a5a;
             }
 
             #subfilters {
@@ -411,7 +424,7 @@ html {
             padding-top: 20px;
             max-width: 50%;
 
-            #header-console-list {
+            .header-console-list {
                 > li {
                     a {
                         img {
@@ -441,7 +454,7 @@ html {
 
         .content-wrapper {
 
-            #header-console-list {
+            .header-console-list {
                 > li {
                     a {
                         img {

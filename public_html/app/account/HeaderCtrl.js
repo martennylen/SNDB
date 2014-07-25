@@ -3,7 +3,12 @@
         console.log('header');
         $rootScope.consoles = consoles;
         $scope.consoles = $rootScope.consoles;
-        console.log($scope.consoles);
+        var n = 7;
+        $scope.displayConsoles = _.chain($scope.consoles).groupBy(function(element, index){
+            return Math.floor(index/n);
+        }).toArray().value();
+
+        console.log($scope.testConsoles);
 
         $rootScope.$on('$stateChangeStart',
             function (event, toState, toParams, fromState, fromParams) {

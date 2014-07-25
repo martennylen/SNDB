@@ -4,14 +4,16 @@
     <span ng-show="q.length" ng-click="clearSearch()" class="glyphicon glyphicon-remove"></span>
     <input type="text" id="game-search" placeholder="Sök i alla regioner" ng-model="q" ng-change="search()" ng-minlength="3" />
 </div>
-<ul id="header-console-list" style="margin-bottom: 0">
-    <li ng-repeat="c in consoles">
-        <a href ui-sref="all.region({consoleName: c.id, regionName: ''})">
-            <div style="padding: 5px">
-                <img ng-src="/img/{{c.id}}.svg" ng-class="{active: c.id === $parent.consoleName}" />
-            </div>
-        </a>
-    </li>
-</ul>
+<div ng-repeat="clist in displayConsoles">
+    <ul class="header-console-list" style="margin-bottom: 0">
+        <li ng-repeat="c in clist" ng-class="{'first-item': $index === 0, 'last-item': $index === 6}">
+            <a href ui-sref="all.region({consoleName: c.id, regionName: ''})">
+                <div style="padding: 5px">
+                    <img ng-src="/img/{{c.id}}.svg" ng-class="{active: c.id === $parent.consoleName}" />
+                </div>
+            </a>
+        </li>
+    </ul>
+</div>
 <div ui-view>
 </div>

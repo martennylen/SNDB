@@ -6,8 +6,8 @@
         <input type="text" id="game-search" placeholder="Sök i mina spel" ng-model="$parent.q" ng-change="search()" ng-minlength="3" />
     </div>
     <div>
-        <ul id="header-console-list" style="margin-bottom: 0">
-            <li ng-repeat="c in stats">
+        <ul class="header-console-list" style="margin-bottom: 0">
+            <li ng-repeat="c in stats" ng-class="{lastItem: $index === 6}">
                 <div style="padding: 5px">
                     <a ng-href="#/user/{{userName}}/{{c.id}}/">
                         <img ng-src="/img/{{c.id}}.svg" ng-class="{active: c.id === $parent.consoleName}" />

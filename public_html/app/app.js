@@ -220,6 +220,8 @@ app.constant('consoles', [
 	{'id': 'nes', 'name': 'NES'}, 
 	{ 'id': 'snes', 'name': 'SNES' },
     { 'id': 'gb', 'name': 'GB' },
+    { 'id': 'gba', 'name': 'GBA' },
+    { 'id': 'gbc', 'name': 'GBC' },
     { 'id': 'n64', 'name': 'N64' },
     { 'id': 'gc', 'name': 'GC' },
     { 'id': 'wii', 'name': 'Wii' },
