@@ -4,7 +4,7 @@
             <input type="radio" id="{{r.id}}" ng-model="currentRegion.region" ng-value="r" ng-change="regionChanged(r)">
             <label class="main" style="margin-right: 10px" for="{{r.id}}" ng-class="{selected: r.id === currentRegion.region.id}">{{r.id.toUpperCase()}} ({{r.count}})</label>
         </div>
-        <ul style="margin-left: 20px;margin-top: 0;">
+        <ul class="{{currentRegion.region.id}}" style="margin-top: 0;">
             <li ng-repeat="sr in currentRegion.region.subRegions" style="display: inline-block"><input type="radio" id="{{sr.id}}" ng-model="currentRegion.subRegion" ng-value="sr" ng-change="subRegionChanged(sr)"><label ng-class="{'selected': currentRegion.subRegion.id === sr.id}" for="{{sr.id}}">{{sr.id.toUpperCase()}} ({{sr.count}})</label></li>
         </ul>
         </div>

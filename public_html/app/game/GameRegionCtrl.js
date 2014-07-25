@@ -7,8 +7,6 @@
         $scope.consoleName = $stateParams.consoleName;
         $scope.regionName = $stateParams.regionName;
 
-        console.log('weo ' + $scope.regionName);
-
         $scope.currentRegion = {};
 
         //if ($scope.consoleName.length === 0) {
