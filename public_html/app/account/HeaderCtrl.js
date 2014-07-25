@@ -3,6 +3,7 @@
         console.log('header');
         $rootScope.consoles = consoles;
         $scope.consoles = $rootScope.consoles;
+        console.log($scope.consoles);
 
         $rootScope.$on('$stateChangeStart',
             function (event, toState, toParams, fromState, fromParams) {
