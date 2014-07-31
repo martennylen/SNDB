@@ -22,6 +22,7 @@
     });
     
     $scope.getGames = function () {
+        console.log($scope.q);
         if (($scope.q && $scope.q.length) || $scope.isFetching || $scope.reachedEnd) {
             return;
         }

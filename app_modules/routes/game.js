@@ -318,6 +318,8 @@ module.exports = function(app, passport) {
         });
     });
 
+    var sortOrder = ['nes', 'snes', 'n64', 'gc', 'gb', 'gba', 'gbc', 'wii', 'wiiu'];
+
     app.get('/api/stats', function (req, res) {
         var level = req.query.level;
         var reqObj = { group_level: level };
@@ -367,7 +369,7 @@ module.exports = function(app, passport) {
                 });
             });
         }).then(function (consoles) {
-            res.send(_u.sortBy(consoles, function (c) { return c.count; }).reverse());
+            res.send(_u.sortBy(consoles, function (c) { return _u.indexOf(sortOrder, c.id); }));
         });
     });
 }

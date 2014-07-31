@@ -3,12 +3,12 @@
         console.log('header');
         $rootScope.consoles = consoles;
         $scope.consoles = $rootScope.consoles;
+        $scope.q = '';
+        
         var n = 7;
         $scope.displayConsoles = _.chain($scope.consoles).groupBy(function(element, index){
             return Math.floor(index/n);
         }).toArray().value();
-
-        console.log($scope.testConsoles);
 
         $rootScope.$on('$stateChangeStart',
             function (event, toState, toParams, fromState, fromParams) {
@@ -22,10 +22,6 @@
         }
 
         $scope.consoleName = $scope.consoles[0].id;
-        //$scope.changeConsole = function (c) {
-        //    console.log('djdjd');
-        //    $location.path('/all/' + c.id + '/').replace();
-        //};
 
         $scope.$on('consoleChanged', function (event, data) {
             console.log(data);

@@ -7,11 +7,6 @@
         $scope.currentRegion = {};
         $scope.stats = stats;
         $scope.userAttrs = attrs;
-        
-    if ($scope.regionName.length === 0) {
-        $location.path('/user/' + $stateParams.userName + '/' + $stateParams.consoleName + '/' + $scope.stats[0].regions[0].id + '/' + $scope.stats[0].regions[0].subRegions[0].id).replace();
-        return;
-    }
 
     if ($location.$$path.split('/').length === 6) {
         $scope.subRegionName = $location.$$path.split('/')[5];
@@ -20,6 +15,11 @@
     $scope.regions = _.find($scope.stats, function (c) {
         return c.id === $scope.consoleName;
     }).regions;
+        
+    if ($scope.regionName.length === 0) {
+        $location.path('/user/' + $stateParams.userName + '/' + $stateParams.consoleName + '/' + $scope.regions[0].id + '/' + $scope.regions[0].subRegions[0].id).replace();
+        return;
+    }
 
     $scope.currentRegion.region =
         _.find($scope.regions, function (r) {
@@ -30,12 +30,14 @@
         return sr.id === $scope.subRegionName;
     });
 
+    $scope.currentRegion.index = _.indexOf($scope.regions, $scope.currentRegion.region);
+
     $scope.regionChanged = function (r) {
         $scope.$emit('consoleChanged', $stateParams.consoleName);
         $location.path('/user/' + $stateParams.userName + '/' + $stateParams.consoleName + '/' + $scope.currentRegion.region.id + '/' + $scope.currentRegion.region.subRegions[0].id).replace();
     };
 
-    $scope.subRegionChanged = function (r, sr) {
-        $location.path('/user/' + $stateParams.userName + '/' + $stateParams.consoleName + '/' + r.id + '/' + sr.id).replace();
+    $scope.subRegionChanged = function (sr) {
+        $location.path('/user/' + $stateParams.userName + '/' + $stateParams.consoleName + '/' + $scope.currentRegion.region.id + '/' + sr.id).replace();
     };
 }]);

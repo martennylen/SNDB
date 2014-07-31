@@ -7,75 +7,77 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
     $urlRouterProvider
         .when('', '/all/nes/');
 
-        $stateProvider
-            .state('login', { url: '/login', templateUrl: 'app/account/login.html', controller: 'LoginCtrl' })
-            .state('register', { url: '/register', templateUrl: 'app/account/register.html', controller: 'RegisterCtrl' })
-            .state('admin', { url: '/admin', templateUrl: 'app/admin/header.html', controller: 'AdminHeaderCtrl', resolve: { user: validateUser } })
-            .state('admin.index', {
-                url: '/index',
-                templateUrl: 'app/admin/index.html',
-                controller: 'AdminCtrl',
-                resolve: { user: validateUser }
-            })
-            .state('admin.register', {
-                url: '/register',
-                templateUrl: 'app/admin/register.html',
-                controller: 'RegisterCtrl',
-                resolve: { user: validateUser }
-            })
-            .state('user', {
-                //abstract: true,
-                url: '/user/:userName',
-                templateUrl: 'app/user/header.html',
-                controller: 'UserHeaderCtrl',
-                resolve: {
-                    stats: ['BazingaService', '$stateParams', '$q', function (BazingaService, $stateParams, $q) {
-                        var deferred = $q.defer();
-                        BazingaService.query({ userName: $stateParams.userName, level: 2 }).$promise.then(function(data) {
-                            deferred.resolve(data);
-                        });
-                        return deferred.promise;
-                    }],
-                    attrs: ['UserAttrService', '$stateParams', '$q', function (UserAttrService, $stateParams, $q) {
-                        var deferred = $q.defer();
-                        UserAttrService.query({ userName: $stateParams.userName, level: 2 }).$promise.then(function (data) {
-                            deferred.resolve(data);
-                        });
+    $stateProvider
+        .state('login', { url: '/login', templateUrl: 'app/account/login.html', controller: 'LoginCtrl' })
+        .state('register', { url: '/register', templateUrl: 'app/account/register.html', controller: 'RegisterCtrl' })
+        .state('admin', { url: '/admin', templateUrl: 'app/admin/header.html', controller: 'AdminHeaderCtrl', resolve: { user: validateUser } })
+        .state('admin.index', {
+            url: '/index',
+            templateUrl: 'app/admin/index.html',
+            controller: 'AdminCtrl',
+            resolve: { user: validateUser }
+        })
+        .state('admin.register', {
+            url: '/register',
+            templateUrl: 'app/admin/register.html',
+            controller: 'RegisterCtrl',
+            resolve: { user: validateUser }
+        })
+        .state('user', {
+            //abstract: true,
+            url: '/user/:userName',
+            templateUrl: 'app/user/header.html',
+            controller: 'UserHeaderCtrl',
+            resolve: {
+                stats: ['BazingaService', '$stateParams', '$q', function (BazingaService, $stateParams, $q) {
+                    var deferred = $q.defer();
+                    BazingaService.query({ userName: $stateParams.userName, level: 2 }).$promise.then(function(data) {
+                        deferred.resolve(data);
+                    });
+                    return deferred.promise;
+                }],
+                attrs: ['UserAttrService', '$stateParams', '$q', function (UserAttrService, $stateParams, $q) {
+                    var deferred = $q.defer();
+                    UserAttrService.query({ userName: $stateParams.userName, level: 2 }).$promise.then(function (data) {
+                        deferred.resolve(data);
+                    });
 
-                        return deferred.promise;
-                    }]
-                }
-            })
-            .state('user.region', {
-                url: '/:consoleName/:regionName',
-                templateUrl: 'app/user/user.html',
-                controller: 'UserCtrl'
-            })
-            .state('user.region.subRegion', {
-                url: '/:subRegionName',
-                templateUrl: 'app/user/userlist.html',
-                controller: 'UserListCtrl'
-            })
-            .state('all', {
-                url: '/all', templateUrl: 'app/game/header.html', controller: 'HeaderCtrl',
-                resolve: {
-                    consoles: ['GamesStatsService', '$q', function (GamesStatsService, $q) {
-                        var deferred = $q.defer();
-                        GamesStatsService.query({ level: 1 }).$promise.then(function (data) {
-                            deferred.resolve(data);
-                        });
+                    return deferred.promise;
+                }]
+            }
+        })
+        .state('user.region', {
+            url: '/:consoleName/:regionName',
+            templateUrl: 'app/user/user.html',
+            controller: 'UserCtrl'
+        })
+        .state('user.region.subRegion', {
+            url: '/:subRegionName',
+            templateUrl: 'app/user/userlist.html',
+            controller: 'UserListCtrl'
+        })
+        .state('all', {
+            url: '/all',
+            templateUrl: 'app/game/header.html',
+            controller: 'HeaderCtrl',
+            resolve: {
+                consoles: ['GamesStatsService', '$q', function (GamesStatsService, $q) {
+                    var deferred = $q.defer();
+                    GamesStatsService.query({ level: 1 }).$promise.then(function (data) {
+                        deferred.resolve(data);
+                    });
 
-                        return deferred.promise;
-                    }]
-                }
-            })
-            //.state('all.console', {
-            //    abstract: true, url: '/:consoleName', template: '<ui-view/>', controller: 'GameRegionCtrl'
-            //})
-            .state('all.region', {
-                url: '/:consoleName/:regionName',
-                templateUrl: 'app/game/regionlist.html',
-                controller: 'GameRegionCtrl'
+                    return deferred.promise;
+                }]
+            }
+        })
+        //.state('all.console', {
+        //    abstract: true, url: '/:consoleName', template: '<ui-view/>', controller: 'GameRegionCtrl'
+        //})
+        .state('all.region', {
+            url: '/:consoleName/:regionName',
+            templateUrl: 'app/game/regionlist.html',
+            controller: 'GameRegionCtrl'
         })
         .state('all.region.subregion', {
             url: '/:subRegionName', templateUrl: 'app/game/masterlist.html', controller: 'GameListCtrl'
