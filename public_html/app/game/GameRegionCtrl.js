@@ -46,4 +46,9 @@
         $scope.$on('searchResult', function (event, games, success) {
             $scope.showRegions = !success;
         });
-}]);
+
+        var monkey = new Date().valueOf();
+        console.log(monkey);
+        var klsks = new Date(monkey);
+        console.log(klsks);
+    }]);

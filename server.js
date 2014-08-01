@@ -83,6 +83,7 @@ var http = require('http'),
     });
     
     require('./app_modules/routes/account')(app, passport);
+    require('./app_modules/routes/start')(app, passport);
     require('./app_modules/routes/user')(app, passport);
     require('./app_modules/routes/game')(app, passport);
 

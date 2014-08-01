@@ -19,6 +19,7 @@
     <script src="lib/underscore.string.min.js"></script>
     <script src="lib/modernizr-2.5.3.js"></script>
     <script src="app/app.js"></script>
+    <script src="app/start/StartCtrl.js"></script>
     <script src="app/user/UserCtrl.js"></script>
     <script src="app/user/UserListCtrl.js"></script>
     <script src="app/game/GameListCtrl.js"></script>
@@ -105,6 +106,7 @@
                 </div><div id="header-right">
                     <div ng-switch on="isLoggedIn()">
                         <div ng-switch-when="true">
+                            <a href ui-sref="start()"><span class="glyphicon glyphicon-home mobile-only"></span><span style="margin-left:6px" class="desktop-only">Start</span></a>
                             <a href ui-sref="all()"><span class="glyphicon glyphicon-home mobile-only"></span><span style="margin-left:6px" class="desktop-only">Alla spel</span></a>
                             <a href ui-sref="user({userName: loggedInUser.username})"><span class="glyphicon glyphicon-user mobile-only"></span><span style="margin-left:6px" class="desktop-only">Min sida</span></a>
                             <a ng-if="showAdminLink()" href ng-href="#/admin"><span class="glyphicon glyphicon-lock mobile-only"></span><span style="margin-left:6px" class="desktop-only">Admin</span></a>

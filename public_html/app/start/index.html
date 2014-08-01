@@ -1,0 +1,26 @@
+﻿<div class="view-wrapper">
+    <div id="timetravel-lists" class="clearfix" style="background-color: #fff;border-radius: 6px;padding:10px 20px">
+        <div id="created">
+            <h3 style="display: block">Senast inlagda</h3>
+            <ul>
+                <li ng-repeat="game in createdList" ng-class-odd="'odd'" ng-class-even="'even'">
+                    <a href ui-sref="game({consoleName:game.data.console, regionName:game.data.regions.main, subRegionName:game.data.regions.sub, gameName:game.data.slug})">
+                        {{game.data.name }} ({{ game.data.console.toUpperCase() + ' - ' + game.data.regions.main.toUpperCase() + ' - ' + game.data.regions.sub.toUpperCase() }})
+                    </a>
+                    <sup style="color: #5a5a5a">{{game.created}}</sup>
+                </li>
+            </ul>
+        </div>
+        <div id="updated">
+            <h3 style="display: block">Senast uppdaterade</h3>
+            <ul>
+                <li ng-repeat="game in updatedList" ng-class-odd="'odd'" ng-class-even="'even'">
+                    <a href ui-sref="game({consoleName:game.data.console, regionName:game.data.regions.main, subRegionName:game.data.regions.sub, gameName:game.data.slug})">
+                        {{game.data.name }} ({{ game.data.console.toUpperCase() + ' - ' + game.data.regions.main.toUpperCase() + ' - ' + game.data.regions.sub.toUpperCase() }})
+                    </a>
+                    <sup style="color: #5a5a5a">{{game.created}}</sup>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

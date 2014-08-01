@@ -5,12 +5,28 @@ var app = angular.module('trackr', ['ngResource', 'ngRoute', 'ui.router', 'ngCoo
 app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterProvider', '$stateProvider',
     function ($httpProvider, $routeProvider, $locationProvider, $urlRouterProvider, $stateProvider) {
     $urlRouterProvider
-        .when('', '/all/nes/');
+        .when('', '/start');
 
     $stateProvider
         .state('login', { url: '/login', templateUrl: 'app/account/login.html', controller: 'LoginCtrl' })
         .state('register', { url: '/register', templateUrl: 'app/account/register.html', controller: 'RegisterCtrl' })
         .state('admin', { url: '/admin', templateUrl: 'app/admin/header.html', controller: 'AdminHeaderCtrl', resolve: { user: validateUser } })
+        .state('start', {
+            url: '/start',
+            templateUrl: 'app/start/index.html',
+            controller: 'StartCtrl',
+            resolve: {
+                stats: function($q, $resource){
+                    var deferred = $q.defer();
+                    //var appa = $resource('/api/start/stats', {}, { 'query': { method: 'GET', cache: false, isArray: true } });
+                
+                    $resource('/api/start/stats').get().$promise.then(function (data) {
+                        deferred.resolve(data);
+                    });
+                    return deferred.promise;
+                }
+            }
+        })
         .state('admin.index', {
             url: '/index',
             templateUrl: 'app/admin/index.html',
