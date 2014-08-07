@@ -20,7 +20,7 @@
                                         </span>
                                         <span ng-if="$index !== game.data.variants.length-1">/</span>
                                     </div>
-                                    <div ng-if="game.data.variants.length > 3" class="desktop-only" style="text-align: center"><span>{{game.data.variants.length}} varianter</span></div>
+                                    <div ng-if="game.data.variants.length > 3" class="desktop-only" style="text-align: center" ng-class="{exists: game.isComplete}"><span>{{game.data.variants.length}} varianter</span></div>
                                     <div ng-if="game.data.variants.length > 1" class="mobile-only" style="text-align: center"><span>{{game.data.variants.length}}</span></div>
                                 </div><span ng-if="game.data.variants.length === 1 && game.data.variants[0].attr.extras.length" ng-class="{exists: game.attr.extrasComplete}">+</span>
                             </div>
