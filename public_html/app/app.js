@@ -167,9 +167,19 @@ app.factory('SearchService', ['$timeout', '$http', function ($timeout, $http) {
         if ($scope.q !== undefined && $scope.q.length) {
             console.log('eller så söker vi lite...');
 
+            var request;
+            if (self.internal) {
+                request = '/api/admin/search/' + '?q=' + $scope.q.substring(0, 3).toLowerCase();
+            } else {
+                request = '/api/search/' + $scope.consoleName + '?q=' + $scope.q.substring(0, 3).toLowerCase();
+                if ($scope.userName) {
+                    request += '&r=' + $scope.userName;
+                }
+            }
+
             $timeout(function () {
                 if ($scope.pendingPromise) { $timeout.cancel($scope.pendingPromise); }
-                $scope.pendingPromise = self.internal ? $http.get('/api/admin/search/' + '?q=' + $scope.q.substring(0, 3).toLowerCase()) : $http.get('/api/search/' + $scope.consoleName + '?q=' + $scope.q.substring(0, 3).toLowerCase() + '&r=' + $scope.userName);
+                $scope.pendingPromise = $http.get(request);
                 $scope.pendingPromise
                 .success(function (res) {
                     console.log(res.games);
@@ -185,7 +195,6 @@ app.factory('SearchService', ['$timeout', '$http', function ($timeout, $http) {
 
                     if (self.internal) {
                         $scope.games = searchResults;
-                        console.log($scope.games);
                     } else {
                         $scope.$broadcast('searchResult', searchResults, true);
                     }
