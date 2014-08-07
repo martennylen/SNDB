@@ -20,6 +20,10 @@
         if ($location.$$path.split('/').length === 2) {
             $location.path('/all/' + $rootScope.consoles[0].id + '/').replace();
         }
+        
+        if ($location.$$path.split('/').length === 3 && _.last($location.$$path) !== '/') {
+            $location.path('/all/' + $stateParams.consoleName + '/').replace();
+        }
 
         $scope.consoleName = $scope.consoles[0].id;
 

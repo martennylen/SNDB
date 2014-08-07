@@ -7,7 +7,7 @@
 <div ng-repeat="clist in displayConsoles">
     <ul class="header-console-list" style="margin-bottom: 0">
         <li ng-repeat="c in clist" ng-class="{'first-item': $index === 0, 'last-item': $index === 6}">
-            <a href ui-sref="all.region({consoleName: c.id, regionName: ''})">
+            <a href ui-sref="all.console({consoleName: c.id})">
                 <div style="padding: 5px">
                     <img ng-src="/img/{{c.id}}.svg" ng-class="{active: c.id === $parent.consoleName}" />
                 </div>

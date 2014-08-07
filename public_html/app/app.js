@@ -45,21 +45,21 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
             templateUrl: 'app/user/header.html',
             controller: 'UserHeaderCtrl',
             resolve: {
-                stats: ['BazingaService', '$stateParams', '$q', function (BazingaService, $stateParams, $q) {
+                stats: function ($stateParams, $q, $resource) {
                     var deferred = $q.defer();
-                    BazingaService.query({ userName: $stateParams.userName, level: 2 }).$promise.then(function(data) {
+                    $resource('/api/user/stats/:userName').query({ userName: $stateParams.userName, level: 2 }).$promise.then(function (data) {
                         deferred.resolve(data);
                     });
                     return deferred.promise;
-                }],
-                attrs: ['UserAttrService', '$stateParams', '$q', function (UserAttrService, $stateParams, $q) {
+                },
+                attrs: function ($stateParams, $q, $resource) {
                     var deferred = $q.defer();
-                    UserAttrService.query({ userName: $stateParams.userName, level: 2 }).$promise.then(function (data) {
+                    $resource('/api/user/stats/attrs/:userName').query({ userName: $stateParams.userName, level: 2 }).$promise.then(function (data) {
                         deferred.resolve(data);
                     });
 
                     return deferred.promise;
-                }]
+                }
             }
         })
         .state('user.region', {
@@ -77,19 +77,19 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
             templateUrl: 'app/game/header.html',
             controller: 'HeaderCtrl',
             resolve: {
-                consoles: ['GamesStatsService', '$q', function (GamesStatsService, $q) {
+                consoles: function ($q, $resource) {
                     var deferred = $q.defer();
-                    GamesStatsService.query({ level: 1 }).$promise.then(function (data) {
+                    $resource('/api/stats').query({ level: 1 }).$promise.then(function (data) {
                         deferred.resolve(data);
                     });
 
                     return deferred.promise;
-                }]
+                }
             }
         })
-        //.state('all.console', {
-        //    abstract: true, url: '/:consoleName', template: '<ui-view/>', controller: 'GameRegionCtrl'
-        //})
+        .state('all.console', {
+            url: '/:consoleName', template: '', controller: 'HeaderCtrl'
+        })
         .state('all.region', {
             url: '/:consoleName/:regionName',
             templateUrl: 'app/game/regionlist.html',
@@ -215,20 +215,8 @@ app.factory('SearchService', ['$timeout', '$http', function ($timeout, $http) {
     };
 }]);
 
-app.factory('GamesStatsService', ['$resource', function ($resource) {
-    return $resource('/api/stats');
-}]);
-
 app.factory('UserGamesService', ['$resource', function ($resource) {
     return $resource('/api/user/:userName/:consoleName/:regionName/:subRegionName');
-}]);
-
-app.factory('UserAttrService', ['$resource', function($resource) {
-    return $resource('/api/user/stats/attrs/:userName');
-}]);
-
-app.factory('BazingaService', ['$resource', function ($resource) {
-    return $resource('/api/user/stats/:userName');
 }]);
 
 app.factory('GamesService', ['$resource', function ($resource) {
