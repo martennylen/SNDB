@@ -13,29 +13,25 @@
         function handleDate(d) {
             var date = new Date(d);
             var hours = date.getHours();
-            if (isToday(d)) {
+            if (isSame(d, new Date())) {
                 return 'Idag ' + (hours < 9 ? '0' + hours : hours) + ':' + date.getMinutes();
-            }
-            else if (isYesterday(d)) {
-                return 'Igår ' + (hours < 9 ? '0' + hours : hours) + ':' + date.getMinutes();
             } else {
-                return (date.getDate() + ' ' + getMonthyName(date.getMonth()) + ' ' + date.getFullYear());
+                var e = new Date();
+                e.setDate(e.getDate() - 1);
+                
+                if (isSame(d, e)) {
+                    return 'Igår ' + (hours < 9 ? '0' + hours : hours) + ':' + date.getMinutes();
+                } else {
+                    return (date.getDate() + ' ' + getMonthyName(date.getMonth()) + ' ' + (date.getFullYear() !== e.getFullYear() ? date.getFullYear() : ''));
+                }
             }
         }
         
-        function isToday(d) {
-            return (new Date(d)).setHours(0, 0, 0, 0) === (new Date()).setHours(0, 0, 0, 0);
-        }
-
-        function isYesterday(d) {
-            var e = new Date();
-            e.setDate(e.getDate() - 1);
-
-
-            return (new Date(d)).setHours(0, 0, 0, 0) === (e.setHours(0, 0, 0, 0));
+        function isSame(d, e) {
+            return (new Date(d)).setHours(0, 0, 0, 0) === (e).setHours(0, 0, 0, 0);
         }
 
         function getMonthyName(p) {
             return ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'][p];
-        };
+        }
     }]);

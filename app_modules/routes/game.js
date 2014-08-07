@@ -61,10 +61,17 @@ module.exports = function(app, passport) {
         var toInsert = [];
         var error = false;
 
-        _u.each(game.children, function(child) {
+        _u.each(game.children, function (child) {
+            if (!child.data.accessInfo) {
+                child.data.accessInfo = {
+                    created: new Date().valueOf()
+                };
+            }
+            
             if (child.id.length === 0) { //New edition
                 toInsert.push(child);
-            } else {
+            } else { //Update
+                child.data.accessInfo.updated = new Date().valueOf();
                 if (!saveDoc(child.id, child.data, "/data")) {
                     error = true;
                 };
@@ -161,14 +168,14 @@ module.exports = function(app, passport) {
 
     app.get('/api/search/:consoleName', function (req, res) {
         var reqObj = {
-            startkey: [req.query.q, req.params.consoleName],
-            endkey: [req.query.q + '\u9999', req.params.consoleName]
+            startkey: [req.params.consoleName, req.query.q],
+            endkey: [req.params.consoleName, req.query.q + '\u9999']
         };
         
         if (req.params.consoleName === 'undefined') {
             reqObj = {
-                startkey: [req.query.q, {}],
-                endkey: [req.query.q + '\u9999', {}]
+                startkey: [{}, req.query.q],
+                endkey: [{}, req.query.q + '\u9999']
             };
         }
 
@@ -180,7 +187,6 @@ module.exports = function(app, passport) {
             response = _u.uniq(response, function (g) { return g.id; });
             var gameIds = _u.map(response, function (g) { return req.user.id + '_' + g.id; });
 
-            console.log(gameIds);
             if (req.user !== undefined && req.params.consoleName !== 'undefined') {
                 db.view('games/by_item_id', {
                     keys: gameIds
