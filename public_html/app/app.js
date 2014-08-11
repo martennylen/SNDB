@@ -18,8 +18,6 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
             resolve: {
                 stats: function($q, $resource){
                     var deferred = $q.defer();
-                    //var appa = $resource('/api/start/stats', {}, { 'query': { method: 'GET', cache: false, isArray: true } });
-                
                     $resource('/api/start/stats').get().$promise.then(function (data) {
                         deferred.resolve(data);
                     });

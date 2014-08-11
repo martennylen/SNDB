@@ -50,7 +50,7 @@ app.controller('UserHeaderCtrl', ['$scope', '$location', '$state', '$stateParams
         $scope.userAttrs = attrs;
         $scope.userName = $stateParams.userName;
         $scope.stats = $rootScope.stats;
-        $scope.consoleName = $rootScope.stats[0].id;
+        $scope.consoleName = $rootScope.stats.length ? $rootScope.stats[0].id : 'nes';
 
         $rootScope.$on('$stateChangeStart',
             function (event, toState, toParams, fromState, fromParams) {
