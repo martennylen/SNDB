@@ -54,7 +54,7 @@ module.exports = function(app, passport) {
     app.post('/api/login', function(req, res, next) {
         passport.authenticate('local', function(err, user, info) {
             if (err) {
-                return next(err); // will generate a 500 error
+                return next(err);
             }
             if (!user) {
                 return res.send({ success: false, message: 'Användarnamn och eller lösenord hittades inte.' });
