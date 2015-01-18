@@ -4,7 +4,8 @@
     <span ng-show="q.length" ng-click="clearSearch()" class="glyphicon glyphicon-remove"></span>
     <input type="text" id="game-search" placeholder="Sök i alla regioner" ng-model="q" ng-change="search()" ng-minlength="3" />
 </div>
-<div>
+<div style="position: relative">
+    <span style="position: absolute; right: 0; top: 35%; color: #e2e2e2;" class="glyphicon glyphicon-chevron-right"></span>
     <ul class="header-console-list" style="text-align: center;margin-bottom: 0">
         <li ng-repeat="c in consoles" ng-class="{'first-item': $index%6 === 0, active: c.id === $parent.consoleName}">
             <a href ui-sref="all.console({consoleName: c.id})">
