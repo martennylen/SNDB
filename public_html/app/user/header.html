@@ -5,9 +5,12 @@
         <span ng-show="q.length" ng-click="clearSearch()" class="glyphicon glyphicon-remove"></span>
         <input type="text" id="game-search" placeholder="Sök i mina spel" ng-model="$parent.q" ng-change="search()" ng-minlength="3" />
     </div>
-    <div>
+    <div id="header-console-container" style="position: relative">
+        <div ng-if="stats.length > 3" id="scroll-indicator-container" style="position: absolute; right: 0; margin: auto; top: 0; bottom: 0; text-align: center;">
+            <span id="scroll-indicator" style="color: #e2e2e2;font-size:15px" class="glyphicon glyphicon-chevron-right"></span>
+        </div>
         <ul class="header-console-list" style="margin-bottom: 0">
-            <li ng-repeat="c in stats" ng-class="{lastItem: $index === 6, active: c.id === $parent.consoleName}">
+            <li ng-repeat="c in stats" ng-class="{'first-item': $index%6 === 0, active: c.id === $parent.consoleName}">
                 <div style="padding: 5px">
                     <a ng-href="#/user/{{userName}}/{{c.id}}/">
                         <img ng-src="/img/{{c.id}}.png" />
