@@ -187,7 +187,9 @@ module.exports = function(app, passport) {
             response = _u.uniq(response, function (g) { return g.id; });
             var gameIds = _u.map(response, function (g) { return req.user.id + '_' + g.id; });
 
-            if (req.user !== undefined && req.params.consoleName !== 'undefined') {
+            console.log(gameIds);
+
+            if (req.user !== undefined && req.params.consoleName !== undefined) {
                 db.view('games/by_item_id', {
                     keys: gameIds
                     //startkey: [req.user.id, req.params.consoleName, req.query.q],
@@ -197,9 +199,12 @@ module.exports = function(app, passport) {
                     if (e) {
                         res.send(500);
                     }
-                    console.log(resp);
-                    var list = mapGameInformation(resp, response, (req.query.r !== 'undefined'));
-                    res.send({ games: list, loggedIn: true });
+                    console.log(req.query.r);
+                    var list = mapGameInformation(resp, response, (req.query.r !== undefined));
+                    res.send({ games: _u.sortBy(list, function(a) {
+                        return a.data.name;
+                    }), loggedIn: true
+                    });
                 });
             } else {
                 res.send({
@@ -210,6 +215,7 @@ module.exports = function(app, passport) {
     });
     
     function mapGameInformation(resp, response, isUserScope) {
+
         var result = [];
         var hasGames = resp.length > 0;
         var found = -1;

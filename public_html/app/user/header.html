@@ -7,10 +7,10 @@
     </div>
     <div>
         <ul class="header-console-list" style="margin-bottom: 0">
-            <li ng-repeat="c in stats" ng-class="{lastItem: $index === 6}">
+            <li ng-repeat="c in stats" ng-class="{lastItem: $index === 6, active: c.id === $parent.consoleName}">
                 <div style="padding: 5px">
                     <a ng-href="#/user/{{userName}}/{{c.id}}/">
-                        <img ng-src="/img/{{c.id}}.svg" ng-class="{active: c.id === $parent.consoleName}" />
+                        <img ng-src="/img/{{c.id}}.png" />
                     </a>
                 </div>
             </li>

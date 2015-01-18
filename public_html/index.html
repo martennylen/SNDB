@@ -101,7 +101,7 @@
                 <div id="header-left">
                     <h1>
                         <a href ui-sref="all()" class="nintendoid" style="display:block">SNDB</a>
-                        <a href ui-sref="all()" class="nintendoid" style="color: #B53121">Trackr</a>
+                        <a href ui-sref="all()" class="nintendoid" style="color: #FFC302">Trackr</a>
                     </h1>
                 </div><div id="header-right">
                     <div ng-switch on="isLoggedIn()">
@@ -111,7 +111,7 @@
                             <a href ui-sref="user({userName: loggedInUser.username})"><span class="glyphicon glyphicon-user mobile-only"></span><span style="margin-left:6px" class="desktop-only">Min sida</span></a>
                             <a ng-if="showAdminLink()" href ng-href="#/admin"><span class="glyphicon glyphicon-lock mobile-only"></span><span style="margin-left:6px" class="desktop-only">Admin</span></a>
                             <span class="blockify">
-                                <span class="desktop-only" style="color: #5a5a5a;font-weight:bold">{{loggedInUser.username}} </span>
+                                <span class="desktop-only" style="color: #e2e2e2; font-weight: bold">{{loggedInUser.username}} </span>
                                 <a href ng-click="logout()"><span class="glyphicon glyphicon-log-out mobile-only"></span><span style="margin-left:6px" class="desktop-only">(Logga ut)</span></a>
                             </span>
                         </div>

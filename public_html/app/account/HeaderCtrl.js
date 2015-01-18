@@ -5,10 +5,10 @@
         $scope.consoles = $rootScope.consoles;
         $scope.q = '';
         
-        var n = 7;
-        $scope.displayConsoles = _.chain($scope.consoles).groupBy(function(element, index){
-            return Math.floor(index/n);
-        }).toArray().value();
+        //var n = 7;
+        //$scope.displayConsoles = _.chain($scope.consoles).groupBy(function(element, index){
+        //    return Math.floor(index/n);
+        //}).toArray().value();
 
         $rootScope.$on('$stateChangeStart',
             function (event, toState, toParams, fromState, fromParams) {
@@ -55,6 +55,7 @@ app.controller('UserHeaderCtrl', ['$scope', '$location', '$state', '$stateParams
         $rootScope.$on('$stateChangeStart',
             function (event, toState, toParams, fromState, fromParams) {
                 if (toState.name === 'user' && _.str.include(fromState.name, "user")) {
+                    if(toParams.userName === fromParams.userName)
                     event.preventDefault();
                 }
             });

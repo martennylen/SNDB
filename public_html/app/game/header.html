@@ -1,15 +1,15 @@
-﻿<div id="subheader-left" style="background-color: #48D8F1" class="desktop-only" style="vertical-align: top">
+﻿<div id="subheader-left" style="background-color: #1A4047; vertical-align: top; " class="desktop-only">
     
 </div><div class="search-engine-holder">
     <span ng-show="q.length" ng-click="clearSearch()" class="glyphicon glyphicon-remove"></span>
     <input type="text" id="game-search" placeholder="Sök i alla regioner" ng-model="q" ng-change="search()" ng-minlength="3" />
 </div>
-<div ng-repeat="clist in displayConsoles">
-    <ul class="header-console-list" style="margin-bottom: 0">
-        <li ng-repeat="c in clist" ng-class="{'first-item': $index === 0, 'last-item': $index === 6}">
+<div>
+    <ul class="header-console-list" style="text-align: center;margin-bottom: 0">
+        <li ng-repeat="c in consoles" ng-class="{'first-item': $index%6 === 0, active: c.id === $parent.consoleName}">
             <a href ui-sref="all.console({consoleName: c.id})">
                 <div style="padding: 5px">
-                    <img ng-src="/img/{{c.id}}.svg" ng-class="{active: c.id === $parent.consoleName}" />
+                    <img ng-src="/img/{{c.id}}.png" />
                 </div>
             </a>
         </li>
