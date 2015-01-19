@@ -5,10 +5,13 @@
     <input type="text" id="game-search" placeholder="Sök" ng-model="q" ng-change="search()" ng-minlength="3" />
 </div>
 <div id="header-console-container" style="position: relative">
-    <div id="scroll-indicator-container" style="position: absolute; right: 0; margin: auto; top: 0; bottom: 0; text-align: center;">
-        <span id="scroll-indicator" style="color: #e2e2e2;font-size:15px" class="glyphicon glyphicon-chevron-right"></span>
+    <div style="position: absolute; left: 0; margin: auto; top: 0; bottom: 0; text-align: center;">
+        <span style="color: #e2e2e2;font-size:15px" class="glyphicon glyphicon-chevron-left"></span>
     </div>
-    <ul class="header-console-list" style="text-align: center;margin-bottom: 0">
+    <div style="position: absolute; right: 0; margin: auto; top: 0; bottom: 0; text-align: center;">
+        <span id="scroll-indicator-right" style="color: #e2e2e2;font-size:15px" class="glyphicon glyphicon-chevron-right"></span>
+    </div>
+    <ul id="header-console-scroller" class="header-console-list" style="text-align: center;margin-bottom: 0">
         <li ng-repeat="c in consoles" ng-class="{'first-item': $index%6 === 0, active: c.id === $parent.consoleName}">
             <a href ui-sref="all.console({consoleName: c.id})">
                 <div style="padding: 5px">
@@ -20,3 +23,18 @@
 </div>
 <div ui-view>
 </div>
+
+<script>
+    var fluff = document.getElementById('header-console-scroller');
+    fluff.onscroll = isAtFarEnd;
+
+    function isAtFarEnd() {
+        if ((fluff.scrollWidth - fluff.scrollLeft + 1) === fluff.clientWidth) {
+            document.getElementById('scroll-indicator-right').style.display = 'none';
+        } else {
+            if (document.getElementById('scroll-indicator-right').style.display === 'none') {
+                document.getElementById('scroll-indicator-right').style.display = 'inline';
+            }
+        }
+    }
+</script>
