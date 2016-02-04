@@ -11,12 +11,15 @@
     var lastGameName = '';
     $scope.isFetching = false;
     $scope.reachedEnd = false;
+    $scope.isSearchResult = false;
 
     $scope.$on('searchResult', function (event, games, success) {
         if (success) {
             console.log(games);
+            $scope.isSearchResult = true;
             $scope.games = games;
         } else {
+            $scope.isSearchResult = false;
             $scope.games = initialResult;
         }
     });
@@ -26,6 +29,7 @@
         if (($scope.q && $scope.q.length) || $scope.isFetching || $scope.reachedEnd) {
             return;
         }
+        
         $scope.isFetching = true;
         GamesService.get({ consoleName: $stateParams.consoleName, regionName: $stateParams.regionName, subRegionName: $stateParams.subRegionName, gameName:lastGameName, docid: docid, skip: skip }).$promise.then(function (data) {
             if (!_.isEmpty(lastResult)) {

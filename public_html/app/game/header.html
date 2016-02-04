@@ -5,10 +5,10 @@
     <input type="text" id="game-search" placeholder="Sök" ng-model="q" ng-change="search()" ng-minlength="3" />
 </div>
 <div id="header-console-container" style="position: relative">
-    <div style="position: absolute; left: 0; margin: auto; top: 0; bottom: 0; text-align: center;">
+    <div class="scroll-indicator" style="position: absolute; left: 0; margin: auto; top: 0; bottom: 0; text-align: center;">
         <span style="color: #e2e2e2;font-size:15px" class="glyphicon glyphicon-chevron-left"></span>
     </div>
-    <div style="position: absolute; right: 0; margin: auto; top: 0; bottom: 0; text-align: center;">
+    <div class="scroll-indicator" style="position: absolute; right: 0; margin: auto; top: 0; bottom: 0; text-align: center;">
         <span id="scroll-indicator-right" style="color: #e2e2e2;font-size:15px" class="glyphicon glyphicon-chevron-right"></span>
     </div>
     <ul id="header-console-scroller" class="header-console-list" style="text-align: center;margin-bottom: 0">
@@ -29,7 +29,11 @@
     fluff.onscroll = isAtFarEnd;
 
     function isAtFarEnd() {
-        if ((fluff.scrollWidth - fluff.scrollLeft + 1) === fluff.clientWidth) {
+        console.log(fluff.scrollWidth);
+        console.log(fluff.scrollLeft);
+        console.log(fluff.clientWidth-10);
+        console.log(fluff.scrollWidth - (fluff.scrollLeft));
+        if ((fluff.scrollWidth - (fluff.scrollLeft+10)) === (fluff.clientWidth-10)) {
             document.getElementById('scroll-indicator-right').style.display = 'none';
         } else {
             if (document.getElementById('scroll-indicator-right').style.display === 'none') {

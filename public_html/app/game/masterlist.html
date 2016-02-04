@@ -7,9 +7,9 @@
                         <!--ui-sref="game({consoleName:game.data.console, regionName:game.data.regions.main, subRegionName:game.data.regions.sub, gameName:game.data.name.split('-').join('+').split(' ').join('-')})"-->
                         <div class="game-name">
                             <span>
-                                {{game.data.name}}
-                                <span>({{game.data.regions.sub.toUpperCase()}})</span>
+                                {{game.data.name}}{{game.data.alternativeName !== undefined ? ' / ' + game.data.alternativeName : ''}}
                             </span>
+                            <span ng-if="$parent.isSearchResult">({{game.data.regions.sub.toUpperCase()}})</span>
                         </div><div class="game-data">
                             <div class="game-attr">
                                 <div class="common">
