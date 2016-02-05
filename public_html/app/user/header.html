@@ -6,13 +6,13 @@
         <input type="text" id="game-search" placeholder="Sök i mina spel" ng-model="$parent.q" ng-change="search()" ng-minlength="3" />
     </div>
     <div id="header-console-container" style="position: relative">
-        <div style="position: absolute; left: 0; margin: auto; top: 0; bottom: 0; text-align: center;">
+        <div class="scroll-indicator" style="position: absolute; left: 0; margin: auto; top: 0; bottom: 0; text-align: center;">
             <span style="color: #e2e2e2;font-size:15px" class="glyphicon glyphicon-chevron-left"></span>
         </div>
-        <div ng-if="stats.length > 3" style="position: absolute; right: 0; margin: auto; top: 0; bottom: 0; text-align: center;">
-            <span id="scroll-indicator" style="color: #e2e2e2;font-size:15px" class="glyphicon glyphicon-chevron-right"></span>
+        <div ng-if="stats.length > 3" class="scroll-indicator" style="position: absolute; right: 0; margin: auto; top: 0; bottom: 0; text-align: center;">
+            <span id="scroll-indicator-right" style="color: #e2e2e2;font-size:15px" class="glyphicon glyphicon-chevron-right"></span>
         </div>
-        <ul class="header-console-list" style="margin-bottom: 0">
+        <ul id="header-console-scroller" class="header-console-list" style="margin-bottom: 0">
             <li ng-repeat="c in stats" ng-class="{'first-item': $index%6 === 0, active: c.id === $parent.consoleName}">
                 <div style="padding: 5px">
                     <a ng-href="#/user/{{userName}}/{{c.id}}/">
@@ -28,3 +28,18 @@
 </div>
 <div ui-view>
 </div>
+
+<script>
+    var fluff = document.getElementById('header-console-scroller');
+    fluff.onscroll = isAtFarEnd;
+
+    function isAtFarEnd() {
+        if ((fluff.scrollWidth - (fluff.scrollLeft + 10)) === (fluff.clientWidth - 10)) {
+            document.getElementById('scroll-indicator-right').style.display = 'none';
+        } else {
+            if (document.getElementById('scroll-indicator-right').style.display === 'none') {
+                document.getElementById('scroll-indicator-right').style.display = 'inline';
+            }
+        }
+    }
+</script>

@@ -13,14 +13,16 @@
         function handleDate(d) {
             var date = new Date(d);
             var hours = date.getHours();
+            var minutes = date.getMinutes();
+            
             if (isSame(d, new Date())) {
-                return 'Idag ' + (hours < 9 ? '0' + hours : hours) + ':' + date.getMinutes();
+                return 'Idag ' + (hours < 9 ? '0' + hours : hours) + ':' + (minutes < 9 ? '0' + minutes : minutes);
             } else {
                 var e = new Date();
                 e.setDate(e.getDate() - 1);
                 
                 if (isSame(d, e)) {
-                    return 'Igår ' + (hours < 9 ? '0' + hours : hours) + ':' + date.getMinutes();
+                    return 'Igår ' + (hours < 9 ? '0' + hours : hours) + ':' + (minutes < 9 ? '0' + minutes : minutes);
                 } else {
                     return (date.getDate() + ' ' + getMonthyName(date.getMonth()) + ' ' + (date.getFullYear() !== e.getFullYear() ? date.getFullYear() : ''));
                 }

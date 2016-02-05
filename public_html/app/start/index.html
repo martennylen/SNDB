@@ -5,7 +5,7 @@
             <ul>
                 <li ng-repeat="game in createdList" ng-class-odd="'odd'" ng-class-even="'even'">
                     <a href ui-sref="game({consoleName:game.data.console, regionName:game.data.regions.main, subRegionName:game.data.regions.sub, gameName:game.data.slug})">
-                        {{game.data.name }} ({{ game.data.console.toUpperCase() + ' - ' + game.data.regions.main.toUpperCase() + ' - ' + game.data.regions.sub.toUpperCase() }})
+                        {{game.data.name }} ({{ game.data.console.toUpperCase() + ' - ' + game.data.regions.main.toUpperCase() + (game.data.regions.main.toUpperCase() !== game.data.regions.sub.toUpperCase() ? ' - ' + game.data.regions.sub.toUpperCase() : '')}})
                     </a>
                     <sup style="color: #5a5a5a">{{game.created}}</sup>
                 </li>

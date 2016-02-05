@@ -29,10 +29,6 @@
     fluff.onscroll = isAtFarEnd;
 
     function isAtFarEnd() {
-        console.log(fluff.scrollWidth);
-        console.log(fluff.scrollLeft);
-        console.log(fluff.clientWidth-10);
-        console.log(fluff.scrollWidth - (fluff.scrollLeft));
         if ((fluff.scrollWidth - (fluff.scrollLeft+10)) === (fluff.clientWidth-10)) {
             document.getElementById('scroll-indicator-right').style.display = 'none';
         } else {
