@@ -1,5 +1,5 @@
 ﻿<div ng-show="showRegions">
-    <div class="filter-holder" style="margin-top: 10px; margin-bottom: 0; border-bottom: 2px solid #cecece; background-color: #EDBF2C; padding-left: 15px; ">
+    <div class="filter-holder" style="margin-top: 10px; margin-bottom: 0; border-bottom: 2px solid #e2e2e2; background-color: #EDBF2C; padding-left: 15px; ">
         <div ng-repeat="r in regions" style="display:inline-block">
             <input type="radio" id="{{r.id}}" ng-model="currentRegion.region" ng-value="r" ng-change="regionChanged(r)">
             <label class="main" style="margin-right: 10px" for="{{r.id}}" ng-class="{selected: r.id === currentRegion.region.id}">{{r.id.toUpperCase()}} ({{r.count}})</label>
