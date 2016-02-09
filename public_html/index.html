@@ -3,7 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <title>SNDB Trackr</title>
-    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon">
+    <link href="favicon.png" rel="icon" type="image/png">
+    <link rel="apple-touch-icon" href="touch-icon-iphone.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="touch-icon-iphone-retina.png">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" /> 
     <link rel="stylesheet" type="text/css" href="styles/trackr.css">
     <link rel="stylesheet" type="text/css" href="styles/icons.css">
@@ -100,8 +103,10 @@
             <div class="desktop-only">
                 <div id="header-left">
                     <h1>
-                        <a href ui-sref="start()" class="nintendoid" style="display:block">SNDB</a>
-                        <a href ui-sref="start()" class="nintendoid" style="color: #FFC302">Trackr</a>
+                        <a href ui-sref="start()">
+                           <span class="nintendoid" style="display:block">SNDB</span>
+                            <span class="nintendoid" style="color: #FFC302">Trackr</span>
+                        </a>
                     </h1>
                 </div><div id="header-right">
                     <div ng-switch on="isLoggedIn()">

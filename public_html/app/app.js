@@ -250,6 +250,7 @@ app.constant('baseRegions', [
         id: 'pal-b', name: 'PAL-B', selected: true, regions:
         [
             { id: 'scn', name: 'SCN', selected: true },
+            { id: 'eur', name: 'EUR', selected: true },
             { id: 'noe', name: 'NOE', selected: false },
             { id: 'esp', name: 'ESP', selected: false },
             { id: 'fra', name: 'FRA', selected: false },
