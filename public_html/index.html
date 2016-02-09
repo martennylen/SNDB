@@ -7,6 +7,8 @@
     <link href="favicon.png" rel="icon" type="image/png">
     <link rel="apple-touch-icon" href="touch-icon-iphone.png">
     <link rel="apple-touch-icon" sizes="120x120" href="touch-icon-iphone-retina.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" /> 
     <link rel="stylesheet" type="text/css" href="styles/trackr.css">
     <link rel="stylesheet" type="text/css" href="styles/icons.css">
@@ -46,7 +48,7 @@
                             <span ng-if="isLoggedIn()" style="color:#fff">({{loggedInUser.username}})</span>
                         </div>
                         <span id="cart-separator" style="width: 2px; height: 100%; display: table-cell; border-left: 1px solid #990000; border-right: 1px solid #f86d6d;"></span>
-                        <div ng-click="toggleBurger()" id="cart-burger" style="display:table-cell;width:20%;vertical-align: middle">
+                        <div ng-click="toggleBurger()" id="cart-burger" style="display:table-cell;width:16%;vertical-align: middle">
                             <div ng-if="!burgerIsOpen">
                                 <span style="display: block; width: 24px; height: 2px; margin: 5px 14px; background: #fafafa;"></span>
                                 <span style="display: block; width: 24px; height: 2px; margin: 5px 14px; background: #fafafa;"></span>

@@ -1,8 +1,9 @@
-﻿app.controller('HeaderCtrl', ['$scope', '$location', '$state', '$stateParams', '$rootScope', 'SearchService', 'consoles',
-    function ($scope, $location, $state, $stateParams, $rootScope, SearchService, consoles) {
+﻿app.controller('HeaderCtrl', ['$scope', '$location', '$state', '$stateParams', '$rootScope', 'SearchService', 'consoleStats', 'consoles',
+    function ($scope, $location, $state, $stateParams, $rootScope, SearchService, consoleStats, consoles) {
         console.log('header');
-        $rootScope.consoles = consoles;
-        $scope.consoles = $rootScope.consoles;
+        //$rootScope.consoles = consoles;
+        $scope.consoles = consoleStats;
+        //console.log($scope.consoles);
         $scope.q = '';
         
         //var n = 7;
@@ -18,18 +19,17 @@
             });
 
         if ($location.$$path.split('/').length === 2) {
-            $location.path('/all/' + $rootScope.consoles[0].id + '/').replace();
+            $location.path('/all/' + consoles[0].id + '/').replace();
         }
         
         if ($location.$$path.split('/').length === 3 && _.last($location.$$path) !== '/') {
             $location.path('/all/' + $stateParams.consoleName + '/').replace();
         }
 
-        $scope.consoleName = $scope.consoles[0].id;
+        $scope.consoleName = consoles[0].id;
 
         $scope.$on('consoleChanged', function (event, data) {
-            console.log(data);
-            $scope.consoleName = data;
+            $scope.currentConsole = data;
         });
 
         $scope.search = function() {

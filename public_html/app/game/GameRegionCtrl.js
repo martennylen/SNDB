@@ -1,14 +1,15 @@
-﻿app.controller('GameRegionCtrl', ['$scope', '$location', '$stateParams', '$rootScope',
-    function ($scope, $location, $stateParams, $rootScope) {
+﻿app.controller('GameRegionCtrl', ['$scope', '$location', '$stateParams', '$rootScope', 'consoleStats', 'consoles',
+    function ($scope, $location, $stateParams, $rootScope, consoleStats, consoles) {
         console.log('gameregion');
         
-        $scope.apa = $rootScope.consoles;
+        $scope.stats = consoleStats;
+
         $scope.consoleName = $stateParams.consoleName;
         $scope.regionName = $stateParams.regionName;
 
         $scope.currentRegion = {};
 
-        $scope.regions = _.find($scope.apa, function (c) {
+        $scope.regions = _.find($scope.stats, function (c) {
                 return c.id === $scope.consoleName;
         }).regions;
         
@@ -40,7 +41,7 @@
             $location.path('/all/' + $stateParams.consoleName + '/' + $scope.currentRegion.region.id + '/' + sr.id).replace();
         };
         
-        $scope.$emit('consoleChanged', $scope.consoleName);
+        $scope.$emit('consoleChanged', _.find(consoles, function (obj) { return obj.id == $scope.consoleName; }));
 
         $scope.showRegions = true;
         $scope.$on('searchResult', function (event, games, success) {

@@ -75,7 +75,7 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
             templateUrl: 'app/game/header.html',
             controller: 'HeaderCtrl',
             resolve: {
-                consoles: function ($q, $resource) {
+                consoleStats: function ($q, $resource) {
                     var deferred = $q.defer();
                     $resource('/api/stats').query({ level: 1 }).$promise.then(function (data) {
                         deferred.resolve(data);

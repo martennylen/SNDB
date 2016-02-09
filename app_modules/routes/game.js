@@ -381,7 +381,6 @@ module.exports = function(app, passport) {
                 });
             });
         }).then(function (consoles) {
-            console.log(consoles);
             res.send(_u.sortBy(consoles, function (c) { return _u.indexOf(sortOrder, c.id); }));
         });
     });
