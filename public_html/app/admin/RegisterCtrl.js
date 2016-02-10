@@ -4,6 +4,9 @@
     $scope.credentials = { email: '', username: '', password: '' };
 
     $scope.registerCredentials = function () {
+        $scope.credentials.displayName = $scope.credentials.username;
+        $scope.credentials.username = $scope.credentials.displayName.toLowerCase();
+        
         $http.post('/api/register', $scope.credentials).
 		success(function (response) {
 		    console.log(JSON.stringify(response));

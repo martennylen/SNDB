@@ -4,8 +4,12 @@ var app = angular.module('trackr', ['ngResource', 'ngRoute', 'ui.router', 'ngCoo
 
 app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterProvider', '$stateProvider',
     function ($httpProvider, $routeProvider, $locationProvider, $urlRouterProvider, $stateProvider) {
-    $urlRouterProvider
-        .when('', '/start');
+        $locationProvider.html5Mode(true);
+
+        $urlRouterProvider
+        //.when('/user/:userName', '/user/:userName')
+            .when('/', '/start');
+            
 
     $stateProvider
         .state('login', { url: '/login', templateUrl: 'app/account/login.html', controller: 'LoginCtrl' })
@@ -46,14 +50,21 @@ app.config(['$httpProvider', '$routeProvider', '$locationProvider', '$urlRouterP
                 stats: function ($stateParams, $q, $resource) {
                     var deferred = $q.defer();
                     $resource('/api/user/stats/:userName').query({ userName: $stateParams.userName, level: 2 }).$promise.then(function (data) {
+                        console.log('tjooo');
+                        console.log(data);
                         deferred.resolve(data);
+                    }, function() {
+                        deferred.resolve({ '$resolved' : false});
                     });
+
                     return deferred.promise;
                 },
                 attrs: function ($stateParams, $q, $resource) {
                     var deferred = $q.defer();
-                    $resource('/api/user/stats/attrs/:userName').query({ userName: $stateParams.userName, level: 2 }).$promise.then(function (data) {
+                    $resource('/api/user/stats/attrs/:userName').query({ userName: $stateParams.userName.toLowerCase(), level: 2 }).$promise.then(function (data) {
                         deferred.resolve(data);
+                    }, function() {
+                        deferred.resolve({ '$resolved': false });
                     });
 
                     return deferred.promise;
@@ -250,7 +261,7 @@ app.constant('baseRegions', [
         id: 'pal-b', name: 'PAL-B', selected: true, regions:
         [
             { id: 'scn', name: 'SCN', selected: true },
-            { id: 'eur', name: 'EUR', selected: true },
+            { id: 'eur', name: 'EUR', selected: false },
             { id: 'noe', name: 'NOE', selected: false },
             { id: 'esp', name: 'ESP', selected: false },
             { id: 'fra', name: 'FRA', selected: false },
@@ -268,7 +279,8 @@ app.constant('baseRegions', [
     {
         id: 'ntsc', name: 'NTSC', selected: false, regions:
         [
-            { id: 'rev-a', name: 'REV-A', selected: true }
+            { id: 'rev-a', name: 'REV-A', selected: true },
+            { id: 'can', name: 'CAN', selected: false }
         ]
     },
     {

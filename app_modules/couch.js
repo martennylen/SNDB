@@ -13,6 +13,7 @@ exports.updatePath = function() {
 };
 
 exports.validateUser = function (username, fn) {
+    console.log(username);
     db.view('users/by_username', { key: username.toLowerCase() }, function (err, response) {
         if (err) {
             return fn(err, null);

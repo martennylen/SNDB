@@ -12,12 +12,12 @@ var http = require('http'),
 
     passport.use(new LocalStrategy(
       function (username, password, done) {
-          couch.validateUser(username, function (err, user) {
+          couch.validateUser(username.toLowerCase(), function (err, user) {
               if (err || !pwhelper.validate(user.hash, password, user.salt)) {
                   return done(null, false, { message: 'Användaren hittades inte eller lösenordet stämmer inte.' });
               }
 
-              return done(null, { "id": user.id, "username": user.username, "roles": user.roles });
+              return done(null, { "id": user.id, "username": user.username, "displayName": user.displayName, "roles": user.roles });
           });
       }
     ));
@@ -87,6 +87,12 @@ var http = require('http'),
     require('./app_modules/routes/user')(app, passport);
     require('./app_modules/routes/game')(app, passport);
 
+
+    app.all('/*', function (req, res, next) {
+        // Just send the index.html for other files to support HTML5Mode
+        res.sendfile('public_html/index.html', { root: __dirname });
+    });
+    
     http.createServer(app).listen(app.get('port'), function () {
         console.log("Express server listening on port " + app.get('port'));
     });

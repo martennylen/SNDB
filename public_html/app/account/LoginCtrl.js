@@ -14,8 +14,6 @@
         return _.contains($scope.loggedInUser.roles, 'a');
     };
     $scope.$on('userLog', function (event, user) {
-        console.log(event);
-        console.log('user ' + JSON.stringify(user));
         $scope.loggedInUser = user;
     });
 
@@ -42,6 +40,8 @@ app.controller('LoginCtrl', ['$scope', '$location', '$http', function ($scope, $
     $scope.credentials = {};
 
     $scope.validateCredentials = function (credentials) {
+        credentials = { 'username': credentials.username, 'password': credentials.password };
+        
         $http.post('/api/login', credentials).
 		success(function (response) {
 		    if (response.success) {

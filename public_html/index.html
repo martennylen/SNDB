@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>SNDB Trackr</title>
+    <base href="/" />
     <link href="favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon">
     <link href="favicon.png" rel="icon" type="image/png">
     <link rel="apple-touch-icon" href="touch-icon-iphone.png">
@@ -45,10 +46,10 @@
                         <div style="height:100%;display:table-cell;width:100%;vertical-align: bottom;padding-left:10px">
                             <span class="nintendoid" style="display:block">SNDB</span>
                             <span class="nintendoid">TRACKR</span>
-                            <span ng-if="isLoggedIn()" style="color:#fff">({{loggedInUser.username}})</span>
+                            <span ng-if="isLoggedIn()" style="color:#fff">({{loggedInUser.displayName}})</span>
                         </div>
                         <span id="cart-separator" style="width: 2px; height: 100%; display: table-cell; border-left: 1px solid #990000; border-right: 1px solid #f86d6d;"></span>
-                        <div ng-click="toggleBurger()" id="cart-burger" style="display:table-cell;width:16%;vertical-align: middle">
+                        <div ng-click="toggleBurger()" id="cart-burger" style="display:table-cell;width:50px;vertical-align: middle">
                             <div ng-if="!burgerIsOpen">
                                 <span style="display: block; width: 24px; height: 2px; margin: 5px 14px; background: #fafafa;"></span>
                                 <span style="display: block; width: 24px; height: 2px; margin: 5px 14px; background: #fafafa;"></span>
@@ -116,14 +117,14 @@
                             <a href ui-sref="start()"><span class="glyphicon glyphicon-home mobile-only"></span><span style="margin-left:6px" class="desktop-only">Start</span></a>
                             <a href ui-sref="all()"><span class="glyphicon glyphicon-home mobile-only"></span><span style="margin-left:6px" class="desktop-only">Alla spel</span></a>
                             <a href ui-sref="user({userName: loggedInUser.username})"><span class="glyphicon glyphicon-user mobile-only"></span><span style="margin-left:6px" class="desktop-only">Min sida</span></a>
-                            <a ng-if="showAdminLink()" href ng-href="#/admin"><span class="glyphicon glyphicon-lock mobile-only"></span><span style="margin-left:6px" class="desktop-only">Admin</span></a>
+                            <a ng-if="showAdminLink()" href ng-href="/admin"><span class="glyphicon glyphicon-lock mobile-only"></span><span style="margin-left:6px" class="desktop-only">Admin</span></a>
                             <span class="blockify">
-                                <span class="desktop-only" style="color: #e2e2e2; font-weight: bold">{{loggedInUser.username}} </span>
+                                <span class="desktop-only" style="color: #e2e2e2; font-weight: bold">{{loggedInUser.displayName}} </span>
                                 <a href ng-click="logout()"><span class="glyphicon glyphicon-log-out mobile-only"></span><span style="margin-left:6px" class="desktop-only">(Logga ut)</span></a>
                             </span>
                         </div>
                         <div ng-switch-default>
-                            <a ng-controller="LoginCtrl" ng-href="#/login"><span class="glyphicon glyphicon-log-in mobile-only"></span><span class="desktop-only blockify">Logga in</span></a>
+                            <a ng-controller="LoginCtrl" ng-href="/login"><span class="glyphicon glyphicon-log-in mobile-only"></span><span class="desktop-only blockify">Logga in</span></a>
                         </div>
                     </div>
                 </div>

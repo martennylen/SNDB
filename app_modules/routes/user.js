@@ -7,14 +7,16 @@
 module.exports = function(app, passport) {
     app.get('/api/user/details', function(req, res) {
         if (req.isAuthenticated()) {
-            res.send({ 'username': req.user.username, 'roles': req.user.roles });
+            console.log('apa');
+            console.log(req.user);
+            res.send({ 'username': req.user.username, 'displayName': req.user.displayName, 'roles': req.user.roles });
         }
         res.send({});
     });
 
     app.get('/api/user/stats/attrs/:userName', function(req, res) {
         db.view('users/by_user', { key: req.params.userName }, function(err, response) {
-            if (err) {
+            if (err || response.length == 0) {
                 console.log("Ingen användare hittades");
                 res.send(404);
             }
@@ -35,10 +37,12 @@ module.exports = function(app, passport) {
 
     app.get('/api/user/stats/:userName', function(req, res) {
         db.view('users/by_user', { key: req.params.userName }, function(err, response) {
-            if (err) {
+            if (err || response.length == 0) {
                 console.log("Ingen användare hittades");
                 res.send(404);
             }
+            console.log('TJOHO');
+            console.log(response);
             var userId = response[0].id;
             var level = req.query.level;
 
@@ -159,7 +163,8 @@ module.exports = function(app, passport) {
         });
 
         var requestId = '';
-        if (user !== 'undefined') {
+        if (user) {
+            console.log(user);
             requestId = user.id;
         }
 

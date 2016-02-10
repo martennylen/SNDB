@@ -45,7 +45,9 @@
 app.controller('UserHeaderCtrl', ['$scope', '$location', '$state', '$stateParams', '$rootScope', 'SearchService', 'stats', 'attrs',
     function ($scope, $location, $state, $stateParams, $rootScope, SearchService, stats, attrs) {
         console.log('userheader');
+        $scope.userExists = stats.$resolved && attrs.$resolved;
 
+        console.log(stats);
         $rootScope.stats = stats;
         $scope.userAttrs = attrs;
         $scope.userName = $stateParams.userName;
@@ -62,7 +64,7 @@ app.controller('UserHeaderCtrl', ['$scope', '$location', '$state', '$stateParams
 
         if ($location.$$path.split('/').length === 3) {
             if ($rootScope.stats.length) {
-                $location.path('/user/' + $stateParams.userName + '/' + $rootScope.stats[0].id + '/').replace();
+                $location.path('/user/' + $stateParams.userName.toLowerCase() + '/' + $rootScope.stats[0].id + '/').replace();
             }
         }
 

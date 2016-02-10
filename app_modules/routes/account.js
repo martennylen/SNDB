@@ -29,6 +29,7 @@ module.exports = function(app, passport) {
                 salt: h.salt,
                 hash: h.hash,
                 user: req.body.username,
+                displayName: req.body.displayName,
                 email: req.body.email,
                 roles: ['u']
             };

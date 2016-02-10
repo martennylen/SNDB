@@ -1,4 +1,7 @@
-﻿<div ng-show="stats.length" style="width: 100%">
+﻿<div ng-if="!userExists" style="margin-top: 30px; background-color: #fff; border-radius: 6px; padding: 20px;">
+    <span>Användaren hittades inte.</span>
+</div>
+<div ng-show="userExists && stats.length" style="width: 100%">
     <div id="subheader-left" class="desktop-only" style="vertical-align: top">
         <span ng-repeat="a in userAttrs">{{a.id.toUpperCase()}}: {{a.count}}</span>
     </div><div class="search-engine-holder">
@@ -15,7 +18,7 @@
         <ul id="header-console-scroller" class="header-console-list" style="margin-bottom: 0">
             <li ng-repeat="c in stats" ng-class="{'first-item': $index%6 === 0, active: c.id === $parent.consoleName}">
                 <div style="padding: 5px">
-                    <a ng-href="#/user/{{userName}}/{{c.id}}/">
+                    <a ng-href="/user/{{userName}}/{{c.id}}/">
                         <img ng-src="/img/{{c.id}}.png" />
                     </a>
                 </div>
@@ -23,7 +26,7 @@
         </ul>
     </div>
 </div>
-<div ng-if="!stats.length" style="margin-top: 30px; background-color: #fff; border-radius: 6px; padding: 20px;">
+<div ng-if="userExists && !stats.length" style="margin-top: 30px; background-color: #fff; border-radius: 6px; padding: 20px;">
     <span>Det verkar som du inte har några spel inlagda än! Gå till "Alla spel" och lägg till de spel du har i din samling så blir den här sidan roligare att titta på.</span>
 </div>
 <div ui-view>
