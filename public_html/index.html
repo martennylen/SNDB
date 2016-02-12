@@ -22,8 +22,10 @@
                 <div>
                     <div id="cart-content" style="height: 50px; background-color: #B53121; border-bottom: 4px solid #fff;display: table;table-layout: fixed;width:100%">
                         <div style="height:100%;display:table-cell;width:100%;vertical-align: bottom;padding-left:10px">
-                            <span class="nintendoid" style="display:block">SNDB</span>
-                            <span class="nintendoid">TRACKR</span>
+                            <a href ui-sref="start()">
+                                <span class="nintendoid" style="display:block">SNDB</span>
+                                <span class="nintendoid">TRACKR</span>
+                            </a>
                             <span ng-if="isLoggedIn()" style="color:#fff">({{loggedInUser.displayName}})</span>
                         </div>
                         <span id="cart-separator" style="width: 2px; height: 100%; display: table-cell; border-left: 1px solid #990000; border-right: 1px solid #f86d6d;"></span>
