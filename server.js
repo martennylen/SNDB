@@ -61,7 +61,7 @@ var http = require('http'),
         //    minifyJs: true,
         //    //complete: console.log.bind(console, "Bundle-up: static files are minified/ready")
         //    complete: function () {
-        //        fs.readdir(__dirname + '/public/min/bundle', function (err, files) {
+        //        fs.readdir(__dirname + '/public_html/min/bundle', function (err, files) {
         //            files.forEach(function (f) {
         //                var name = f.split('_')[1];
         //                fs.rename(__dirname + '/public_html/min/bundle/' + f, __dirname + '/public_html/min/bundle/' + name, function (err) {
