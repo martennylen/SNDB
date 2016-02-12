@@ -291,4 +291,4 @@ app.constant('baseRegions', [
     }
   ]);
 
-_.mixin(_.str.exports());
+_.mixin(s.exports());
