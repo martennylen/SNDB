@@ -13,8 +13,10 @@ var http = require('http'),
     passport.use(new LocalStrategy(
       function (username, password, done) {
           couch.validateUser(username.toLowerCase(), function (err, user) {
+              console.log('apa');
+              console.log(err);
               if (err || !pwhelper.validate(user.hash, password, user.salt)) {
-                  return done(null, false, { message: 'Användaren hittades inte eller lösenordet stämmer inte.' });
+                  return done(null, false, { message: 'Anvï¿½ndaren hittades inte eller lï¿½senordet stï¿½mmer inte.' });
               }
 
               return done(null, { "id": user.id, "username": user.username, "displayName": user.displayName, "roles": user.roles });

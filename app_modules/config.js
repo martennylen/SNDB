@@ -17,10 +17,13 @@ function getDevConf(){
 	config.couchdb = {};
 
 	config.couchdb.url = 'http://localhost';
+	//config.couchdb.url = 'https://sndb.smileupps.com';
+	//config.couchdb.url = 'https://couchdb-1d0fba.smileupps.com';
 	config.couchdb.port = 5984;
+	//config.couchdb.port = 443;
     config.couchdb.database = 'sndb';
-	config.couchdb.username = 'xxx';
-	config.couchdb.password = 'yyy';
+	//config.couchdb.username = 'xxx';
+	//config.couchdb.password = 'yyy';
 
 	return config;
 }
@@ -31,11 +34,11 @@ function getProdConf(){
 	config.couchdb = {};
 
 	//config.couchdb.url = 'https://app21098818.heroku:h03MiH3TtVfOIEhOgURxR28d@app21098818.heroku.cloudant.com';
-	config.couchdb.url = 'https://sndb.smileupps.com';
-	config.couchdb.port = '443';
-	//config.couchdb.database = 'sndb';
-	config.couchdb.username = 'xxx';
-	config.couchdb.password = 'yyy';
+	config.couchdb.url = 'https://couchdb-1d0fba.smileupps.com';
+	config.couchdb.port = 443;
+	config.couchdb.database = 'sndb';
+	//config.couchdb.username = 'xxx';
+	//config.couchdb.password = 'yyy';
 
 	return config;
 }

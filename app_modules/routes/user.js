@@ -6,6 +6,7 @@
 
 module.exports = function(app, passport) {
     app.get('/api/user/details', function(req, res) {
+        console.log(res);
         if (req.isAuthenticated()) {
             console.log('apa');
             console.log(req.user);
